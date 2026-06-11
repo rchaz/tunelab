@@ -1,0 +1,24 @@
+[
+  {
+    "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+    "n_texts": 3000,
+    "dim": 384,
+    "encode_wall_secs": 19.77,
+    "encode_texts_per_sec": 151.7,
+    "lr_accuracy": 0.7617,
+    "lr_macro_f1": 0.7597,
+    "centroid_accuracy_20_per_class": 0.6167,
+    "model_load_secs": 9.08
+  },
+  {
+    "model_id": "sentence-transformers/static-retrieval-mrl-en-v1",
+    "n_texts": 3000,
+    "dim": 1024,
+    "encode_wall_secs": 0.47,
+    "encode_texts_per_sec": 6406.9,
+    "lr_accuracy": 0.73,
+    "lr_macro_f1": 0.7308,
+    "centroid_accuracy_20_per_class": 0.4467,
+    "model_load_secs": 10.33
+  }
+]

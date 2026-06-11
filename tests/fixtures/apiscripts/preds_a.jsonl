@@ -1,0 +1,12 @@
+{"id": "p01", "input": "Summarize ticket 1", "expected": "ref answer 1", "predicted": "base answer 1"}
+{"id": "p02", "input": "Summarize ticket 2", "expected": "ref answer 2", "predicted": "base answer 2"}
+{"id": "p03", "input": "Summarize ticket 3", "expected": "ref answer 3", "predicted": "base answer 3"}
+{"id": "p04", "input": "Summarize ticket 4", "expected": "ref answer 4", "predicted": "base answer 4"}
+{"id": "p05", "input": "REFUSE_ME ticket 5", "expected": "ref answer 5", "predicted": "base answer 5"}
+{"id": "p06", "input": "Summarize ticket 6", "expected": "ref answer 6", "predicted": "base answer 6"}
+{"id": "p07", "input": "Summarize ticket 7", "expected": "ref answer 7", "predicted": "base answer 7"}
+{"id": "p08", "input": "Summarize ticket 8", "expected": "ref answer 8", "predicted": "base answer 8"}
+{"id": "p09", "input": "BANANA_ME ticket 9", "expected": "ref answer 9", "predicted": "base answer 9"}
+{"id": "p10", "input": "Summarize ticket 10", "expected": "ref answer 10", "predicted": "base answer 10"}
+{"id": "p11", "input": "Summarize ticket 11", "expected": "ref answer 11", "predicted": "base answer 11"}
+{"id": "p12", "input": "Summarize ticket 12", "expected": "ref answer 12", "predicted": "base answer 12"}

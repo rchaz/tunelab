@@ -1,0 +1,20 @@
+{"id": 1, "expected": "a", "predicted": "a"}
+{"id": 2, "expected": "a", "predicted": "a"}
+{"id": 3, "expected": "a", "predicted": "a"}
+{"id": 4, "expected": "a", "predicted": "a"}
+{"id": 5, "expected": "a", "predicted": "a"}
+{"id": 6, "expected": "a", "predicted": "A"}
+{"id": 7, "expected": "a", "predicted": "b"}
+{"id": 8, "expected": "a", "predicted": "zzz-junk"}
+{"id": 9, "expected": "b", "predicted": "b"}
+{"id": 10, "expected": "b", "predicted": "b"}
+{"id": 11, "expected": "b", "predicted": "b"}
+{"id": 12, "expected": "b", "predicted": "b"}
+{"id": 13, "expected": "b", "predicted": "b"}
+{"id": 14, "expected": "b", "predicted": "a"}
+{"id": 15, "expected": "c", "predicted": "c"}
+{"id": 16, "expected": "c", "predicted": "c"}
+{"id": 17, "expected": "c", "predicted": "c"}
+{"id": 18, "expected": "c", "predicted": "c"}
+{"id": 19, "expected": "c", "predicted": "c"}
+{"id": 20, "expected": "c", "predicted": " c "}

@@ -1,0 +1,47 @@
+{
+  "skill_name": "tunelab",
+  "evals": [
+    {
+      "id": 1,
+      "name": "classification-should-not-finetune",
+      "prompt": "I've got about 5,000 customer support emails that GPT-4o has been classifying into 6 categories (billing, bug, feature-request, refund, spam, other) — costs us around $40/day and I want to fine-tune a small local model to replace it. The logged emails with their labels are in support_logs.jsonl. Where do I start?",
+      "expected_output": "Does NOT jump to LoRA fine-tuning. Identifies fixed-bucket classification, recommends embeddings + classifier (Level 1), trains it on the logged labels, reports held-out accuracy, and mentions confidence routing back to the LLM. Fine-tuning positioned only as the escalation if the classifier misses the bar. Asks for the acceptance bar before showing the score.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "style-generation-full-pipeline",
+      "prompt": "We have ~2,000 pairs of (customer message, our support team's reply) exported in replies.csv. I want a small model that drafts replies in our voice, running locally on my M3 MacBook (24GB). Walk me through the whole thing end to end.",
+      "expected_output": "Correctly identifies Level 2 (LoRA SFT). Converts CSV to MLX chat format, dedupes, makes stratified-ish 80/10/10 splits, validates before training. Picks a sensible 4-bit mlx-community model for 24GB and verifies the checkpoint id exists before downloading, recommends hyperparameters scaled to ~2k examples, runs/monitors mlx_lm.lora with --mask-prompt and --save-every, watches validation loss for overfitting, records the run in EXPERIMENT-LOG.md and runs/<id>/state.json. Pre-registers an acceptance bar, then evaluates on the untouched test split with a blinded pairwise judge comparing tuned vs base.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "domain-knowledge-should-recommend-rag",
+      "prompt": "I want to fine-tune a model so it knows our internal API documentation — about 200 markdown files — and can answer developer questions about it. Can we do continued pretraining on my Mac?",
+      "expected_output": "Pushes back: knowledge tasks are retrieval problems, fine-tuning doesn't store facts reliably, and 200 files is far below the ~10M-token threshold where continued pretraining pays off. Recommends RAG as the primary solution, optionally + SFT for answer style only. Does not run continued pretraining as a production path. May offer the research-mode framing (run small CPT to *see* the fluency-vs-facts gap) but only with expectations explicitly reset.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "research-mode-overfitting-experiment",
+      "prompt": "I keep reading about overfitting and early stopping but it hasn't really clicked. I've got a free evening and an M2 Air with 16GB — can you set something up so I can actually watch overfitting happen, not just read about it?",
+      "expected_output": "Recognizes a research-mode request (goal is understanding, not a production model) and runs the predict-then-run protocol: asks the user to PREDICT the validation-loss curve before launching, then sets up a deliberately small dataset with deliberately too many iterations on a tiny model, monitors train vs validation loss, identifies the iteration where val loss bottoms and climbs, and compares the user's prediction against the actual curve in EXPERIMENT-LOG.md. Does NOT impose the production pipeline (no acceptance bar negotiation, no held-out-test ceremony for shipping). Explains early stopping from the observed curve, not from theory alone.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "no-data-synthetic-generation",
+      "prompt": "I want a small local model that turns plain-English descriptions of file-management tasks into safe shell one-liners (e.g. 'find all PDFs bigger than 10MB' -> the find command). I have zero training data. M3 Pro, 36GB. How do we get there?",
+      "expected_output": "Routes through tune-decide to Level 2, then takes the synthetic path (Path C): generates inputs WITH explicit diversity instructions (vary personas, phrasing, lengths, edge cases — not a naive 'generate 500 examples' prompt), overgenerates ~30% knowing dedupe will eat near-duplicates, spot-checks ~25 teacher outputs with the user before scaling, then dedupes, splits, validates, and trains. For a small dataset, labels/generates session-natively (no API key) rather than insisting on an API script; mentions the API script as the scale path. Records provenance (synthetic, teacher, prompt) in the DATACARD. Pre-registers the eval bar (e.g. command correctness/safety judged against held-out cases) before testing.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "name": "hardware-boundary-nvidia",
+      "prompt": "My setup is a Linux workstation with an RTX 4090 — no Mac. I have 8k logged (ticket, resolution-category, agent-reply) rows and want to distill them into a small local model. Can tunelab help me?",
+      "expected_output": "Honest about the boundary: tunelab's training backend is MLX/Apple-Silicon-first today, so the tune-train step doesn't run on NVIDIA. Does NOT refuse outright and does NOT pretend mlx_lm runs on CUDA. Walks the parts that are backend-agnostic by construction: tune-decide (the 8k labeled rows likely make the category task a Level 1 classifier — no GPU needed at all), tune-data (ingest/dedupe/split/validate produce standard JSONL chat data any trainer consumes), and tune-eval (held-out discipline works on any checkpoint). Points to standard NVIDIA trainers (e.g. TRL/Unsloth/axolotl) or cloud jobs for the training step, with the prepared data, then returning to tune-eval for the scoreboard.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "tunelab",
+  "owner": {
+    "name": "Rahul Chandrasekaran"
+  },
+  "plugins": [
+    {
+      "name": "tunelab",
+      "source": "./",
+      "description": "Decision-first LLM/SLM fine-tuning and distillation pipeline: decide, prepare data, train on Apple Silicon, evaluate."
+    }
+  ]
+}

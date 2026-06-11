@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+adapters/
+fused-model/
+*.gguf
+*.joblib
+*.safetensors
+data/
+.DS_Store

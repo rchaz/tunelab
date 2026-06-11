@@ -1,0 +1,5 @@
+{"messages": [{"role": "system", "content": "Classify the ticket."}, {"role": "user", "content": "My card was charged twice for the same order."}, {"role": "assistant", "content": "billing"}]}
+{"messages": [{"role": "user", "content": "The app crashes when I open settings."}, {"role": "assistant", "content": "bug"}]}
+{"messages": [{"role": "user", "content": "How do I export my data to CSV?"}, {"role": "assistant", "content": "how-to"}]}
+{"messages": [{"role": "user", "content": "I was charged after cancelling my plan."}, {"role": "assistant", "content": "billing"}]}
+{"messages": [{"role": "user", "content": "Dark mode toggle does nothing on iOS."}, {"role": "assistant", "content": "bug"}]}

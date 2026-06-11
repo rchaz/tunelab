@@ -1,0 +1,13 @@
+[
+  {
+    "model_id": "sentence-transformers/static-retrieval-mrl-en-v1 (via model2vec)",
+    "n_texts": 3000,
+    "dim": 1024,
+    "encode_wall_secs": 0.66,
+    "encode_texts_per_sec": 4554.0,
+    "lr_accuracy": 0.73,
+    "lr_macro_f1": 0.7303,
+    "centroid_accuracy_20_per_class": 0.4517,
+    "model_load_secs": 1.26
+  }
+]

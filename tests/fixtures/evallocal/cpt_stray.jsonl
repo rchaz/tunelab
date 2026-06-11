@@ -1,0 +1,2 @@
+{"id": "ok1", "messages": [{"role": "user", "content": "hello"}, {"role": "assistant", "content": "hi"}]}
+{"text": "a stray continued-pretraining record that does not belong in a test set"}

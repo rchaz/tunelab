@@ -1,0 +1,12 @@
+{"text": "I want my money back for the broken blender", "label": "refund", "amount": 49.99, "flag": 0}
+{"text": "Please refund the duplicate charge on my card", "label": "refund", "amount": 12.5, "flag": 0}
+{"text": "The jacket arrived torn, I expect a full refund", "label": "refund", "amount": 89.0, "flag": 0}
+{"text": "Charged twice for one order, return my money", "label": "refund", "amount": 23.75, "flag": 0}
+{"text": "Item never worked, refund me immediately", "label": "refund", "amount": 150.0, "flag": 0}
+{"text": "I returned the shoes last week and still no refund", "label": "refund", "amount": 65.0, "flag": 0}
+{"text": "Where is my package, it was due Monday", "label": "shipping", "amount": 0.0, "flag": 0}
+{"text": "Tracking says delivered but nothing arrived", "label": "shipping", "amount": 5.0, "flag": 0}
+{"text": "My order has been stuck in transit for two weeks", "label": "shipping", "amount": 8.99, "flag": 0}
+{"text": "Can you expedite the delivery of my order", "label": "shipping", "amount": 15.0, "flag": 0}
+{"text": "The courier left my box at the wrong address", "label": "shipping", "amount": 3.5, "flag": 0}
+{"text": "Shipment delayed again, third time this month", "label": "shipping", "amount": 7.25, "flag": 0}

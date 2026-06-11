@@ -1,0 +1,5 @@
+{"messages": [{"role": "user", "content": "A valid record so the file format locks to chat."}, {"role": "assistant", "content": "ok"}]}
+{"messages": [{"role": "user", "content": "unterminated json"
+{"messages": [{"role": "user", "content": "no assistant reply here"}]}
+{"messages": [{"role": "user", "content": ""}, {"role": "assistant", "content": "empty user above"}]}
+{"prompt": "a completions record in a chat file", "completion": "format clash"}
