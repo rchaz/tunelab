@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tests for skills/tune-data/scripts/distill_generate.py against the fake
-anthropic SDK in tests/shims (no API key, no network — the real script runs
-via 'uv run' with PYTHONPATH pointing at the shim)."""
+anthropic and openai SDKs in tests/shims (no API key, no network — the real
+script runs via 'uv run' with PYTHONPATH pointing at the shims)."""
 
 import json
 import os
@@ -22,9 +22,27 @@ def base_env(**extra):
     env = dict(os.environ)
     env["PYTHONPATH"] = SHIMS
     env["ANTHROPIC_API_KEY"] = "shim-dummy-key"
+    env.pop("OPENAI_API_KEY", None)
     env.pop("SHIM_DEBUG", None)
     env.update(extra)
     return env
+
+
+def openai_env(**extra):
+    # Deliberately drops ANTHROPIC_API_KEY: the openai path must not need it.
+    env = dict(os.environ)
+    env["PYTHONPATH"] = SHIMS
+    env["OPENAI_API_KEY"] = "shim-dummy-key"
+    env.pop("ANTHROPIC_API_KEY", None)
+    env.pop("SHIM_DEBUG", None)
+    env.update(extra)
+    return env
+
+
+def write_jsonl(path, rows):
+    with open(path, "w", encoding="utf-8") as f:
+        for row in rows:
+            f.write(json.dumps(row) + "\n")
 
 
 def run(args, env=None):
@@ -221,11 +239,188 @@ def main():
         assert "empty label set" in r.stderr, r.stderr
         print("PASS: --labels ',,' exits non-zero with 'empty label set'")
 
-    # --- --provider flag is present and gated ------------------------------
+    # ===== --provider openai (fake openai SDK in tests/shims) ===============
+    probe = subprocess.run(
+        ["uv", "run", "--no-project", "--with", "openai>=2.41",
+         "python", "-c", "import openai; print(openai.__file__)"],
+        capture_output=True, text=True, env=openai_env(), cwd=ROOT,
+    )
+    assert probe.returncode == 0, probe.stderr
+    assert os.path.join("tests", "shims") in probe.stdout, (
+        f"shim did not shadow real package: {probe.stdout!r}")
+    print("PASS: shim shadows real openai package under uv run "
+          f"(openai.__file__ = {probe.stdout.strip()})")
+
+    with tempfile.TemporaryDirectory() as tmp:
+        out = os.path.join(tmp, "labeled.jsonl")
+        train = os.path.join(tmp, "train.jsonl")
+
+        # --- classify on 10 inputs incl. refusal marker, openai path -------
+        r = run(classify_args(out, train, ["--provider", "openai"]),
+                env=openai_env())
+        assert r.returncode == 0, r.stderr
+        assert "processing 10 of 10 records with gpt-5.5" in r.stderr, r.stderr
+        print("PASS: openai classify run exits 0; default model resolves "
+              "to gpt-5.5 (ANTHROPIC_API_KEY absent from env)")
+
+        raw = read_jsonl(out)
+        assert len(raw) == 9, f"expected 9 raw records, got {len(raw)}"
+        assert [rec["id"] for rec in raw] == [g["id"] for g in good]
+        for rec in raw:
+            assert rec["label"] == expected_label(rec["text"]), rec
+        chats = read_jsonl(train)
+        assert len(chats) == 9
+        for chat, rec in zip(chats, raw):
+            msgs = chat["messages"]
+            assert [m["role"] for m in msgs] == ["system", "user", "assistant"]
+            assert msgs[2]["content"] == rec["label"]
+        print("PASS: openai classify writes the same 9 deterministic labels "
+              "and aligned 3-role train records as the anthropic path")
+
+        assert "id=r07 skipped (refusal: (refusing))" in r.stderr, r.stderr
+        assert "9 written, 1 skipped" in r.stderr, r.stderr
+        print("PASS: openai refusal content part skipped with stderr note "
+              "'id=r07 skipped (refusal: (refusing))'")
+
+        # --- resume on the openai path --------------------------------------
+        r2 = run(classify_args(out, train, ["--provider", "openai"]),
+                 env=openai_env())
+        assert r2.returncode == 0, r2.stderr
+        assert "resuming: 9 already done" in r2.stderr, r2.stderr
+        assert "processing 1 of 10" in r2.stderr, r2.stderr
+        assert "0 written, 1 skipped" in r2.stderr, r2.stderr
+        print("PASS: openai resume re-run reports 'resuming: 9 already done' "
+              "and retries only the refused record")
+
+    # --- generate mode, openai path ----------------------------------------
+    with tempfile.TemporaryDirectory() as tmp:
+        out = os.path.join(tmp, "gen.jsonl")
+        train = os.path.join(tmp, "gen_train.jsonl")
+        r = run(["--mode", "generate",
+                 "--input", os.path.join(FIXTURES, "generate_inputs.jsonl"),
+                 "--system", "Draft a reply in our support voice.",
+                 "--output", out, "--train-out", train,
+                 "--provider", "openai"], env=openai_env())
+        assert r.returncode == 0, r.stderr
+        assert "3 written, 0 skipped" in r.stderr, r.stderr
+        for rec, chat in zip(read_jsonl(out), read_jsonl(train)):
+            assert rec["generated"].startswith("GEN::"), rec
+            assert chat["messages"][2]["content"] == rec["generated"], chat
+        print("PASS: openai generate mode writes shim output ('GEN::<input>') "
+              "to raw and train outputs for all 3 inputs")
+
+    # --- openai request shape: max_output_tokens / store / reasoning --------
+    dbg = openai_env(SHIM_DEBUG="1")
+    r = one_shot("classify", ["--provider", "openai"], dbg)
+    assert "SHIM max_output_tokens=256 store=False effort=none" in r.stderr, r.stderr
+    print("PASS: openai classify default max_output_tokens=256 with "
+          "store=False and reasoning effort 'none' on every call")
+    r = one_shot("classify", ["--provider", "openai", "--max-tokens", "99"], dbg)
+    assert "SHIM max_output_tokens=99 store=False effort=none" in r.stderr, r.stderr
+    print("PASS: explicit --max-tokens 99 honored on the openai path")
+    r = one_shot("generate", ["--provider", "openai"], dbg)
+    assert "SHIM max_output_tokens=1024 store=False effort=none" in r.stderr, r.stderr
+    print("PASS: openai generate default max_output_tokens=1024")
+
+    # --- incomplete (truncated) openai response is skipped, never written ---
+    with tempfile.TemporaryDirectory() as tmp:
+        inp = os.path.join(tmp, "in.jsonl")
+        write_jsonl(inp, [{"id": "t1", "text": "TRUNCATE_ME long prompt"}])
+        out = os.path.join(tmp, "o.jsonl")
+        r = run(["--mode", "generate", "--input", inp, "--system", "s",
+                 "--output", out, "--train-out", os.path.join(tmp, "t.jsonl"),
+                 "--provider", "openai"], env=openai_env())
+        assert r.returncode == 0, r.stderr
+        assert "id=t1 skipped (status=incomplete (max_output_tokens))" in r.stderr, r.stderr
+        assert "0 written, 1 skipped" in r.stderr, r.stderr
+        assert read_jsonl(out) == []
+        print("PASS: openai status=incomplete response skipped with reason, "
+              "never written (truncation-filter side of the provider asymmetry)")
+
+    # --- usage-less response under-counts to 0 instead of crashing ----------
+    with tempfile.TemporaryDirectory() as tmp:
+        inp = os.path.join(tmp, "in.jsonl")
+        write_jsonl(inp, [{"id": "u1", "text": "NOUSAGE_ME usage is None"}])
+        r = run(["--mode", "classify", "--input", inp,
+                 "--labels", ",".join(LABELS), "--system", "s",
+                 "--output", os.path.join(tmp, "o.jsonl"),
+                 "--train-out", os.path.join(tmp, "t.jsonl"),
+                 "--provider", "openai"], env=openai_env())
+        assert r.returncode == 0, r.stderr
+        assert "1 written, 0 skipped" in r.stderr, r.stderr
+        assert "tokens: 0 in / 0 out" in r.stderr, r.stderr
+        print("PASS: usage=None openai response (Response.usage is Optional) "
+              "under-counts to 0 tokens instead of crashing the run")
+
+    # --- first-5-calls-all-api-errors abort ----------------------------------
+    with tempfile.TemporaryDirectory() as tmp:
+        inp = os.path.join(tmp, "in.jsonl")
+        write_jsonl(inp, [{"id": f"e{i}", "text": f"ERROR_ME {i}"} for i in range(6)])
+        r = run(["--mode", "classify", "--input", inp,
+                 "--labels", ",".join(LABELS), "--system", "s",
+                 "--output", os.path.join(tmp, "o.jsonl"),
+                 "--train-out", os.path.join(tmp, "t.jsonl"),
+                 "--provider", "openai"], env=openai_env())
+        assert r.returncode != 0, r.stderr
+        assert ("aborting: first 5 calls all failed with api errors — check "
+                "--model/--provider (gpt-5.5 on openai)") in r.stderr, r.stderr
+        assert r.stderr.count("skipped (api error") == 5, r.stderr
+        print("PASS: run aborts non-zero after the first 5 calls all fail "
+              "with api errors (6th record never attempted) — a typo'd "
+              "--model/--provider cannot burn a full run")
+
+    # --- provider isolation: each path never imports the other SDK ----------
+    # A poisoned module that raises on import is placed AHEAD of tests/shims
+    # on PYTHONPATH; the run only stays green if that SDK is never imported.
+    with tempfile.TemporaryDirectory() as tmp:
+        poison_an = os.path.join(tmp, "poison_an")
+        poison_oa = os.path.join(tmp, "poison_oa")
+        os.makedirs(poison_an)
+        os.makedirs(poison_oa)
+        with open(os.path.join(poison_an, "anthropic.py"), "w", encoding="utf-8") as f:
+            f.write('raise ImportError("poisoned: anthropic imported on the openai path")\n')
+        with open(os.path.join(poison_oa, "openai.py"), "w", encoding="utf-8") as f:
+            f.write('raise ImportError("poisoned: openai imported on the anthropic path")\n')
+
+        out = os.path.join(tmp, "o.jsonl")
+        r = run(classify_args(out, os.path.join(tmp, "t.jsonl"),
+                              ["--provider", "openai", "--limit", "3"]),
+                env=openai_env(PYTHONPATH=os.pathsep.join([poison_an, SHIMS])))
+        assert r.returncode == 0, r.stderr
+        assert len(read_jsonl(out)) == 3
+        print("PASS: --provider openai runs green with a poisoned anthropic "
+              "module first on PYTHONPATH — openai path never imports anthropic")
+
+        out2 = os.path.join(tmp, "o2.jsonl")
+        r = run(classify_args(out2, os.path.join(tmp, "t2.jsonl"), ["--limit", "3"]),
+                env=base_env(PYTHONPATH=os.pathsep.join([poison_oa, SHIMS])))
+        assert r.returncode == 0, r.stderr
+        assert len(read_jsonl(out2)) == 3
+        print("PASS: --provider anthropic runs green with a poisoned openai "
+              "module first on PYTHONPATH — anthropic path never imports openai")
+
+    # --- per-provider key gates ----------------------------------------------
+    with tempfile.TemporaryDirectory() as tmp:
+        gate_args = classify_args(os.path.join(tmp, "o.jsonl"),
+                                  os.path.join(tmp, "t.jsonl"))
+        r = run(gate_args + ["--provider", "openai"], env=base_env())
+        assert r.returncode != 0
+        assert "OPENAI_API_KEY is not set" in r.stderr, r.stderr
+        print("PASS: --provider openai without OPENAI_API_KEY exits non-zero "
+              "with 'OPENAI_API_KEY is not set' (ANTHROPIC key present, unused)")
+        r = run(gate_args, env=openai_env())
+        assert r.returncode != 0
+        assert "ANTHROPIC_API_KEY is not set" in r.stderr, r.stderr
+        print("PASS: default provider without ANTHROPIC_API_KEY exits non-zero "
+              "with 'ANTHROPIC_API_KEY is not set' (OPENAI key present, unused)")
+
+    # --- --provider flag covers both providers in --help ---------------------
     r = run(["--help"])
-    assert "--provider" in r.stdout and "anthropic" in r.stdout, r.stdout
-    assert "OpenAI lands in Phase 2" in r.stdout, r.stdout
-    print("PASS: --provider {anthropic} flag present with Phase-2 help text")
+    assert "--provider {anthropic,openai}" in r.stdout, r.stdout
+    assert "OpenAI lands in Phase 2" not in r.stdout, r.stdout
+    assert "gpt-5.5" in r.stdout and "claude-opus-4-8" in r.stdout, r.stdout
+    print("PASS: --provider {anthropic,openai} flag present with per-provider "
+          "model defaults in --help (Phase-2 gating text gone)")
 
     print("ALL distill_generate CHECKS PASSED")
 

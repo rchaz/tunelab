@@ -106,7 +106,7 @@ uv run <skill-dir>/scripts/distill_generate.py --mode generate \
   --output data_labeled.jsonl --train-out train_chat.jsonl
 ```
 
-Defaults: `--provider anthropic` (OpenAI lands in Phase 2), `--model claude-opus-4-8` (pass `--model claude-sonnet-4-6` to trade quality for cost on easy jobs — ask first; both ids verified 2026-06), `--max-tokens` 256 classify / 1024 generate. Resumable: ids already in `--output` are skipped on re-run; refusals/unparseable outputs are skipped and counted, re-run to retry. **Id-stability warning:** resume matches on the `"id"` field — if the input lacks ids, line numbers are used, so never reorder the input file between runs.
+Defaults: `--provider anthropic` with `--model claude-opus-4-8`, or `--provider openai` (needs `OPENAI_API_KEY`; only the selected provider's key and SDK are used) with `--model gpt-5.5`. Cheaper teachers trade quality for cost on easy jobs — ask first: `claude-sonnet-4-6` / `gpt-5.4-mini`, or `gpt-5.4-nano` for easy label sets (all ids verified 2026-06). `--max-tokens` 256 classify / 1024 generate. Resumable: ids already in `--output` are skipped on re-run; refusals/unparseable outputs are skipped and counted, re-run to retry. **Id-stability warning:** resume matches on the `"id"` field — if the input lacks ids, line numbers are used, so never reorder the input file between runs.
 
 ### Path C — nothing (synthetic from scratch)
 
@@ -146,7 +146,7 @@ python3 <skill-dir>/scripts/split_data.py --input deduped.jsonl --outdir data/ \
   --ratios 0.8,0.1,0.1 --seed 42 --label-key label
 ```
 
-Stratify whenever a label exists: `--label-key <field>` for a top-level field, or `--label-from-assistant` when the last assistant message *is* the label (the distillation chat shape) — they're mutually exclusive. The seed makes the split reproducible: same input + same seed = same split, which is what lets a future session regenerate it from the log.
+Stratify whenever a label exists: `--label-key <field>` for a top-level field, or `--label-from-assistant` when the last assistant message *is* the label (the distillation chat shape) — they're mutually exclusive. No label field at all (open generation pairs)? Say so out loud — "splitting unstratified: no label to stratify on" — so the choice is visible, not accidental. The seed makes the split reproducible: same input + same seed = same split, which is what lets a future session regenerate it from the log.
 
 Say the contract to the user explicitly: **valid.jsonl steers training (early stopping, hyperparameter picks); test.jsonl is looked at exactly once, at the end, by tune-eval.** A test set peeked at during development is just a second validation set wearing a costume (see ../../concepts/validation-vs-test.md).
 

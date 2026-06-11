@@ -21,7 +21,7 @@ On invocation, BEFORE asking the user a single question, check the project workd
   "started_at", "updated_at", "best_val": {"iter", "loss"}, "resume_history": [] }
 ```
 
-Training runs detached (`nohup <cmd> > runs/<id>/train.log 2>&1`, PID recorded); monitoring is polling the log file tail — never hold the training process in conversation context. Resume is weights-only in mlx-lm 0.31.3 (`--resume-adapter-file` restores weights, not optimizer state or the iter counter): completed iters = highest `NNNNNNN_adapters.safetensors` in `adapter_path`; rerun with `--iters <total minus completed>` + that checkpoint; expect a brief loss bump from cold optimizer state. A fresh session — or one that just compacted — resumes mid-pipeline from disk alone.
+Training runs detached (`nohup <cmd> > runs/<id>/train.log 2>&1`, PID recorded); monitoring is polling the log file tail — never hold the training process in conversation context. Resume is weights-only in mlx-lm 0.31.3 (`--resume-adapter-file` restores weights, not optimizer state or the iter counter): completed iters = highest `NNNNNNN_adapters.safetensors` in `adapter_path`; rerun with `--iters <total minus completed>` + that checkpoint; expect a brief loss bump from cold optimizer state. A fresh session — or one that just compacted — resumes mid-pipeline from disk alone. Report what you actually found ("no EXPERIMENT-LOG.md in `<path>`"), and never assert a check you didn't run.
 
 ## The capability ladder (first match wins, walking down)
 

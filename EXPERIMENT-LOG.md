@@ -158,3 +158,53 @@ descriptions alone; case 4 reached concepts/epochs-and-overfitting.md).
 Workflow `wf_08e57896-015` (rate-limit interrupted, resumed from journal).
 Notes for a Phase-2 prose round: commit to the word "stratified" (or its
 absence rationale) in split plans; discourage asserting unperformed checks.
+
+---
+
+## 2026-06-11 — Phase 2: `--provider openai` in distill_generate / judge_eval
+
+### OpenAI API check (no spend — installed SDK + developers.openai.com)
+
+Responses API facts the implementation is built on, verified 2026-06-11:
+
+- **Surface** (verified against installed `openai` 2.41.1):
+  `client.responses.create(model, instructions=<system>, input=<user>,
+  max_output_tokens, store=False)`; structured outputs via
+  `text={"format": {"type": "json_schema", "name": ..., "schema": ...,
+  "strict": True}}` — the format-level `name` is required; usage at
+  `resp.usage.input_tokens/output_tokens`, but `Response.usage` is typed
+  `ResponseUsage | None`, so both scripts guard the None case (under-count
+  to 0, never crash); refusals are `refusal`-type content parts inside
+  `output` message items; truncation surfaces as `status != "completed"` +
+  `incomplete_details.reason`. `store=False` on every call (Responses API
+  otherwise persists responses for 30 days). `BadRequestError`,
+  `RateLimitError`, `APIConnectionError` all subclass `openai.APIError`, so
+  SDK-retry exhaustion and 4xx land in the per-record skip path
+  (`OpenAI(max_retries=5)`); SDK `ReasoningEffort` literal is
+  `'none'|'minimal'|'low'|'medium'|'high'|'xhigh'`.
+- **Models** (developers.openai.com/api/docs/models/\*, fetched 2026-06-11):
+  - `gpt-5.5` (default teacher/judge): model page states verbatim
+    "Reasoning.effort supports: none, low, medium (default), high and xhigh"
+    — closes the open question on `reasoning={"effort": "none"}` (distill)
+    and `"low"` (judge). $5/$30 per MTok, 1.05M context, snapshot
+    `gpt-5.5-2026-04-23`. The GPT-5.5 usage guide reserves `none` for
+    "latency-critical tasks that don't need reasoning ... such as ...
+    classification" — exactly distill's classify use.
+  - `gpt-5.4`: "none (default), low, medium, high and xhigh", $2.50/$15.
+    `gpt-5.4-mini`: $0.75/$4.50. `gpt-5.4-nano`: $0.20/$1.25 ("cheapest ...
+    for simple high-volume tasks like classification"). All four ids named
+    in the scripts' `--model` help text exist.
+- **Hardening added with the provider** (both scripts): abort with non-zero
+  exit if the first 5 calls of a run all fail with api errors (a typo'd
+  `--model`/`--provider` previously burned the whole run as per-record skips
+  and still exited 0); usage-None guard as above.
+- **Known asymmetry** (documented in distill_generate's docstring): in
+  generate mode the openai path skips incomplete/truncated generations,
+  while the anthropic path keeps partial text when `stop_reason=max_tokens`
+  — anthropic-teacher generate outputs deserve a truncation spot-check.
+- **Offline coverage:** `tests/shims/openai.py` fakes exactly this surface
+  (refusal / api-error / truncation / usage-None / out-of-enum markers);
+  both API-script test suites now run the behavioral matrix on both
+  providers, plus poisoned-module proofs that each provider path never
+  imports the other SDK. Still never run live — first live OpenAI spend
+  should start with `--limit 1` smokes per script.
