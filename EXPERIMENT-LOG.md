@@ -128,3 +128,33 @@ this machine 2026-06-10):
   never run live (Phase 1 decision stands).
 - Main-loop judgment call: dropped split_data's `n >= 3` gate so 1–2-example
   stratified classes also warn when absent from a split.
+
+---
+
+## 2026-06-10/11 — Milestones 5–6: live runs + eval round 1 — PHASE 1 DEFINITION OF DONE MET
+
+**Level 1 live run (CFPB complaint triage)** — PASSED its pre-registered bar:
+held-out macro-F1 0.730 ≥ 0.70 on 3,000 real complaints, local embeddings,
+$0.00 spend. Level 0 probe reproduced its predicted failure (0.437 vs ~0.45).
+Routing sweep: ≥0.6 confidence keeps 90% of traffic at 0.744. Full log:
+`dogfood/level1/EXPERIMENT-LOG.md`; tutorial: `recipes/01-ticket-triage.md`.
+
+**Level 2 live run (synthetic Taskloop triage→JSON, Path C)** — PASSED all
+three pre-registered bars on a FRESH 90-record test set (the original test was
+spent by an interim look and replaced, per the one-look rule): format validity
+100% (≥98), category accuracy 92.2% (≥85), blinded judge 68.9%
+equivalent-or-better vs teacher (≥60; 5 wins/57 ties/28 losses). Base control:
+70.0%/44.4% → lift +22/+40 points. 825 session-native synthetic records
+(zero API spend), QLoRA on Qwen3-4B-Instruct-2507-4bit, early-stopped at the
+val bottom (global iter ~340 of 823 planned). Full three-leg saga — the
+wired-memory freeze, the discarded full-LR resume leg, the halved-LR fix —
+in `dogfood/level2/EXPERIMENT-LOG.md`; the resume-LR lesson is now in
+tune-train's SKILL.md.
+
+**Eval round 1 (§12)** — PASSED: with-skill 6/6 pass vs no-skill 1 pass /
+3 partial / 2 fail; with-skill judged better in all 6 blinded comparisons.
+Skill triggering verified (each case loaded the right SKILL.md set from
+descriptions alone; case 4 reached concepts/epochs-and-overfitting.md).
+Workflow `wf_08e57896-015` (rate-limit interrupted, resumed from journal).
+Notes for a Phase-2 prose round: commit to the word "stratified" (or its
+absence rationale) in split plans; discourage asserting unperformed checks.

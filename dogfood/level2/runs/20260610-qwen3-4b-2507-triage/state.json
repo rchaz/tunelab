@@ -1,0 +1,43 @@
+{
+ "run_id": "20260610-qwen3-4b-2507-triage",
+ "status": "completed",
+ "pid": 4505,
+ "command": "mlx_lm.lora --model mlx-community/Qwen3-4B-Instruct-2507-4bit --train --data data --iters 823 --batch-size 4 --learning-rate 1e-4 --num-layers 16 --adapter-path runs/20260610-qwen3-4b-2507-triage/adapters --steps-per-report 20 --steps-per-eval 68 --val-batches 25 --save-every 68 --seed 42 --mask-prompt",
+ "model": "mlx-community/Qwen3-4B-Instruct-2507-4bit",
+ "adapter_path": "runs/20260610-qwen3-4b-2507-triage/adapters-best",
+ "data_dir": "data/",
+ "log_path": "runs/20260610-qwen3-4b-2507-triage/train_leg3.log",
+ "total_iters": 823,
+ "save_every": 68,
+ "hparams": {
+  "batch_size": 2,
+  "learning_rate": 5e-05,
+  "num_layers": 16,
+  "max_seq_length": 2048,
+  "grad_accumulation_steps": 2,
+  "grad_checkpoint": true
+ },
+ "started_at": "2026-06-11T03:18:30+00:00",
+ "updated_at": "2026-06-11T06:08:13+00:00",
+ "best_val": {
+  "iter": 340,
+  "loss": 0.509,
+  "note": "global iter (leg1 68 + leg3 272); early-stopped at global ~476 after val 0.513->0.666 (two non-improving evals); best checkpoint copied to adapters-best/"
+ },
+ "resume_history": [
+  {
+   "resumed_at": "2026-06-11T05:19:01+00:00",
+   "from_checkpoint": "adapters/0000068_adapters.safetensors",
+   "from_global_iter": 68,
+   "iters_remaining": 755,
+   "note": "weights-only resume, fresh optimizer; leg2 iter N = global iter 68+N; memory-light flags after wired-memory freeze"
+  },
+  {
+   "resumed_at": "2026-06-11T05:27:46+00:00",
+   "from_checkpoint": "adapters/0000068_adapters.safetensors",
+   "from_global_iter": 68,
+   "iters_remaining": 755,
+   "note": "leg2 DISCARDED: cold-optimizer shock at lr 1e-4 (train 0.585->0.737, val 0.718->0.848 over 68 iters). Leg3 = same resume point, lr halved to 5e-5 per the not-learning/oscillation triage."
+  }
+ ]
+}

@@ -155,7 +155,7 @@ nohup mlx_lm.lora --model mlx-community/gemma-3-4b-it-qat-4bit --train --data da
   > runs/$RUN/train.log 2>&1 &
 ```
 
-**Expect:** a brief loss bump in the first reports — cold Adam optimizer state, not regression. Update `state.json`: `status: "running"`, new `pid`, and push `{resumed_at, from_iter: 900, iters_remaining: 600}` onto `resume_history`.
+**Expect:** a brief loss bump in the first reports — cold Adam optimizer state, not regression. **If the remaining run is long (hundreds of iters), halve the learning rate for the resumed leg** — verified live (2026-06): cold Adam at the original LR can push train AND val loss upward for 60+ iters before recovering, wasting the leg; the brief-bump expectation holds only for short remainders. Update `state.json`: `status: "running"`, new `pid`, and push `{resumed_at, from_iter: 900, iters_remaining: 600}` onto `resume_history`.
 
 ## CPT mode (Level 3)
 

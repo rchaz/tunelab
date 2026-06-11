@@ -1,0 +1,16 @@
+Loading pretrained model
+Fetching 11 files:   0%|          | 0/11 [00:00<?, ?it/s]Fetching 11 files: 100%|██████████| 11/11 [00:00<00:00, 39199.10it/s]
+Loading datasets
+Training
+Loading fine-tuned weights from runs/20260610-qwen3-4b-2507-triage/adapters/0000068_adapters.safetensors
+Trainable parameters: 0.182% (7.340M/4022.468M)
+Starting training..., iters: 755
+Calculating loss...:   0%|          | 0/10 [00:00<?, ?it/s]Calculating loss...:  10%|█         | 1/10 [00:03<00:32,  3.66s/it]Calculating loss...:  20%|██        | 2/10 [00:06<00:25,  3.17s/it]Calculating loss...:  30%|███       | 3/10 [00:09<00:21,  3.01s/it]Calculating loss...:  40%|████      | 4/10 [00:11<00:16,  2.81s/it]Calculating loss...:  50%|█████     | 5/10 [00:14<00:14,  2.94s/it]Calculating loss...:  60%|██████    | 6/10 [00:17<00:11,  2.88s/it]Calculating loss...:  70%|███████   | 7/10 [00:20<00:08,  2.85s/it]Calculating loss...:  80%|████████  | 8/10 [00:23<00:05,  2.94s/it]Calculating loss...:  90%|█████████ | 9/10 [00:27<00:03,  3.11s/it]Calculating loss...: 100%|██████████| 10/10 [00:29<00:00,  3.02s/it]Calculating loss...: 100%|██████████| 10/10 [00:29<00:00,  3.00s/it]
+Iter 1: Val loss 0.718, Val took 30.012s
+Iter 20: Train loss 0.585, Learning Rate 1.000e-04, It/sec 0.159, Tokens/sec 12.047, Trained Tokens 1511, Peak mem 4.111 GB
+Iter 40: Train loss 0.720, Learning Rate 1.000e-04, It/sec 0.162, Tokens/sec 12.381, Trained Tokens 3038, Peak mem 4.287 GB
+Iter 60: Train loss 0.737, Learning Rate 1.000e-04, It/sec 0.183, Tokens/sec 14.057, Trained Tokens 4578, Peak mem 4.287 GB
+Calculating loss...:   0%|          | 0/10 [00:00<?, ?it/s]Calculating loss...:  10%|█         | 1/10 [00:02<00:21,  2.39s/it]Calculating loss...:  20%|██        | 2/10 [00:04<00:19,  2.39s/it]Calculating loss...:  30%|███       | 3/10 [00:07<00:18,  2.65s/it]Calculating loss...:  40%|████      | 4/10 [00:09<00:14,  2.44s/it]Calculating loss...:  50%|█████     | 5/10 [00:12<00:12,  2.43s/it]Calculating loss...:  60%|██████    | 6/10 [00:14<00:09,  2.42s/it]Calculating loss...:  70%|███████   | 7/10 [00:17<00:07,  2.41s/it]Calculating loss...:  80%|████████  | 8/10 [00:19<00:04,  2.33s/it]Calculating loss...:  90%|█████████ | 9/10 [00:21<00:02,  2.31s/it]Calculating loss...: 100%|██████████| 10/10 [00:24<00:00,  2.48s/it]Calculating loss...: 100%|██████████| 10/10 [00:24<00:00,  2.43s/it]
+Iter 68: Val loss 0.848, Val took 24.355s
+/Users/rc/.local/share/uv/python/cpython-3.14.3-macos-aarch64-none/lib/python3.14/multiprocessing/resource_tracker.py:396: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown: {'/mp-a0r3t7cw'}
+  warnings.warn(
