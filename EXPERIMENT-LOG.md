@@ -89,6 +89,8 @@ say so in a comment; dropping the line adapts everything.
 json_schema usage in `distill_generate.py`/`judge_eval.py` is the current
 canonical form; `thinking: adaptive` correct on Opus 4.7+; no sampling params —
 prototype API scripts are shape-correct, review can focus on logic.
+`claude-sonnet-4-6` (tune-data's cheaper-teacher option) also verified valid
+via the claude-api model catalog (2026-06-10): Claude Sonnet 4.6, $3/$15 per MTok.
 
 ---
 
