@@ -40,7 +40,7 @@ Every number from live runs on an M1 Pro 16GB, **$0.00 in API spend** (session-n
 ## Install
 
 ```
-/plugin marketplace add rahulcsekaran/tunelab
+/plugin marketplace add rchaz/tunelab
 /plugin install tunelab@tunelab
 ```
 
