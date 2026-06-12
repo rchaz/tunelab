@@ -208,3 +208,78 @@ Responses API facts the implementation is built on, verified 2026-06-11:
   providers, plus poisoned-module proofs that each provider path never
   imports the other SDK. Still never run live — first live OpenAI spend
   should start with `--limit 1` smokes per script.
+
+---
+
+## 2026-06-11 — OpenAI provider LIVE validation (Phase 2, ~$0.22 of the $2 cap)
+
+After two billing false-starts (key valid, project unfunded — diagnosed via the free models
+endpoint returning 200 while inference returned `insufficient_quota`):
+- **Classify** (25 real CFPB complaints, gpt-5.5 default): 25/25, 0 skipped, every label
+  schema-valid (Responses API `text.format` json_schema strict), resume verified ("25 already
+  done"), usage accounting correct (7,937 in / 364 out). **gpt-5.5 accepted
+  `reasoning.effort: "none"`** — the one fact the doc sweep couldn't verify, now live-confirmed.
+  72% accuracy vs CFPB gold ≈ our local classifier's 0.73 (dataset boundary fuzziness).
+- **Judge** (25 blinded pairs, L2 triage base-vs-tuned): 0 skipped, structured verdicts,
+  position randomization, noise warning self-printed. Independent cross-check: the OpenAI judge
+  scored tuned at 80% W / 16% T / 4% L over base — consistent with the session-native judging
+  that shipped the L2 run.
+Both API scripts now proven live on BOTH providers (anthropic shape verified by claude-api docs
++ shim; openai by shim + live run).
+
+---
+
+## 2026-06-12 — Eval round 2 (8 cases): PASSED — with-skill 8/8
+
+Workflow `wf_dc0ad312-5d5`: 6 regression cases + 2 new recipe-flavored traps
+(router false-cheap blindness; distiller hallucination tolerance). With-skill
+8 pass / 0 partial / 0 fail vs no-skill 3 pass; with-skill judged better in
+7/8 (one tie). Notable from the judges:
+- Case 2's judge independently verified the with-arm's commands against the
+  actual scripts on disk and noted it "checks disk state before acting and
+  sequences around an existing live run" — the §7 continuity prose observably
+  drives behavior.
+- Case 7 (false-cheap): with-skill led the metric card with false-cheap rate
+  and threshold curves; no-skill accepted the average-CSAT framing.
+- Case 8 (hallucination tolerance): with-skill refused the 2%-corruption
+  trade and proposed the mechanical atomic-grounding gate as both eval metric
+  and training-data filter — the exact discipline the distiller dogfood run
+  exercised hours earlier.
+Round-1 prose fixes held: stratification stated-or-disclaimed (case 2 hit),
+no unperformed-check assertions observed.
+
+---
+
+## 2026-06-12 — Phase 2 milestone C: distiller closed at the hardware boundary; Phase 2 DONE
+
+The distiller dogfood run (dogfood/distiller/) ends at a documented 16GB
+boundary, not a checkpoint: six consecutive Metal OOMs training
+Qwen3.5-2B-4bit on 365 compression pairs, across progressively minimal
+configs (final leg: batch 1, no grad-accum, seqlen 2048, 8 layers), two of
+them on a freshly rebooted machine, both dying at the iter-1 val pass.
+Diagnosis (the lesson worth the six legs): activation memory scales with
+ACTUAL sequence length — the same machine trained a larger 4B model at
+12.4GB on ~100–400-token triage records under the same seqlen cap, while
+1,850-token compression records OOM at 2B. `max-seq-length` is a cap, not a
+cost. Scope decision: accept and document (trimming to ≤1,024 tokens biases
+the set to the blobs that least need compressing; the 0.8B fallback is the
+classification-tier model on the hardest metric family). Requirement
+recorded: 32GB+ or a cloud backend.
+
+What shipped instead of a checkpoint — and is the recipe's real value:
+- recipes/03-tool-result-distiller.md — pipeline + frozen teacher prompt +
+  the mechanical grounding gate as centerpiece + the 6-leg OOM table.
+- dogfood/distiller/DATACARD.md — 1,200 extracted pairs → 1,149 deduped →
+  800 teacher-compressed → 683 gate-verified (85.4%; ratio p50 0.245, zero
+  atomic hallucinations) → 546/68/68 split; $0.00 API spend.
+- dogfood/distiller/runs/…/state.json closed (status failed,
+  hardware-boundary note, full 6-leg resume_history) + all six train logs
+  committed as receipts.
+- The pre-registered bar is logged and UNCONSUMED — test set looked at zero
+  times; it binds any future run against this dataset.
+- README: Phase 2 receipts (router + distiller) added; plugin v0.3.0.
+
+Phase 2 definition of done (PLAN §11): router recipe ✓ (milestone B),
+distiller recipe ✓ (this milestone — boundary documented with receipts),
+OpenAI teacher option ✓ (milestone A + live validation above), eval round 2
+✓ (8/8). Next: Phase 3 (CPT showcase on EDGAR + research mode).

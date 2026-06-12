@@ -1,6 +1,6 @@
 {
   "name": "tunelab",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "The fine-tuning lab for Claude Code: decide whether you need fine-tuning at all, distill your LLM logs into small local models (MLX/LoRA), continued-pretrain for domain fluency, evaluate with held-out discipline — and learn the why at every step.",
   "author": {
     "name": "Rahul Chandrasekaran"
