@@ -92,3 +92,29 @@
 - What ships regardless (the recipe's actual value): the extraction → teacher spot-check →
   frozen prompt → mechanical grounding gate → verified dataset pipeline, with receipts.
   `recipes/03-tool-result-distiller.md` + `DATACARD.md` document it; $0.00 API spend.
+
+## 2026-06-12 — tune-train: leg 7 PRE-REGISTRATION (v2 Phase A — the wired-limit hypothesis)
+- Context: PLAN-V2.md §5. rc's decision of record: Qwen3-4B only (no 2B retry).
+- **Hypothesis:** legs 1–6 hit the *default Metal wired-memory limit* (~⅔ of RAM ≈ 10.9GB on
+  16GB), not the machine's total memory. Verified 2026-06-12 on this machine:
+  `iogpu.wired_limit_mb = 0` (system default) — the lever was never raised in any leg.
+- **Levers (all new vs legs 1–6):** (1) `sudo sysctl iogpu.wired_limit_mb=13312` (~13GB,
+  reserving ~2.7GB for macOS; runtime-settable, reverts on reboot; rc runs it — needs sudo;
+  revert after the run). (2) `--clear-cache-threshold` against Metal buffer-cache fragmentation
+  (exact value picked at launch from `mlx_lm.lora --help`). (3) mlx-lm version: 0.31.3 confirmed
+  latest on PyPI as of 2026-06-12 (released 2026-04-22) — no upgrade available; lever closed.
+- **Config:** `mlx-community/Qwen3-4B-Instruct-2507-4bit`; same data as legs 3–6 (train 365
+  records ≤~2k tokens, valid 44); leg-6 minimalism: batch 1, grad-accum 1, seqlen 2048,
+  8 layers, `--grad-checkpoint`, QLoRA. Scale up (layers, then seqlen/full 546-record train)
+  only as measured headroom allows.
+- **Confound acknowledged:** leg 7 changes model (2B→4B) AND the wired limit vs leg 6, so a
+  failure does not cleanly attribute; a 2B control is the fallback diagnostic, currently
+  unplanned per the 4B-only decision.
+- **Predicted-vs-actual (predicted half, logged before launch):** the val pass fits (it fit at
+  2B under the ~10.9GB default; no gradients); training iter 1 is the test — predicted peak
+  ~12–14.5GB for 4B at 1,850-token records, so pass at a 13.0GB wired limit is ~55/45. If OOM
+  at 13312: one retry at 14336 (reserving ~2GB — floor of the safety margin), then the local
+  path is declared closed and Recipe 3 escalates to cloud training per PLAN-V2 §5.2.
+- **Bar:** the 2026-06-11 pre-registered bar above remains UNCONSUMED and binds the eval of any
+  checkpoint this run produces. Test set still looked at zero times.
+- **Blocked on:** rc running the sysctl (sudo). Everything else is staged.
