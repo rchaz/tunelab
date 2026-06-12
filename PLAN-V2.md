@@ -275,3 +275,98 @@ sequences with the raised limit?) bounds what Phase B can promise about tier-2 h
 - mlx-lm-lora: [GitHub](https://github.com/Goekdeniz-Guelmez/mlx-lm-lora) · [PyPI](https://pypi.org/project/mlx-lm-lora/) — 12 training algorithms incl. DPO/CPO/ORPO/GRPO; v2.1.0.
 - Wired limit: [override notes](https://github.com/ivanopcode/devnote-override-macos-metal-vram-cap) · [Peddals guide](https://blog.peddals.com/en/fine-tune-vram-size-of-mac-for-llm/) · [mlx-lm OOM issue #1015](https://github.com/ml-explore/mlx-lm/issues/1015) (cache fragmentation note).
 - Banking77: [PolyAI/banking77](https://huggingface.co/datasets/PolyAI/banking77) · fine-tuned ~93.7%/93.9% and the zero-shot gap + RAP result: [ASRJETS RAP study](https://asrjetsjournal.org/American_Scientific_Journal/article/view/12048) · [Loukas et al. 2023](https://arxiv.org/pdf/2308.14634).
+
+---
+
+## 14. Addendum (2026-06-12, post-finalization deep research sweep) — upgrades ADOPTED into the spec
+
+Run the same day as finalization, while distiller leg 7 trained (rc's request: verify the whole
+plan is cutting-edge, not traditional). Four search batches; sources in §14.6. Verdict first:
+the finalized architecture (cascade + calibrated deferral + flywheel + experiment-driven decide)
+matches 2025–26 research practice — production frontier systems are themselves cascades/routers
+now, and the cascade-routing literature is an active 2026 survey-grade field. The sweep found
+five places to go from "current" to "ahead," adopted below as spec changes.
+
+### 14.1 Cascade (Recipe 1) — three upgrades
+
+1. **Calibration method pinned (replaces "calibrate on validation" hand-wave):** tier-2
+   confidence = token-margin aggregation + **isotonic regression**, the exact recipe of
+   cost-optimal cascade work (UCCI, 2026). Tier 1's LR probabilities get the same calibration
+   check. A Self-REF-style confidence-token fine-tune is noted as roadmap, not v2.
+2. **Conformal risk control is the flagship's research centerpiece:** `cascade_compose.py`
+   selects deferral thresholds with **distribution-free, finite-sample guarantees** ("local-tier
+   error ≤ ε at confidence 1−δ" on the routed subset), alongside the descriptive Pareto sweep.
+   This upgrades the recipe's product knob from "a threshold you eyeball on validation" to "a
+   certified operating point" — the 2025–26 selective-prediction literature does exactly this
+   for LLM cascades, and nobody has shipped it as a laptop-scale teaching recipe.
+3. **Banking77 label noise is quantified and the bars account for it:** ~14% of train
+   utterances are flagged as potential label errors (ACL 2022); filtering them lifted F1 ~4.5
+   points in the original study. Adopted: (a) the ≥0.936 primary bar STANDS — the anchor was
+   measured under the same noise; (b) the 0.95 stretch is explicitly flagged as possibly above
+   the noisy-gold ceiling; (c) the eval adds a **noise-aware secondary read** (confident-learning
+   filter over test; report raw AND filtered accuracy) — the §6 "noisy-gold ceiling" lesson,
+   productized. (d) **Tier-1 embedding upgrade sub-experiment:** Qwen3-Embedding-0.6B (the 2026
+   small-classification leader) vs the static default — static stays the latency default; the
+   experiment prices what accuracy-first buys at 0.6B.
+
+### 14.2 Recipe 3 — the post-SFT roadmap becomes RLVR
+
+1. **Round 2 = GRPO/RLVR with the mechanical grounding gate as the verifiable reward.** The
+   gate (atomic verbatim grounding + length budget) is a textbook programmatic verifier;
+   SFT → RL-against-verifier is the standard 2025–26 two-stage pipeline, and `mlx-lm-lora`
+   ships GRPO locally. Reward = gate-pass + ratio-budget terms. This supersedes
+   "ORPO on gate failures" as the headline next step (ORPO stays as the cheaper alternative).
+   RL rollout memory at 4B/16GB gets a feasibility check in the §8 spike.
+2. **DWQ export:** the fused student gets `mlx_lm.dwq` treatment (already installed,
+   currently unexploited by tunelab) — distilled weight quantization tunes quantization
+   scales/biases against the unquantized model as teacher; "compression accuracy" extends to
+   the weights themselves. `mlx_lm.dynamic_quant` (sensitivity-ranked mixed precision) noted
+   for the same path.
+3. **On-policy distillation context:** OPD is now a standard post-training primitive in
+   frontier recipes (GKD lineage). Token-level teacher logprobs aren't available session-native,
+   so tunelab's practical on-policy step IS the RLVR round above — the concept doc says so.
+4. **Curriculum A/B (cheap, pre-registered):** short→long record ordering for the distiller —
+   the published difficulty signals literally include compression ratio, and ordering softens
+   early-iteration memory spikes on exactly this dataset shape.
+
+### 14.3 Flywheel — adopt the MAPE control-loop formalism
+
+`flywheel.py`'s trigger logic is specified as a **Monitor–Analyze–Plan–Execute loop** (the 2025
+adaptive-data-flywheel formulation; same architecture as NVIDIA's NeMo data-flywheel
+microservices, the current production standard — which independently validates §4.5). The NeMo
+case-study scale ("~685 curated points moved a small model materially") matches tunelab's
+dataset sizes — worth quoting in the recipe.
+
+### 14.4 CPT (Recipe 4 design inputs)
+
+LR **rewarming + re-decaying** with **general-data replay** (the continual-pretraining
+canon); **LoRA-CPT** for small corpora (forgetting control by construction);
+**EntiGraph-style synthetic CPT** (ICLR 2025) as the modern answer when the domain corpus is
+under the ~10M-token gate — synthetic corpus amplification slots into tune-data Path C/D.
+These four go into `continuous-pretraining.md` and the Recipe 4 skeleton.
+
+### 14.5 Concepts — currency requirements
+
+- `why-cascades-work.md`: routing-vs-cascading taxonomy per the 2026 survey; EAGLE-3/3.1 as the
+  speculative-decoding exemplar (token-level + multi-layer feature fusion; production-default).
+- `calibration-and-selective-prediction.md`: isotonic regression + conformal risk control as
+  the two practical recipes (matching what cascade_compose.py actually does).
+- `curriculum-and-progressive-training.md`: difficulty signals with evidence (compression
+  ratio, MTLD, readability) + the "difficulty is not enough — sample utility matters" caveat.
+- `sft-vs-preference-tuning.md`: RLVR/GRPO as the 2025–26 default for *verifiable* tasks;
+  DPO/ORPO for preference-shaped tasks without programmatic verifiers; the decision rule is
+  "do you have a verifier?" first, not "SFT vs RLHF."
+
+### 14.6 Sources (research sweep, all fetched 2026-06-12)
+
+Cascades/routing: [UCCI](https://arxiv.org/html/2605.18796) · [routing/cascading survey](https://arxiv.org/pdf/2603.04445) · [confidence tuning for cascades](https://openreview.net/pdf?id=qYI4fw3g4v) · [Self-REF confidence tokens](https://arxiv.org/pdf/2410.13284) · [agreement-based cascading](https://arxiv.org/pdf/2407.02348).
+Conformal/risk control: [Conformal Arbitrage](https://arxiv.org/pdf/2506.00911) · [conformal selective prediction with general risk control](https://arxiv.org/html/2603.24704) · [bootstrapped conformal risk control for LLMs](https://arxiv.org/pdf/2509.23007) · [COIN](https://arxiv.org/pdf/2506.20178).
+Distillation/RL: [on-policy distillation collection](https://github.com/chrisliu298/awesome-on-policy-distillation) · [GKD](https://arxiv.org/abs/2306.13649) · [rethinking OPD](https://arxiv.org/html/2604.13016v1) · [RLVR overview](https://www.emergentmind.com/topics/reinforcement-learning-with-verified-reward-rlvr) · [RL for large models survey](https://arxiv.org/pdf/2508.08189).
+Banking77 noise: [Label Errors in BANKING77 (ACL 2022)](https://aclanthology.org/2022.insights-1.19/) · [cleanlab confident learning](https://docs.cleanlab.ai/stable/tutorials/clean_learning/text.html).
+PEFT: [LoRA variant landscape](https://arxiv.org/pdf/2502.16894) · [HF PEFT LoRA guide (rsLoRA/PiSSA/LoftQ)](https://huggingface.co/docs/peft/developer_guides/lora) · [LoRA-as-knowledge-memory empirical analysis](https://arxiv.org/pdf/2603.01097).
+Embeddings: [2026 open-source embedding guide](https://www.bentoml.com/blog/a-guide-to-open-source-embedding-models) · [2026 comparison](https://milvus.io/blog/choose-embedding-model-rag-2026.md).
+Flywheels: [MAPE adaptive data flywheel](https://arxiv.org/pdf/2510.27051) · [NeMo flywheel (MLRun)](https://www.mlrun.org/blog/mlrun-nvidia-nemo-building-observable-ai-data-flywheels-in-production/) · [NVIDIA flywheel case study](https://www.zenml.io/llmops-database/data-flywheels-for-cost-effective-ai-agent-optimization).
+CPT: [Synthetic continued pretraining / EntiGraph (ICLR 2025)](https://arxiv.org/pdf/2409.07431) · [how to (re)warm your model](https://www.semanticscholar.org/paper/193955704f66923ac20a664bd184ed4663b2bdf9) · [continual learning survey](https://github.com/Wang-ML-Lab/llm-continual-learning-survey).
+Curriculum: [curriculum pretraining](https://arxiv.org/abs/2506.11300) · [Difficulty Is Not Enough (AAAI)](https://ojs.aaai.org/index.php/AAAI/article/view/40400/44361).
+Speculative decoding: [EAGLE-3 in practice](https://huggingface.co/blog/lujangusface/tw-eagle3-gpu) · [EAGLE 3.1](https://www.marktechpost.com/2026/05/27/meet-eagle-3-1-the-speculative-decoding-algorithm-that-fixes-attention-drift-in-llm-inference/).
+MLX: [LEARNED_QUANTS.md (DWQ/AWQ/dynamic)](https://github.com/ml-explore/mlx-lm/blob/main/mlx_lm/LEARNED_QUANTS.md) · [mlx-lm](https://github.com/ml-explore/mlx-lm) · [Apple M5 MLX benchmarks](https://machinelearning.apple.com/research/exploring-llms-mlx-m5).

@@ -283,3 +283,41 @@ Phase 2 definition of done (PLAN §11): router recipe ✓ (milestone B),
 distiller recipe ✓ (this milestone — boundary documented with receipts),
 OpenAI teacher option ✓ (milestone A + live validation above), eval round 2
 ✓ (8/8). Next: Phase 3 (CPT showcase on EDGAR + research mode).
+
+---
+
+## 2026-06-12 — v2 plan finalized (PLAN-V2.md) + deep research sweep + distiller leg 7 LAUNCHED
+
+**v2 finalization:** PLAN-V2.md committed after a review session. Decisions of record (full
+detail in PLAN-V2 §3): cascade flagship reworked into Recipe 1 on Banking77 (CFPB's frontier
+ceiling is 72% — measured 2026-06-11 — so 95–98% there was impossible for any architecture);
+Recipe 3 = 4B-only leg 7 under the wired-limit hypothesis; DPO/ORPO deferred to concept doc +
+mlx-lm-lora spike; cloud (HF Jobs delegation) in scope only as Recipe 3's escalation path.
+Flagship bars pre-registered in PLAN-V2 §4.4 before any tier has produced a score.
+
+**Research sweep (rc's request: verify the plan is cutting-edge, not traditional).** Method:
+four inline web-search batches run while leg 7 trained; ~30 sources; full list + adopted
+changes in PLAN-V2 §14. Facts that changed the spec:
+- Cascade deferral with **conformal risk control** (distribution-free error guarantees on the
+  routed subset) is the 2025–26 selective-prediction frontier → adopted as cascade_compose.py's
+  centerpiece; calibration pinned to token-margin + isotonic regression (UCCI recipe).
+- **Banking77 has ~14% flagged label errors** (ACL 2022) → ≥0.936 bar stands (same-noise
+  anchor); 0.95 stretch flagged as near the noisy ceiling; noise-aware secondary eval added.
+- The mechanical grounding gate is a textbook **RLVR verifier** → Recipe 3 round 2 = GRPO
+  against gate-pass + ratio reward (mlx-lm-lora ships GRPO locally); supersedes ORPO-on-failures
+  as the headline next step.
+- **mlx_lm.dwq / dynamic_quant / awq are installed and unexploited** → DWQ adopted for student
+  export (quantization scales distilled against the unquantized model).
+- OPD (on-policy distillation) is now a standard frontier post-training primitive; CPT canon =
+  rewarming + re-decaying + replay + EntiGraph-style synthetic CPT for small corpora; curriculum
+  difficulty signals include compression ratio (directly applicable to the distiller set).
+
+**Distiller leg 7 (run `20260612-qwen3-4b-distiller-leg7`, pid in state.json):** launched
+~16:40Z after rc raised the wired limit (`iogpu.wired_limit_mb` 0 → 13312; verified). Model
+Qwen3-4B-Instruct-2507-4bit, leg-6-minimal config, same 365/44 data. **Correction to the leg-7
+pre-registration:** `--clear-cache-threshold` was NOT a new lever — legs 4–6 already ran with
+it at 1GB (state.json hparams; the pre-registration text was wrong to call it untried). The
+true delta vs leg 6 is the wired limit + the 2B→4B model swap. Early telemetry: the iter-1 val
+pass **completed** (val loss 2.147 — legs 5/6 died exactly here) and training proceeded past
+it, wired peaking ~9.5GB then dropping to ~7.6GB as the cache threshold cycles — consistent
+with the hypothesis. Outcome entry to follow when the run resolves.
