@@ -2,7 +2,8 @@
 
 **Level 2 · stop paying frontier prices to read JSON · every number below is from a real run on
 the author's own agent transcripts (June 2026, M1 Pro 16GB, $0.00 API spend) — including the
-honest ending: this one hits a hardware boundary, and the recipe documents exactly where.**
+honest ending: the SFT student compresses beautifully, fools a frontier judge, and still fails
+the grounding gate — which is exactly why the gate, not the judge, owns the guarantee.**
 
 ## The problem
 
@@ -63,61 +64,81 @@ At scale the gate kept earning: **683 of 800 teacher outputs passed (85.4%)**; 1
 rather than trained on. Survivors: ratio p50 0.245, max 0.325. Full provenance:
 `dogfood/distiller/DATACARD.md`.
 
-## Where it ended: the 16GB boundary, with receipts
+## The memory wall — and how it fell
 
-Training `Qwen3.5-2B-4bit` (QLoRA, `--grad-checkpoint`, `--mask-prompt`) on 365 pairs OOM'd six
-consecutive times on a 16GB M1 Pro (`kIOGPUCommandBufferCallbackErrorOutOfMemory`):
+Early training (`Qwen3.5-2B-4bit`) OOM'd six consecutive times on this 16GB M1 Pro
+(`kIOGPUCommandBufferCallbackErrorOutOfMemory`), dying at the iter-1 val pass even on a minimal
+config and a freshly rebooted machine. The lesson from those six legs stands: **`--max-seq-length`
+is a cap, not a cost — your actual token distribution is the cost.** Compression data is
+long-blob by definition, so it blows the activation budget that short-record SFT never touches.
 
-| leg | batch / grad-accum / seqlen / layers | outcome |
+But the wall itself turned out to be one `sysctl` away. The six legs all ran under macOS's
+**default Metal wired-memory limit** (~⅔ of RAM ≈ 10.9GB on 16GB) — never raised:
+
+```bash
+sudo sysctl iogpu.wired_limit_mb=13312   # ~13GB; reserves ~2.7GB for macOS; reverts on reboot
+```
+
+With the limit raised, **Qwen3-4B trained fine** — the model *twice the size* of the one that
+OOM'd six times. It cleared the iter-1 val pass that killed the earlier legs and trained to
+completion at a 6.86GB peak. The boundary was a default, not the hardware. (A NaN detour along the
+way taught its own lesson: loss went NaN at a fixed iteration regardless of learning rate — the
+culprit was *data*, not LR. Records whose templated prompt fills the whole `--max-seq-length`
+window leave zero trainable completion tokens under `--mask-prompt`, dividing the masked loss by
+zero. A two-minute tokenizer scan found them; a full-fidelity rebuild at a larger cap fixed it.
+`tune-data`'s validator now hard-fails such records.)
+
+## The student exists — and the result is the recipe's whole point
+
+Trained to the validation bottom, evaluated against the pre-registered bar on the untouched
+68-record test set (same mechanical gate on student and teacher):
+
+| pre-registered bar | result | |
 |---|---|---|
-| 1 | 2 / 2 / 4096 / 16 | OOM |
-| 2 | 1 / 4 / 3072 / 16 | OOM |
-| 3 | 1 / 4 / 2048 / 16 (train trimmed to ≤1,850 tokens) | OOM |
-| 4 | 1 / 4 / 2048 / 8 | OOM |
-| 5 | 1 / 4 / 2048 / 8 — **freshly rebooted machine** | OOM at the iter-1 val pass |
-| 6 | 1 / 1 / 2048 / 8 — minimal possible config | OOM at the iter-1 val pass |
+| compression ratio p50 ≤ 0.35 | **0.215** | ✅ PASS |
+| blinded judge ≥ 0.60 equiv-or-better vs teacher | **0.94** (15 ties, 1 teacher win / 16) | ✅ PASS |
+| hallucinated-value rate ≈ 0 (≥ 0.99 zero-hallucination) | **0.82** (teacher 0.93) | ❌ **FAIL** |
 
-Legs 5–6 rule out the convenient explanations (memory pressure, zombie processes): a clean
-machine, a minimal config, and both legs computed a full val pass (val loss 1.079, identical)
-then died before training iteration 1.
+**The blinded judge rated the student equivalent to its teacher — and the mechanical gate caught
+the student inventing identifiers ~18% of the time** (`GoalDecomposer.replan`, a fabricated
+`1970-01-01T00:00:00Z` timestamp, status-code lists). This is the recipe's thesis proven on
+itself: *a frontier judge's eye misses the exact corruption the gate catches by string-matching.*
+The gate, not the judge, owns the grounding guarantee — and grounding is non-negotiable here, so
+**the SFT student does not ship.**
 
-**The diagnosis is the lesson: `--max-seq-length` is a cap, not a cost — your actual token
-distribution is the cost.** The same machine trained a *larger* model (Qwen3-4B, the Level 2
-triage dogfood run, 12.4GB peak) under the same 2048 cap, because those records were ~100–400
-actual tokens. Compression data is the opposite shape by definition: the long blobs are the use case.
-Records up to 1,850 actual tokens blow the activation budget that short-record SFT never
-touches.
+## The fix is the next round, and it's motivated by a measured failure
 
-What we did **not** do, on purpose: trim training to ≤1,024 tokens (guts the dataset below the
-sizing minimum and biases it toward short blobs — precisely the cases where a compressor matters
-least), or swap to the 0.8B classification-tier checkpoint (untested on the hardest task family
-in the metrics table). Six progressively minimal configs is evidence; a seventh is denial.
-
-**Requirement: 32GB+ unified memory for variable-length multi-thousand-token SFT** (or a cloud
-backend — on the roadmap). 16GB remains fine for short-record SFT — the Level 2 triage run
-(`dogfood/level2/`) proves that on the same machine.
+SFT transferred the compression *behavior* but not the grounding *discipline*. That's exactly the
+case for **RLVR** (reinforcement learning with verifiable rewards): the grounding gate is already
+a mechanical verifier, so it becomes the reward. SFT → GRPO-against-the-gate (gate-pass +
+ratio-budget terms) teaches the student the property imitation didn't transfer. `mlx-lm-lora`
+ships GRPO locally; the 117 gate-failed teacher outputs are the natural ORPO rejected-set
+alternative. See [concepts/sft-vs-preference-tuning.md](../concepts/sft-vs-preference-tuning.md)
+— the decision rule is "do you have a verifier?" first, and here the answer is yes.
 
 ## Receipts
 
 | | |
 |---|---|
 | verified training pairs from real agent logs | **683** (85.4% gate pass) |
-| teacher compression ratio | **p50 0.245** (4× cheaper context), max 0.325 |
-| atomic hallucinations in survivors | **0** (by construction — the gate) |
-| API spend for the entire dataset | **$0.00** (session-native teacher) |
-| training on 16GB | **blocked** — 6/6 Metal OOM, documented above |
+| teacher compression ratio | **p50 0.245** (4× cheaper context) |
+| student (SFT) — ratio / judge / grounding | **0.215 / 0.94 / 0.82** (2 of 3 bars; grounding owed to RLVR) |
+| API spend for the entire dataset + eval | **$0.00** (session-native teacher + judge) |
+| training on 16GB | **works** — `iogpu.wired_limit_mb` raised; 4B peak 6.86GB |
 
 ## Honest bounds
 
-- No student model exists yet, so no claim about student quality is made — the pre-registered
-  bar is waiting for hardware that fits. The dataset, frozen prompt, and gate are the artifact.
+- The grounding gate survived the original dogfood prep only as prose; the committed
+  `grounding_gate.py` reconstructs it, calibrated to the teacher's documented ~85% population
+  pass rate. A pinned original gate might move absolute numbers a point or two; the
+  **student-vs-teacher gap (−10 points on grounding) is the robust result.**
+- Judge n=16 is directional (the noise threshold wants ~100); field recall not recomputed.
+  Neither rescues the grounding FAIL.
 - Single-user traffic (one developer's coding-agent sessions); the *pipeline* transfers, the
   dataset's distribution doesn't claim to.
-- Field recall is a floor metric (median 2 verbatim-reused identifiers/pair; 190/683 pairs have
-  zero) — the blinded judge is the faithfulness instrument.
 - If ~2% of your compressor's outputs have "close enough" values — rounded numbers, merged IDs —
   that is corruption, not noise. Run the gate over every output; optimize ratio only subject to
   hallucinated-value rate ≈ 0.
 
-Full run log including all six OOM legs: `dogfood/distiller/EXPERIMENT-LOG.md` and
-`dogfood/distiller/runs/20260611-qwen35-2b-distiller/` (state.json + per-leg train logs).
+Full run log including the six OOM legs, the NaN root-cause, and the eval:
+`dogfood/distiller/EXPERIMENT-LOG.md`.
