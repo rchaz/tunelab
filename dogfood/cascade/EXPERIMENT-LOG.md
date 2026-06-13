@@ -52,3 +52,37 @@
   (PLAN-V2 §16 rule: one MLX process at a time). Queued for the Metal lane the moment leg 9
   lands: 0.6B llm_classify smoke → 0.6B LoRA on train.jsonl → tier-2 valid predictions.
   Queued otherwise: frontier ceiling probe (session-native), flywheel.py.
+
+## 2026-06-12 — frontier ceiling probe (session-native) — THE FINDING THAT REFRAMES THE FLAGSHIP
+- Method: 154 stratified validation records (2 per class × 77), classified session-native by the
+  Claude Code session (Claude Fable 5) zero-shot against the 77-label list — the frontier tier
+  with NO few-shot, NO retrieval. `data/ceiling_probe.jsonl` → `tier3_ceiling_preds.jsonl`.
+- **Apples-to-apples on the identical 154 records:**
+  - frontier zero-shot ceiling: **126/154 = 0.8182**
+  - tier-1 LR floor:            **136/154 = 0.8831**
+  - **The $0 logistic regression BEATS frontier zero-shot by +6.5 points.**
+- This is not a fluke — it is the documented Banking77 regime (zero-shot LLMs trail fine-tuned
+  models by ~19–26 points; ACL/Loukas refs in PLAN-V2 §14.6). Fine-grained 77-way intent is
+  exactly where embeddings+LR shine and a general model guesses among near-synonym labels.
+- **Inspecting the 28 frontier misses doubles as a label-noise audit:** many are defensible or
+  arguably mislabeled — "What cards do you offer?" judged supported_cards_and_currencies, gold
+  visa_or_mastercard; "freeze my card immediately" judged compromised_card, gold
+  lost_or_stolen_card; "My card wasn't working in a shop" judged card_not_working, gold
+  declined_card_payment. The ~14% flagged label noise (pre-registered) is visible in the tape.
+- **Three consequences adopted:**
+  1. **The flagship's headline is stronger and truer than the brief's "95–98%":** the cascade's
+     story is "a $0 classifier beats the frontier on your everyday classification, and a tiny
+     fine-tune closes the rest of the gap to the 93.7% fine-tuned anchor" — accuracy AND cost,
+     evidence-first. (rc decision pending — see surfaced note.)
+  2. **Tier-3 bare zero-shot would HURT the cascade** (it sits below the tier-1 floor): the
+     frontier tier earns its slot ONLY with kNN few-shot (PLAN-V2 §4.2). The §4.3 kNN-vs-zero-shot
+     sub-experiment is now PROVEN necessary, not optional — escalating an ambiguous case to a
+     bare frontier call makes things worse, not better.
+  3. **The "fine-tuned beats general" hypothesis is supported before tier 2 even trains:**
+     frontier zero-shot (0.818) is already under the LR floor (0.883); tier 2's job is to reach
+     toward the 0.937 fine-tuned anchor — that is the real headroom, ~+5 points, and it lives in
+     the fine-tuned tier, not the general one.
+- Honest caveats: session-native frontier (unpinned, my own 77-way recall of the label set may
+  add a point or two of my own error); a pinned API frontier with a tuned prompt might score
+  marginally higher; kNN few-shot will definitely help. None of that closes a 6.5-point gap or
+  changes the regime. Budget: $0 (session-native).
