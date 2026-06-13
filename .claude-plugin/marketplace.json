@@ -7,7 +7,7 @@
     {
       "name": "tunelab",
       "source": "./",
-      "description": "Decision-first LLM/SLM fine-tuning and distillation pipeline: decide, prepare data, train on Apple Silicon, evaluate."
+      "description": "Build AI systems that beat any single model: hybrid cascades (ML to fine-tuned SLM to frontier) with conformal-certified routing, a self-improving data flywheel, distillation with a grounding gate, and local MLX training — decide by experiment, evaluate with held-out discipline."
     }
   ]
 }

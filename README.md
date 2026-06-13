@@ -80,6 +80,10 @@ Or clone and copy `skills/*` into `.claude/skills/` in any project.
 
 ## A typical run
 
+> "Our intent classifier is stuck at 79% and we want higher accuracy, not just cheaper."
+
+1. `tune-decide` runs the probes on *your* data: a $0 classifier (the floor) and a frontier **ceiling probe** (what any model can reach on your gold). It reads the headroom — and if the frontier itself only reaches ~80%, it tells you the *labels* are the ceiling, not the model. If there's real headroom, it builds a **cascade**: `cascade_compose` simulates ML-only, fine-tuned-only, frontier-only, and every cascade, then recommends the accuracy/cost/latency winner with a **conformal-certified** operating point. Then the **flywheel** keeps it improving from feedback. Higher accuracy than any single approach — with the evidence.
+
 > "I have 5,000 support emails that GPT-4o has been bucketing into 6 categories at $40/day. Make this cheaper."
 
 1. `tune-decide` interviews you, concludes: fixed buckets → **Level 1**, not LoRA. Embeds your logged decisions locally, trains a logistic regression in seconds, reports honest held-out metrics against the bar you set *before* seeing the score, and ships with confidence routing back to the frontier model. Done in one session.
