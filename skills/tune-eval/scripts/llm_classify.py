@@ -136,7 +136,8 @@ def main():
                 model, tokenizer, prompt, max_tokens=args.max_tokens, sampler=sampler
             ):
                 text_out.append(resp.text)
-                lp = np.array(resp.logprobs, copy=False)
+                # logprobs may be bf16 on MLX — cast to f32 before numpy
+                lp = np.array(resp.logprobs.astype(mx.float32))
                 # top-2 probability margin at this step
                 top2 = np.partition(lp, -2)[-2:]
                 margins.append(float(np.exp(top2[1]) - np.exp(top2[0])))

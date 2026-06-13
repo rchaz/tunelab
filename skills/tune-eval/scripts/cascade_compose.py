@@ -276,6 +276,10 @@ def main():
               f"acc {c['accuracy']:.4f}, UCB {c['certified_local_risk_ucb']}")
 
     if args.report:
+        import os
+        d = os.path.dirname(args.report)
+        if d:
+            os.makedirs(d, exist_ok=True)
         open(args.report, "w").write(table + "\n")
     if args.select_out:
         json.dump(winner, open(args.select_out, "w"), indent=2, default=list)
