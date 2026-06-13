@@ -45,14 +45,29 @@ def eprint(*a):
     print(*a, file=sys.stderr, flush=True)
 
 
-# A "hard" token is anything that carries data a consumer might reuse verbatim:
-# contains a digit, OR looks like an identifier/path/code (has _ / . - : or
-# mixed case / all-caps runs). Plain lowercase English words are NOT hard.
-HARD_RE = re.compile(r"[A-Za-z0-9_./:\-]*\d[A-Za-z0-9_./:\-]*"      # has a digit
-                     r"|[A-Za-z][A-Za-z0-9]*[._/:\-][A-Za-z0-9._/:\-]+"  # has a separator
-                     r"|[A-Z]{2,}[A-Za-z0-9]*")                     # ALLCAPS / CamelCASE run
+# A "hard" token carries data a consumer might reuse verbatim. The gate's job
+# is to catch INVENTED values, not to police new English — so the bar for
+# "hard" is deliberately narrow. A token needs grounding only if it is:
+#   - numeric (contains a digit): 5.54, 12.3ms, 655-786, exit-0, v0.31.3
+#   - a path (contains '/'):       /Users/rc/run/step5.txt
+#   - a dotted/colon identifier:   ClassName.method, mod:func  (code refs)
+#   - a hex/code-like run:         0xdeadbeef, a1b2c3d4 (long mixed alnum)
+# New connective English — including hyphenated compounds the teacher is free
+# to write (auto-run, on-disk, JSON-line, multi-business) — is NOT hard and is
+# never flagged. Hyphen alone does not make a token data.
+# numeric-hard = a real number, not a lone digit inside a word ("e2e" is not a
+# value). Qualifies: 2+ consecutive digits, a digit adjacent to . , - : (decimals,
+# ranges, versions, times), or a pure number.
+NUMERIC_RE = re.compile(r"\d\d|\d[.,:\-]|[.,:\-]\d|^\d+$")
+# path-hard = a real path, not single-slash English ("try/except", "Goal/MVP").
+# Qualifies: leading / or ~/, a dotted file extension somewhere, or 2+ slashes.
+PATH_RE = re.compile(r"^[~/]|/.*\.[A-Za-z0-9]+|/.*/")
+DOTTED_RE = re.compile(r"[A-Za-z0-9]+[.:][A-Za-z0-9][A-Za-z0-9.:]*")  # word.word / word:word
+HEXCODE_RE = re.compile(r"(?:0x[0-9a-fA-F]+|[0-9a-fA-F]{8,})")        # hex / long codes
+# composed-token atoms are split ONLY on structural separators (path/dotted/colon),
+# never on '-' (English hyphenation). Atoms are grounded only if data-bearing.
+SUBSPLIT_RE = re.compile(r"[./:]+")
 SPLIT_RE = re.compile(r"[\s,;()\[\]{}<>\"'`|=]+")
-SUBSPLIT_RE = re.compile(r"[._/:\-]+")
 
 
 def normalize_source(blob: str) -> str:
@@ -60,20 +75,24 @@ def normalize_source(blob: str) -> str:
     return blob.lower()
 
 
+def is_hard(tok: str) -> bool:
+    return bool(NUMERIC_RE.search(tok) or PATH_RE.search(tok)
+                or DOTTED_RE.fullmatch(tok) or HEXCODE_RE.fullmatch(tok))
+
+
 def hard_tokens(text: str):
-    """Yield hard tokens AND their separator-split atoms (composed-token rule)."""
+    """Yield hard tokens AND their structural-split atoms (composed-token rule:
+    a value joined from separate source values must ground in each part)."""
     for raw in SPLIT_RE.split(text):
         raw = raw.strip(".,:;)(")
-        if not raw:
+        if not raw or not is_hard(raw):
             continue
-        if HARD_RE.fullmatch(raw):
-            yield raw
-            atoms = [a for a in SUBSPLIT_RE.split(raw) if a]
-            if len(atoms) > 1:
-                for a in atoms:
-                    # only atoms that are themselves data-bearing need grounding
-                    if any(c.isdigit() for c in a) or len(a) >= 2:
-                        yield a
+        yield raw
+        atoms = [a for a in SUBSPLIT_RE.split(raw) if a]
+        if len(atoms) > 1:
+            for a in atoms:
+                if is_hard(a):  # only data-bearing atoms need grounding
+                    yield a
 
 
 def ungrounded(blob: str, output: str):
