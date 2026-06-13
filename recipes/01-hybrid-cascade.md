@@ -132,13 +132,32 @@ promote. The loop turns, and the lift is the receipt. See
 | cascade serving | 87.7% of traffic at ~$0, ~1ms; frontier tail $0.002/call |
 | vs. frontier-only at iso-accuracy | 8× cheaper per 1k queries |
 
+## The official test result (3,080 records, one look) — reported straight
+
+Calibration + the t1→t2 threshold were selected on validation, then applied **once** to the
+untouched official test set:
+
+| approach | accuracy (official test) |
+|---|---|
+| tier-1 solo (LR) | 0.8851 |
+| tier-2 solo (4B QLoRA) | 0.8630 |
+| **cascade t1→t2 (fully local, $0, 9.4% escalated)** | **0.9013** |
+
+**Against the pre-registered bar (two conditions): one met, one missed.**
+- ✅ The cascade **beats every single tier** (+1.6 over the best) — the flagship thesis
+  ("exceeds what any single approach can do") holds on real locked gold, fully local at $0.
+- ❌ It does **not** reach the 0.936 fine-tuned-BERT anchor.
+
+Why, honestly: this is the fully-local **two-tier** config (the frontier tier-3 was omitted at
+test scale), and tier-2 is a quick dev-grade QLoRA (0.863 solo, well under the 0.937 anchor). The
+machinery is proven; reaching the absolute anchor is a tier-2-quality + tier-3-inclusion problem,
+both well-scoped for the next iteration. No spin: the comparative claim is earned, the absolute
+0.95-class number is not, for this config.
+
 ## Honest bounds
 
-- The composition table above is a **machinery demonstration** on a 154-record stratified
-  validation probe with the 0.6B dev tier-2 and a session-native frontier; thresholds were
-  selected in-sample. The headline test-set number — 4B tier-2, thresholds picked on the 1,998
-  validation set and applied **once** to the official 3,080-record test — is the receipt that
-  binds the pre-registered bar (in progress).
-- The cascade-beats-every-tier result and the conformal guarantee are robust to those caveats.
-- Full run log, including the ceiling probe and the flywheel cycle:
-  `dogfood/cascade/EXPERIMENT-LOG.md`.
+- The 154-probe composition table above is the **machinery demonstration** (all architectures,
+  conformal certification); the official-test numbers just above are the **binding receipt**.
+- The cascade-beats-every-tier result is robust on both validation and the locked test.
+- Full run log — ceiling probe, flywheel cycle, the official-test consumption, and the bug/gotcha
+  fixes — `dogfood/cascade/EXPERIMENT-LOG.md`.
