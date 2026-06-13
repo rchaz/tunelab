@@ -130,3 +130,17 @@
   cascade-beats-every-tier result is robust to all four caveats.
 - Two real bugs caught + fixed building this: `llm_classify.py` bf16→numpy logprob conversion;
   `cascade_compose.py --report` now creates its parent dir instead of crashing.
+
+## 2026-06-12 — flywheel retrain cycle demonstrated (the loop turns, measured)
+- Setup: round-0 champion = LR trained on a STARVED 2,000-record slice; the other 6,005
+  records play "feedback that accrues over time." Prediction log built from the champion on
+  valid with simulated feedback (5% uniform audit slice + low-confidence escalations).
+- `flywheel.py status`: audit-slice accuracy 0.7227 (the honest served estimate, separate from
+  biased feedback) → triggers FIRE (min-new-labels 307≥200, accuracy-floor 0.72<0.90) →
+  RETRAIN CANDIDATE. Bias-awareness working: audit slice reported, not the inflated feedback pile.
+- Round-1 challenger = LR retrained on all 8,005 (champion + accrued feedback).
+- **Champion 0.8128 → challenger 0.8904 valid acc = +7.76 points → PROMOTE.** One turn of the
+  flywheel, a real measured lift, with the promotion gated on beating the champion. The loop
+  turns; the receipt is the delta.
+- This is the §4.5 deliverable: prediction-log schema + drift/trigger analysis + curation +
+  champion/challenger promotion, demonstrated end-to-end on real Banking77 data.
