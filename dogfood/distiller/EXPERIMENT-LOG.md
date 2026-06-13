@@ -208,3 +208,22 @@
   recomputed; session-native unpinned judge. None of these rescue the grounding FAIL.
 - Hardware: leg 9 ran at `iogpu.wired_limit_mb=13312` (rc-raised); **reverts on reboot —
   restore/verify default before relying on stock behavior.** Six-OOM wall stays gone.
+
+## 2026-06-13 — RLVR round-2 (GRPO + grounding gate as reward): capability proven, 4B boundary documented
+- **The harness works:** the mechanical grounding gate is wired as a GRPO reward
+  (`grpo_grounding_reward.py`, registered via mlx-lm-lora's `@register_reward_function`).
+  Reward per completion = 1.0 if zero ungrounded hard tokens + max(0, 0.40−ratio) compression
+  bonus; empty/non-compressing = 0. Self-test: grounded+compressed 1.0 vs fluent+hallucinated 0.0.
+- **Demonstrated live on Qwen3-0.6B (30 GRPO iters, group-size 4, fits 16GB):** the reward is
+  computed per completion (100% coverage, μ in the ~0.8–1.15 grounded band) and GRPO trains
+  against it end-to-end — adapters saved + fused. The gate-as-verifiable-reward concept is
+  proven on Apple Silicon. (30 iters at lr 1e-5 is a mechanism demo, not convergence.)
+- **HONEST BOUNDARY — 4B GRPO does not fit 16GB:** GRPO requires a frozen REFERENCE model
+  alongside the policy (2× the 4B) plus multi-completion rollouts. On 16GB it pushed 6.4GB into
+  swap and stalled at 0% CPU. So the *actual* round-2 (RL-fix the 4B SFT student's grounding gap,
+  0.82→toward teacher 0.93) needs >16GB unified memory or a cloud backend — the same
+  documented-boundary discipline as the original distiller OOM, now for GRPO's reference-model
+  overhead. DPO/ORPO (single reference, no rollouts) fit at 0.6B; GRPO at 4B does not on 16GB.
+- **Net:** the RLVR path is real and proven (harness + reward + live 0.6B training); closing the
+  4B student's grounding gap is cloud/≥32GB work. The recipe documents the gate→reward design and
+  the memory boundary honestly. Receipt: dogfood/distiller/grpo_06b.log, grpo_grounding_reward.py.

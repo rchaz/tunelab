@@ -44,6 +44,17 @@ def _ungrounded(blob, out):
     return bad
 
 
+try:
+    # register into mlx-lm-lora's REWARD_REGISTRY so --reward-functions can find it
+    from mlx_lm_lora.trainer.grpo_reward_functions import register_reward_function
+except Exception:  # standalone import (self-test) without mlx-lm-lora
+    def register_reward_function():
+        def _wrap(fn):
+            return fn
+        return _wrap
+
+
+@register_reward_function()
 def grounding_reward(prompts, completions, answer, types=None):
     rewards = []
     for comp, blob in zip(completions, answer):
