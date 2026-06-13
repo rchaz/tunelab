@@ -1,6 +1,6 @@
 ---
 name: tune-decide
-description: The tunelab front door — decides whether a task needs fine-tuning at all. Use whenever the user wants to fine-tune, distill, or train a small/local model, cut their LLM API bill, replace frontier calls with something cheaper or faster, build a router/classifier/triage gate, asks "is fine-tuning worth it?", or wants to learn fine-tuning by experiment (overfitting, LoRA ranks, CPT). Even if the user has already decided to fine-tune, run this first to validate the level. Routes to tune-data → tune-train → tune-eval for Levels 2–3; executes Levels -1/0/1 inline. Any hardware — NVIDIA/Linux users start here too; decide/data/eval are backend-agnostic, only the training step is MLX/Apple-Silicon.
+description: The tunelab front door — decides whether a task needs fine-tuning at all, by running EXPERIMENTS on the user's data, not just interviewing. Use whenever the user wants to fine-tune, distill, or train a small/local model, cut their LLM API bill, replace frontier calls with something cheaper or faster, build a router/classifier/triage/cascade, asks "is fine-tuning worth it?" or "which architecture?", or wants to learn fine-tuning by experiment. Runs cheap probes + a frontier ceiling probe (headroom = ceiling − floor) and recommends an architecture with evidence. Even if the user has already decided to fine-tune, run this first. Routes to tune-data → tune-train → tune-eval for Levels 2–3; executes Levels -1/0/1 inline. Any hardware — NVIDIA/Linux users start here too; decide/data/eval are backend-agnostic, only the training step is MLX/Apple-Silicon.
 ---
 
 # tune-decide — should you fine-tune at all?
@@ -66,6 +66,21 @@ Logged rows carrying **multiple outputs** — e.g. a category AND a free-text re
 Present the recommendation **with economics** — do the cost math out loud (e.g. "$40/day of frontier classification is ~$1,200/month; a Level-1 classifier runs for ~$0 and takes an afternoon to validate") — and state what evidence would change it ("if the classifier's held-out macro-F1 misses your bar by more than a few points after adding data, we escalate to Level 2").
 
 > **STOP — the level checkpoint.** Get the user's explicit yes on the level before executing anything. The other fixed checkpoints in the pipeline: the labeling/teacher-prompt freeze after tune-data's 25-sample spot-check, the acceptance bar AND metric set (negotiated at decision time for Levels 2–3 — before any training launch), and any expensive run (training launches, large labeling jobs). Stop at exactly these judgment points, nowhere else.
+
+## Step 2.5 — Experiment, don't guess: probe the ceiling and the floor
+
+The interview narrows the options; **experiments on the user's own data pick the winner.** Before recommending an architecture for any classification/routing/extraction task with labeled data, run three cheap probes and read the *headroom*:
+
+1. **Floor — Level 1 LR** (`train_classifier.py`, seconds, $0): what a $0 classifier reaches.
+2. **Ceiling — the frontier probe** on ~150 stratified validation items (`distill_generate.py --mode classify` with the frontier teacher, or session-native): what the *best available model* reaches on the user's gold labels. This bounds what ANY architecture can achieve.
+3. **Headroom = ceiling − floor.** This is the budget that justifies — or kills — a fine-tuned tier *before* hours of training.
+
+Read it mechanically, and be ready for the counterintuitive result (measured on Banking77, `dogfood/cascade/`): the **floor beat the ceiling** — a $0 LR scored 0.883 vs the frontier's zero-shot 0.818 on fine-grained 77-way intent. Two lessons that change the recommendation:
+
+- **If the frontier ceiling is low, the labels are the constraint, not the model.** "The frontier only reaches 0.78 on your gold — your taxonomy/labels are the ceiling; no amount of fine-tuning fixes that. Fix the labels first." (The CFPB lesson: frontier hit 0.72 on noisy gold — see concepts/why-cascades-work.md, the noisy-gold ceiling.)
+- **If a cheap tier already beats frontier zero-shot, the cascade is the answer, not a single model** — and the frontier tier needs kNN few-shot to earn its slot, never bare zero-shot. Route to the cascade build (recipes/01-hybrid-cascade.md), and let `cascade_compose.py` pick the architecture by measurement: it simulates ML-only, fine-tuned-only, frontier-only, and every cascade across the threshold grid, and recommends the accuracy/cost/latency winner with a conformal-certified operating point.
+
+Write the probe results, the headroom, and the architecture recommendation (with the Pareto table when a cascade is in play) into EXPERIMENT-LOG.md as the decision's evidence — "what evidence would change this" becomes "here is the evidence."
 
 ## Step 3 — Execute Levels -1/0/1 inline
 
