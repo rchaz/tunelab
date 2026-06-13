@@ -138,3 +138,31 @@
   when training destabilizes"; same lesson, new spelling.
 - **Leg 8 launched** (~17:25Z, pid in state.json): identical config, single factor changed —
   lr 5e-5. The 2026-06-11 bar still binds; test set still untouched.
+
+## 2026-06-12 — leg 8 NaN at the SAME window → ROOT CAUSE (data, not LR) → leg 9: full-fidelity rebuild @3072
+- **Leg 8 outcome:** healthy through iter 40 (1.282 → 0.860), NaN by iter 60 — the *identical*
+  window as leg 7 at half the LR. Same seed → same sampling order → a specific record is the
+  culprit, not loss-scale instability. LR acquitted.
+- **Root cause (mechanical, 2-minute tokenizer scan — no blind leg spent):** under
+  `--mask-prompt`, a record whose templated prompt ≥ `--max-seq-length` retains ZERO trainable
+  completion tokens → masked-loss normalization divides by zero → NaN poisons the weights.
+  At cap 2048: **5/365 train records** (d0603, d0173, d0192, d0429, d0237; prompts 2,159–2,567
+  tokens) and 1/44 valid. Worse, quantified: at cap 2048 every 2,048–3,070-token record gets its
+  completion *silently truncated* — training a compressor to emit cut-off output. Legs 1–6
+  never reached a training iteration, so the bug hid behind the OOM wall the whole time.
+- **Lesson (two product fixes queued):** (1) tune-data's validate_dataset must hard-fail any
+  record with zero (and warn under ~16) trainable completion tokens at the planned
+  `--max-seq-length` *under the actual model's chat template* — char-count trims are not token
+  truth. (2) tune-train's monitoring section gets the NaN-at-fixed-iteration → suspect-data
+  (not LR) diagnostic.
+- **Leg 9 (rc approved full rebuild; launched ~18:55Z):** original 546/68/68 split
+  reconstructed — deterministic `dedupe.py` reproduced 683→682 exactly, `split_data.py --seed
+  42` reproduced the split, **verified: regenerated test ids byte-identical (order included) to
+  the untouched on-disk test.jsonl; old 44-valid ⊂ new 68-valid; zero test leakage** — then
+  filtered at ≥16 trainable tokens under cap 3072: **train 536** (10 over-long dropped, ids
+  logged in train_leg9.log build receipts) / **valid 68** / **test 68 untouched**. No
+  truncation remains. Config: seqlen 3072, lr 5e-5, batch 1, layers 8, grad-checkpoint,
+  cache-threshold 1GB, iters 1600 (~3 epochs), eval/save every 100.
+- **Predicted (logged before result):** no NaN; peak memory ~8–9.5GB (3072 vs 2048 cap, leg-7/8
+  measured 5.45GB); val bottom before iter 1600 with early stop. The 2026-06-11 bar binds the
+  eval; test still looked at zero times.

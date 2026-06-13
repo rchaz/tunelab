@@ -447,6 +447,12 @@ budgets, append-only logs, and human checkpoints at spend and promotion (delegab
 standing "continue, don't wait" arrangement). The EXPERIMENT-LOG a learner reads afterwards is
 still the product.
 
+**Operating rule (rc, 2026-06-12): when in doubt, escalate.** The system — and its builders —
+run in supervised mode: verify mechanically first, then present findings with a recommendation
+and let the human pick; never silently execute judgment calls (dataset-composition changes,
+spend, anything that alters a pre-registration). Complete autonomy is the destination, not the
+mode.
+
 ### 15.5 Sequencing (maps onto existing phases — nothing is thrown away)
 
 - **Phase B already builds one hand-cranked revolution:** tier components, offline composition,
@@ -454,3 +460,23 @@ still the product.
 - **Phase C's tune-decide rework IS the experiment engine's Plan stage** (§6).
 - **Phase E (new, after D):** system descriptor + `tune-loop` + champion/challenger promotion +
   the §15.2 bias/burn machinery + the two-stage dogfood. Recipe 5 written from those receipts.
+
+---
+
+## 16. Development strategy (added 2026-06-12): tiny-first, system-first
+
+1. **Tiny-first.** All system machinery — cascade scripts, flywheel, conformal composition,
+   `tune-loop` — is developed and debugged with **Qwen3-0.6B** (rc's pick; mlx-community 4-bit,
+   0.34GB, already live-verified in this repo's milestone-2 smoke tests, same family/tokenizer
+   as the Qwen3-4B target so configs transfer 1:1) standing in for the fine-tuned tier. Full
+   pipeline iterations take minutes. Big models run **once, at the end**, for a recipe's
+   headline numbers. The receipt that motivated this: the leg-7/8 NaN was a data bug that
+   burned 2×33 minutes at 4B and would have surfaced in ~3 minutes at 0.6B.
+   (Gemma 3 270M noted as the browser/on-device demo alternative for a later cascade-deployment
+   showcase.)
+2. **System-first critical path.** Multi-hour headline training runs launch detached with
+   watchers and never block development; attention goes to Phase B/E machinery. Recipe 3's
+   leg 9 is the template: data rebuilt and verified in minutes, run launched, work continues.
+3. **Diagnose offline before re-running.** No blind retry legs: a failed run gets a mechanical
+   diagnosis (tokenizer scans, log forensics) before any relaunch — a 2-minute scan beats a
+   33-minute leg.

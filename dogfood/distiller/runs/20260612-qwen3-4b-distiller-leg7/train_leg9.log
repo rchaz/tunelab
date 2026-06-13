@@ -1,0 +1,7 @@
+Loading pretrained model
+Fetching 11 files:   0%|          | 0/11 [00:00<?, ?it/s]Fetching 11 files: 100%|██████████| 11/11 [00:00<00:00, 24606.58it/s]
+Loading datasets
+Training
+Trainable parameters: 0.091% (3.670M/4022.468M)
+Starting training..., iters: 1600
+Calculating loss...:   0%|          | 0/12 [00:00<?, ?it/s]Calculating loss...:   8%|▊         | 1/12 [00:05<00:59,  5.42s/it]Calculating loss...:  17%|█▋        | 2/12 [00:14<01:13,  7.38s/it]Calculating loss...:  25%|██▌       | 3/12 [00:20<01:03,  7.09s/it]Calculating loss...:  33%|███▎      | 4/12 [00:28<00:59,  7.41s/it]Calculating loss...:  42%|████▏     | 5/12 [00:30<00:38,  5.48s/it]Calculating loss...:  50%|█████     | 6/12 [00:36<00:32,  5.41s/it]Calculating loss...:  58%|█████▊    | 7/12 [00:42<00:29,  5.83s/it]Calculating loss...:  67%|██████▋   | 8/12 [00:55<00:31,  7.90s/it]Calculating loss...:  75%|███████▌  | 9/12 [01:03<00:23,  7.99s/it]Calculating loss...:  83%|████████▎ | 10/12 [01:06<00:13,  6.59s/it]Calculating loss...:  92%|█████████▏| 11/12 [01:13<00:06,  6.55s/it]

@@ -1,0 +1,41 @@
+Loading pretrained model
+Fetching 11 files:   0%|          | 0/11 [00:00<?, ?it/s]Fetching 11 files: 100%|██████████| 11/11 [00:00<00:00, 32536.91it/s]
+Loading datasets
+Training
+Trainable parameters: 0.091% (3.670M/4022.468M)
+Starting training..., iters: 1095
+Calculating loss...:   0%|          | 0/12 [00:00<?, ?it/s]Calculating loss...:   8%|▊         | 1/12 [00:07<01:21,  7.43s/it]Calculating loss...:  17%|█▋        | 2/12 [00:13<01:09,  6.92s/it]Calculating loss...:  25%|██▌       | 3/12 [00:16<00:44,  4.94s/it]Calculating loss...:  33%|███▎      | 4/12 [00:22<00:44,  5.51s/it]Calculating loss...:  42%|████▏     | 5/12 [00:29<00:40,  5.73s/it]Calculating loss...:  50%|█████     | 6/12 [00:30<00:26,  4.35s/it]Calculating loss...:  58%|█████▊    | 7/12 [00:33<00:18,  3.69s/it]Calculating loss...:  67%|██████▋   | 8/12 [00:35<00:12,  3.22s/it]Calculating loss...:  75%|███████▌  | 9/12 [00:37<00:08,  2.94s/it]Calculating loss...:  83%|████████▎ | 10/12 [00:44<00:08,  4.12s/it]Calculating loss...:  92%|█████████▏| 11/12 [00:49<00:04,  4.34s/it]Calculating loss...: 100%|██████████| 12/12 [00:54<00:00,  4.55s/it]Calculating loss...: 100%|██████████| 12/12 [00:54<00:00,  4.52s/it]
+Iter 1: Val loss 2.147, Val took 54.260s
+Iter 20: Train loss 1.282, Learning Rate 5.000e-05, It/sec 0.130, Tokens/sec 30.568, Trained Tokens 4688, Peak mem 5.384 GB
+Iter 40: Train loss 0.860, Learning Rate 5.000e-05, It/sec 0.166, Tokens/sec 31.917, Trained Tokens 8531, Peak mem 5.384 GB
+[WARNING] Some sequences are longer than 2048 tokens. The longest sentence 2497 will be truncated to 2048. Consider pre-splitting your data to save memory.
+[WARNING] Some sequences are longer than 2048 tokens. The longest sentence 2112 will be truncated to 2048. Consider pre-splitting your data to save memory.
+Iter 60: Train loss nan, Learning Rate 5.000e-05, It/sec 0.147, Tokens/sec 27.823, Trained Tokens 12312, Peak mem 5.436 GB
+[WARNING] Some sequences are longer than 2048 tokens. The longest sentence 2140 will be truncated to 2048. Consider pre-splitting your data to save memory.
+Calculating loss...:   0%|          | 0/12 [00:00<?, ?it/s]Calculating loss...:   8%|▊         | 1/12 [00:02<00:24,  2.19s/it]Calculating loss...:  17%|█▋        | 2/12 [00:08<00:44,  4.41s/it]Calculating loss...:  25%|██▌       | 3/12 [00:09<00:28,  3.14s/it]Calculating loss...:  33%|███▎      | 4/12 [00:13<00:25,  3.23s/it]Calculating loss...:  42%|████▏     | 5/12 [00:15<00:20,  2.86s/it]Calculating loss...:  50%|█████     | 6/12 [00:21<00:24,  4.02s/it]Calculating loss...:  58%|█████▊    | 7/12 [00:28<00:24,  4.81s/it]Calculating loss...:  67%|██████▋   | 8/12 [00:34<00:21,  5.44s/it]Calculating loss...:  75%|███████▌  | 9/12 [00:39<00:15,  5.12s/it]Calculating loss...:  83%|████████▎ | 10/12 [00:43<00:09,  4.98s/it]Calculating loss...:  92%|█████████▏| 11/12 [00:49<00:05,  5.18s/it]Calculating loss...: 100%|██████████| 12/12 [00:55<00:00,  5.44s/it]Calculating loss...: 100%|██████████| 12/12 [00:55<00:00,  4.63s/it]
+Iter 73: Val loss nan, Val took 55.612s
+Iter 73: Saved adapter weights to runs/20260612-qwen3-4b-distiller-leg7/adapters/adapters.safetensors and runs/20260612-qwen3-4b-distiller-leg7/adapters/0000073_adapters.safetensors.
+Iter 80: Train loss nan, Learning Rate 5.000e-05, It/sec 0.164, Tokens/sec 32.522, Trained Tokens 16268, Peak mem 5.436 GB
+[WARNING] Some sequences are longer than 2048 tokens. The longest sentence 2649 will be truncated to 2048. Consider pre-splitting your data to save memory.
+Iter 100: Train loss nan, Learning Rate 5.000e-05, It/sec 0.168, Tokens/sec 28.410, Trained Tokens 19648, Peak mem 5.451 GB
+[WARNING] Some sequences are longer than 2048 tokens. The longest sentence 2076 will be truncated to 2048. Consider pre-splitting your data to save memory.
+Iter 120: Train loss nan, Learning Rate 5.000e-05, It/sec 0.183, Tokens/sec 32.835, Trained Tokens 23241, Peak mem 5.451 GB
+[WARNING] Some sequences are longer than 2048 tokens. The longest sentence 2544 will be truncated to 2048. Consider pre-splitting your data to save memory.
+Iter 140: Train loss nan, Learning Rate 5.000e-05, It/sec 0.156, Tokens/sec 28.870, Trained Tokens 26938, Peak mem 5.451 GB
+Calculating loss...:   0%|          | 0/12 [00:00<?, ?it/s]Calculating loss...:   8%|▊         | 1/12 [00:02<00:29,  2.68s/it]Calculating loss...:  17%|█▋        | 2/12 [00:06<00:31,  3.18s/it]Calculating loss...:  25%|██▌       | 3/12 [00:12<00:41,  4.60s/it]Calculating loss...:  33%|███▎      | 4/12 [00:19<00:44,  5.51s/it]Calculating loss...:  42%|████▏     | 5/12 [00:21<00:29,  4.25s/it]Calculating loss...:  50%|█████     | 6/12 [00:26<00:26,  4.39s/it]Calculating loss...:  58%|█████▊    | 7/12 [00:32<00:24,  4.92s/it]Calculating loss...:  67%|██████▋   | 8/12 [00:33<00:15,  3.85s/it]Calculating loss...:  75%|███████▌  | 9/12 [00:36<00:10,  3.39s/it]Calculating loss...:  83%|████████▎ | 10/12 [00:41<00:08,  4.08s/it]Calculating loss...:  92%|█████████▏| 11/12 [00:44<00:03,  3.78s/it]Calculating loss...: 100%|██████████| 12/12 [00:50<00:00,  4.39s/it]Calculating loss...: 100%|██████████| 12/12 [00:50<00:00,  4.21s/it]
+Iter 146: Val loss nan, Val took 50.541s
+Iter 146: Saved adapter weights to runs/20260612-qwen3-4b-distiller-leg7/adapters/adapters.safetensors and runs/20260612-qwen3-4b-distiller-leg7/adapters/0000146_adapters.safetensors.
+Iter 160: Train loss nan, Learning Rate 5.000e-05, It/sec 0.172, Tokens/sec 33.397, Trained Tokens 30827, Peak mem 5.451 GB
+Iter 180: Train loss nan, Learning Rate 5.000e-05, It/sec 0.171, Tokens/sec 31.295, Trained Tokens 34491, Peak mem 5.451 GB
+[WARNING] Some sequences are longer than 2048 tokens. The longest sentence 2083 will be truncated to 2048. Consider pre-splitting your data to save memory.
+Iter 200: Train loss nan, Learning Rate 5.000e-05, It/sec 0.182, Tokens/sec 28.988, Trained Tokens 37674, Peak mem 5.451 GB
+Calculating loss...:   0%|          | 0/12 [00:00<?, ?it/s]Calculating loss...:   8%|▊         | 1/12 [00:06<01:09,  6.28s/it]Calculating loss...:  17%|█▋        | 2/12 [00:12<01:03,  6.35s/it]Calculating loss...:  25%|██▌       | 3/12 [00:15<00:40,  4.53s/it]Calculating loss...:  33%|███▎      | 4/12 [00:18<00:32,  4.05s/it]Calculating loss...:  42%|████▏     | 5/12 [00:20<00:24,  3.53s/it]Calculating loss...:  50%|█████     | 6/12 [00:22<00:18,  3.01s/it]Calculating loss...:  58%|█████▊    | 7/12 [00:28<00:18,  3.71s/it]Calculating loss...:  67%|██████▋   | 8/12 [00:32<00:16,  4.01s/it]Calculating loss...:  75%|███████▌  | 9/12 [00:38<00:13,  4.64s/it]Calculating loss...:  83%|████████▎ | 10/12 [00:40<00:07,  3.83s/it]Calculating loss...:  92%|█████████▏| 11/12 [00:45<00:04,  4.24s/it]Calculating loss...: 100%|██████████| 12/12 [00:51<00:00,  4.66s/it]Calculating loss...: 100%|██████████| 12/12 [00:51<00:00,  4.30s/it]
+Iter 219: Val loss nan, Val took 51.632s
+Iter 219: Saved adapter weights to runs/20260612-qwen3-4b-distiller-leg7/adapters/adapters.safetensors and runs/20260612-qwen3-4b-distiller-leg7/adapters/0000219_adapters.safetensors.
+Iter 220: Train loss nan, Learning Rate 5.000e-05, It/sec 0.141, Tokens/sec 33.234, Trained Tokens 42384, Peak mem 5.451 GB
+[WARNING] Some sequences are longer than 2048 tokens. The longest sentence 2677 will be truncated to 2048. Consider pre-splitting your data to save memory.
+Iter 240: Train loss nan, Learning Rate 5.000e-05, It/sec 0.169, Tokens/sec 28.425, Trained Tokens 45753, Peak mem 5.451 GB
+[WARNING] Some sequences are longer than 2048 tokens. The longest sentence 2071 will be truncated to 2048. Consider pre-splitting your data to save memory.
+Iter 260: Train loss nan, Learning Rate 5.000e-05, It/sec 0.141, Tokens/sec 30.318, Trained Tokens 50052, Peak mem 5.451 GB
+/Users/rc/.local/share/uv/python/cpython-3.14.3-macos-aarch64-none/lib/python3.14/multiprocessing/resource_tracker.py:396: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown: {'/mp-fo_97tbu'}
+  warnings.warn(
