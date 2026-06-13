@@ -191,3 +191,27 @@
   (t1→t2→t3) buys +1.3 more (0.9416) for $0.25/1k. The experiment-driven decision now has a
   real trade to present: a zero-cost local cascade at 0.929, or +1.3 points for a little spend.
   Conformal-certified (UCB 0.067 ≤ 0.10). This is the flagship claim with the real headline tier-2.
+
+## 2026-06-13 — OFFICIAL TEST CONSUMED (3,080 records, one look) — honest split verdict
+- Discipline: tier-1 conf calibration (isotonic) + the t1→t2 escalation threshold were selected
+  on VALIDATION (the 154 stratified probe: best calibrated-thr 0.42 → t1→t2 0.9286), then applied
+  ONCE, unchanged, to the official 3,080-record test. Test looked at exactly once.
+- **Results on the official held-out test:**
+  | approach | accuracy |
+  |---|---|
+  | tier-1 solo (LR) | 0.8851 |
+  | tier-2 solo (4B QLoRA) | 0.8630 |
+  | **cascade t1→t2 (fully local, $0, 9.4% escalated to t2)** | **0.9013** |
+- **Pre-registered bar (two conditions): ONE MET, ONE MISSED — reported straight.**
+  - ✅ cascade beats the best single tier (0.9013 > 0.8851, +1.6) — the flagship thesis
+    ("exceeds what any single approach can do") **holds on real locked gold**, fully local at $0.
+  - ❌ cascade does NOT reach the 0.936 fine-tuned-BERT anchor.
+- **Why short of 0.936 (honest):** (1) this is the fully-local TWO-tier config — tier-3 (frontier
+  + kNN few-shot) was omitted at test scale (session-native frontier on 3,080 was impractical);
+  the probe showed it adds ~+1.3. (2) tier-2 is a quick dev-grade QLoRA (8 layers, 800 iters,
+  seqlen 128) at 0.863 solo — well under the 0.937 fine-tuned-BERT anchor; a properly-tuned
+  tier-2 leaves clear headroom. The cascade machinery is proven; reaching the absolute anchor is
+  a tier-2-quality + tier-3-inclusion problem, both well-scoped.
+- **No spin:** the comparative claim is earned on held-out data; the absolute 0.95-class number is
+  not, for this config. That gap is the honest finding, and it's exactly what the next iteration
+  (better tier-2 hparams + the frontier tier) addresses. Bar consumed; this dataset's test is spent.
