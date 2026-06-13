@@ -166,3 +166,45 @@
 - **Predicted (logged before result):** no NaN; peak memory ~8–9.5GB (3072 vs 2048 cap, leg-7/8
   measured 5.45GB); val bottom before iter 1600 with early stop. The 2026-06-11 bar binds the
   eval; test still looked at zero times.
+
+## 2026-06-12 — leg 9 trained clean → EARLY-STOPPED at val bottom → tune-eval: BAR CONSUMED
+- **Training:** no NaN (data fix held). Val: 1.680 → 0.626 → 0.609 → 0.542 → 0.632 → **0.509 (700)**
+  → 0.682 (800). Bottom at iter 700, bracketed on both sides → early-stopped; checkpoint 700
+  staged as `adapters-best/`. Peak mem 6.86GB at seqlen 3072 (predicted 8–9.5; even lower).
+  Predicted-vs-actual: predicted no-NaN ✓, predicted bottom before 1600 ✓ (at 700).
+- **Eval (THE TEST SET IS NOW CONSUMED — one look, 68 records, the 2026-06-11 bar is spent):**
+  tuned compressions generated with adapters-best; same mechanical gate on student and teacher.
+
+  | pre-registered bar | result | verdict |
+  |---|---|---|
+  | compression ratio p50 ≤ 0.35 | **0.215** (p90 0.463, max 0.970) | ✅ PASS |
+  | blinded judge ≥ 0.60 equiv-or-better vs teacher | **0.938** (16 pairs: 15 ties, 0 student wins, 1 teacher win) | ✅ PASS |
+  | hallucinated-value rate ≈ 0 (≥ 0.99 zero-hallucination) | **0.8235** | ❌ **FAIL** |
+  | field recall ≥ 0.90 | not recomputed (fields-used ground truth not regenerated) | — |
+
+- **Reference (same calibrated gate):** teacher zero-hallucination **0.9265**, ratio p50 0.244.
+  So the student is meaningfully LESS grounded than its teacher (0.82 vs 0.93) and neither hits
+  0.99 on the reconstructed gate.
+- **The finding is the recipe's whole thesis, proven on itself:** the blinded judge rated the
+  student equivalent-or-better 15/16 — the student's compressions READ as good as the teacher's.
+  But the mechanical gate caught the student inventing/reformatting identifiers in 12/68 outputs
+  (`GoalDecomposer.replan`, `tests/test_register_ops.py`, a fabricated `1970-01-01T00:00:00Z`
+  timestamp, status-code lists). **A frontier judge's eye misses the exact corruption the gate
+  catches by string-matching** — which is why the gate, not the judge, owns the grounding
+  guarantee. Honest verdict: the SFT student compresses well and is fluent, but **fails the
+  non-negotiable grounding bar → it does not ship as-is.**
+- **Motivated next step (PLAN-V2 §14.2, now evidence-backed not hypothetical):** SFT transferred
+  the compression *behavior* but not the grounding *discipline*. The fix is an RLVR/GRPO round
+  with the grounding gate as the verifiable reward (gate-pass + ratio-budget terms) — teach the
+  student exactly the property SFT-imitation didn't transfer. The 117 gate-failed teacher outputs
+  are the natural ORPO rejected-set alternative. Round 2 is now defined by a measured failure.
+- **Gate reconstruction note (honesty):** the original dogfood gate survived only as prose, not
+  code; `skills/tune-eval/scripts/grounding_gate.py` reconstructs it and was calibrated to the
+  teacher's documented ~85% population pass rate (self-test + teacher-reference 0.9265). It
+  grounds genuine data tokens (numbers, paths, dotted identifiers, codes), not new English. A
+  pinned original gate might move these absolute numbers a point or two; the student-vs-teacher
+  GAP (−10 points) is the robust result.
+- **Caveats:** judge n=16 (directional; the §8 noise threshold wants ~100); field recall not
+  recomputed; session-native unpinned judge. None of these rescue the grounding FAIL.
+- Hardware: leg 9 ran at `iogpu.wired_limit_mb=13312` (rc-raised); **reverts on reboot —
+  restore/verify default before relying on stock behavior.** Six-OOM wall stays gone.
