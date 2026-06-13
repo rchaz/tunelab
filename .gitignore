@@ -8,3 +8,9 @@ fused-model/
 *.safetensors
 data/
 .DS_Store
+
+# secrets — never commit
+.env
+.env.*
+*.token
+secrets/
