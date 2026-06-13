@@ -1,0 +1,9 @@
+{
+  "version": 4,
+  "kind": "single",
+  "model": "lr-2000",
+  "_promoted_from_slice": "slice3",
+  "_promoted_metric": {
+    "accuracy": 0.8918
+  }
+}

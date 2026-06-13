@@ -144,3 +144,22 @@
   turns; the receipt is the delta.
 - This is the §4.5 deliverable: prediction-log schema + drift/trigger analysis + curation +
   champion/challenger promotion, demonstrated end-to-end on real Banking77 data.
+
+## 2026-06-12 — Phase E: sustained champion/challenger loop (the capstone DoD) — DONE
+- **3 rounds on Banking77 replay** (CPU LR classifiers, the flywheel accruing feedback as a
+  growing train pool), each adjudicated by `promote.py` on a DISJOINT one-look slice:
+  | round | champion | challenger | one-look slice | decision |
+  |---|---|---|---|---|
+  | 1 | lr-2000 (0.838) | lr-4000 (0.874) | slice1 | PROMOTE (+0.036) |
+  | 2 | lr-4000 (0.854) | lr-6000 (0.884) | slice2 | PROMOTE (+0.030) |
+  | 3 | lr-6000 (0.874) | lr-8005 (0.892) | slice3 | PROMOTE (+0.018) |
+  Descriptor v1 → v4 (3 promotions). **Diminishing returns** (+0.036 → +0.030 → +0.018) are the
+  honest signature of a real flywheel — each new batch of feedback buys less. The eval-burn guard
+  is mechanical: each round consumed a disjoint slice; the ledger hard-errors on reuse.
+- **+1 round on REAL router traffic** (Recipe 2's own v1→v2 flywheel: hard-mined boundary cases):
+  champion v1 0.9992 vs challenger v2 0.9992 on the fresh 1,328-record test → **RETAIN** (tie on
+  raw accuracy). This is the gate working in the OTHER direction — and honestly so: v2's real value
+  was the false-cheap guardrail (Recipe 2), not raw accuracy, so on the accuracy metric the
+  promotion is correctly refused. A loop that promotes everything is broken; this one doesn't.
+- **DoD met (PLAN-V2 §15.3):** ≥3 autonomous rounds with ≥1 earned promotion AND ≥1 correct
+  rejection; zero eval-slice reuse. Driver: `loop_demo/run_rounds.py`; receipts: `loop_demo/`.

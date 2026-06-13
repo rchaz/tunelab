@@ -1,0 +1,500 @@
+{"id": "valid-01193", "text": "Help me.  The passcode doesn't work.", "label": "passcode_forgotten"}
+{"id": "valid-01095", "text": "Please tell me why the same transaction is showing up on my account more than once.", "label": "transaction_charged_twice"}
+{"id": "valid-01962", "text": "how come my transfer declined", "label": "declined_transfer"}
+{"id": "valid-01666", "text": "If I want to add funds to the account using American Express, how do I do that?", "label": "supported_cards_and_currencies"}
+{"id": "valid-00102", "text": "Are transfers not free? I didn't know I would be charged for transfers.", "label": "transfer_fee_charged"}
+{"id": "valid-01265", "text": "Why isn't my Google Pay top up working for me? Did I do something wrong?", "label": "apple_pay_or_google_pay"}
+{"id": "valid-01286", "text": "I think my top up may have been reverted, what do I do?", "label": "top_up_reverted"}
+{"id": "valid-00765", "text": "Why won't you let me name X as a beneficiary?", "label": "beneficiary_not_allowed"}
+{"id": "valid-01965", "text": "What do I do if my payment was reverted?", "label": "reverted_card_payment?"}
+{"id": "valid-00948", "text": "There are duplicate transactions on my account", "label": "transaction_charged_twice"}
+{"id": "valid-00947", "text": "What is the virtual card and how can i get one?", "label": "getting_virtual_card"}
+{"id": "valid-00218", "text": "terminate my account please", "label": "terminate_account"}
+{"id": "valid-01908", "text": "What's going on with my balance? Shouldn't it be a bit higher since I deposited a cheque a day ago?", "label": "balance_not_updated_after_cheque_or_cash_deposit"}
+{"id": "valid-00294", "text": "I am just waiting for the transaction to be completed.", "label": "transfer_not_received_by_recipient"}
+{"id": "valid-00199", "text": "How do I know if my top-up went through?", "label": "pending_top_up"}
+{"id": "valid-00711", "text": "Will a cheque suffice?", "label": "top_up_by_cash_or_cheque"}
+{"id": "valid-01861", "text": "What do I need for the identity verification?", "label": "verify_my_identity"}
+{"id": "valid-01443", "text": "My transfer was not approved", "label": "declined_transfer"}
+{"id": "valid-01707", "text": "My PIN got blocked, help.", "label": "pin_blocked"}
+{"id": "valid-00028", "text": "Can I pay more to get it deliver quicker?", "label": "card_delivery_estimate"}
+{"id": "valid-00017", "text": "Can you tell me why I was charged $1 for a transaction?", "label": "extra_charge_on_statement"}
+{"id": "valid-01781", "text": "I would like to be assisted with the activation of my card.", "label": "activate_my_card"}
+{"id": "valid-00061", "text": "I need my card activated.", "label": "activate_my_card"}
+{"id": "valid-00403", "text": "I haven't received my transfer funds yet, where are they?", "label": "pending_transfer"}
+{"id": "valid-01393", "text": "I no longer want this can i cancel my purchase?", "label": "request_refund"}
+{"id": "valid-00336", "text": "Where do you get those exchange rates?", "label": "exchange_rate"}
+{"id": "valid-01610", "text": "Why have I received a rebate for my payment after a week?", "label": "reverted_card_payment?"}
+{"id": "valid-00717", "text": "Can i make transactions before identity verification?", "label": "why_verify_identity"}
+{"id": "valid-01347", "text": "Where can I find the auto-top option?", "label": "automatic_top_up"}
+{"id": "valid-01041", "text": "There is a 1\u00a3 charge that appears as pending on my statement. What is that? I haven't purchased anything for a pound there.", "label": "extra_charge_on_statement"}
+{"id": "valid-01786", "text": "It looks like someone besides me ordered something with my card, what should I do?", "label": "compromised_card"}
+{"id": "valid-00624", "text": "Tell me what the steps for the identity checks are", "label": "verify_my_identity"}
+{"id": "valid-01596", "text": "Can you explain the various transaction times shown on my statement?", "label": "transaction_charged_twice"}
+{"id": "valid-01153", "text": "Help! My account doesn't show any funds. Is transferring funds an option I can use?", "label": "transfer_into_account"}
+{"id": "valid-01353", "text": "Do you know the process how to activate my card?", "label": "activate_my_card"}
+{"id": "valid-00579", "text": "i have a pending top-up", "label": "pending_top_up"}
+{"id": "valid-00728", "text": "How to a go about ordering a disposable virtual card?", "label": "get_disposable_virtual_card"}
+{"id": "valid-00060", "text": "I entered my pin wrong  too many times.", "label": "pin_blocked"}
+{"id": "valid-01409", "text": "I've forgotten my passcode. Can I reset?", "label": "passcode_forgotten"}
+{"id": "valid-01477", "text": "How can I exchange GBP for AUD?", "label": "exchange_via_app"}
+{"id": "valid-01502", "text": "I tired but an unable to activate my card.", "label": "activate_my_card"}
+{"id": "valid-01703", "text": "Why isn't my google top-up pay working?", "label": "apple_pay_or_google_pay"}
+{"id": "valid-00793", "text": "I wasn't able to use my top up card because the money I put on there wasn't there anymore", "label": "topping_up_by_card"}
+{"id": "valid-00618", "text": "When will my top up be applied?", "label": "pending_top_up"}
+{"id": "valid-01154", "text": "Can I use app to unblock my card?", "label": "pin_blocked"}
+{"id": "valid-01109", "text": "I'd like to know what the foreign exchange rate will be.", "label": "exchange_rate"}
+{"id": "valid-01909", "text": "What do you require for identification verification?", "label": "verify_my_identity"}
+{"id": "valid-00375", "text": "I see a payment on my statement for  a place I didn't make a purchase at.", "label": "card_payment_not_recognised"}
+{"id": "valid-01907", "text": "In the app I see a direct debit that I don't recognize.", "label": "direct_debit_payment_not_recognised"}
+{"id": "valid-01030", "text": "Can I order a card?", "label": "order_physical_card"}
+{"id": "valid-01422", "text": "Need help with a stolen card.", "label": "lost_or_stolen_card"}
+{"id": "valid-00292", "text": "I see a direct debit transaction in the app that is not mine", "label": "direct_debit_payment_not_recognised"}
+{"id": "valid-00434", "text": "Can you explain to me why a top up would be reverted?", "label": "top_up_reverted"}
+{"id": "valid-01856", "text": "What do I do if I have exceeded all my PIN tries?", "label": "pin_blocked"}
+{"id": "valid-00282", "text": "Why am I unable to withdraw money even though in the past I've done it just fine?", "label": "declined_cash_withdrawal"}
+{"id": "valid-00536", "text": "I am so angry right now!  I went to the ATM and did not get the correct amount of money I chose to withdraw.  How could this happen?  I need my money and want to know how I can get it ASAP!", "label": "wrong_amount_of_cash_received"}
+{"id": "valid-00483", "text": "I got charged twice", "label": "transaction_charged_twice"}
+{"id": "valid-00810", "text": "Can you unblock my account?  I entered the PIN wrong.", "label": "pin_blocked"}
+{"id": "valid-01356", "text": "I deposited a cheque and its been days and I still haven't received the cash!!", "label": "balance_not_updated_after_cheque_or_cash_deposit"}
+{"id": "valid-00116", "text": "Can you tell me why I haven't received my new card yet?", "label": "card_arrival"}
+{"id": "valid-01260", "text": "I want a Mastercard, instead.", "label": "visa_or_mastercard"}
+{"id": "valid-00792", "text": "Can you tell me what I need for identity validation?", "label": "verify_my_identity"}
+{"id": "valid-00197", "text": "I need to cancel my card.  There are a few charges from a couple days ago that I didn't make.  Can I get credit for these charges?", "label": "card_payment_not_recognised"}
+{"id": "valid-00041", "text": "I am not able to see the card PIN anywhere?", "label": "get_physical_card"}
+{"id": "valid-00347", "text": "Where does the exchange rate stand right now?", "label": "exchange_rate"}
+{"id": "valid-01902", "text": "I had transferred some money but the balance hasn't changed.", "label": "balance_not_updated_after_bank_transfer"}
+{"id": "valid-00432", "text": "I would like to change my personal details.", "label": "edit_personal_details"}
+{"id": "valid-01595", "text": "Does it cost anything to buy something from another country? Like is there going to be hidden transfer fees or currency conversion fees?", "label": "transfer_fee_charged"}
+{"id": "valid-01330", "text": "Is there any amount in which I would get cut off from topping up?", "label": "top_up_limits"}
+{"id": "valid-00084", "text": "I completed a transfer within the UK two days ago, but it is still not showing received.  I have verified the account number is correct already.  Is there anything else I need to do or is there a problem?", "label": "transfer_not_received_by_recipient"}
+{"id": "valid-01550", "text": "How do I add an existing card to the app?", "label": "card_linking"}
+{"id": "valid-00719", "text": "need to know places i can withdraw money", "label": "atm_support"}
+{"id": "valid-00676", "text": "How do I find the top-up verification code?", "label": "verify_top_up"}
+{"id": "valid-00185", "text": "It is urgency. Please freeze my card now. As someone in some odd remote town has withdrawn some money by using my card. As i did not withdraw any money.", "label": "cash_withdrawal_not_recognised"}
+{"id": "valid-01803", "text": "unhappy with service need to delete account", "label": "terminate_account"}
+{"id": "valid-00731", "text": "I would like to change my address.", "label": "edit_personal_details"}
+{"id": "valid-01049", "text": "What is the way to go about getting a virtual card?", "label": "getting_virtual_card"}
+{"id": "valid-01665", "text": "There is a missing transfer on my account", "label": "balance_not_updated_after_bank_transfer"}
+{"id": "valid-00203", "text": "Show me where I can see the PIN?", "label": "get_physical_card"}
+{"id": "valid-00286", "text": "When I was drunk I got my card stuck in your machine because i mis-typed my PIN. What do I need to do to get it restored?", "label": "pin_blocked"}
+{"id": "valid-00842", "text": "I didn't make a payment that shows in my app.", "label": "card_payment_not_recognised"}
+{"id": "valid-00066", "text": "Why was I charged a fee for withdrawing money?", "label": "cash_withdrawal_charge"}
+{"id": "valid-01340", "text": "I need to make several disposable cards per day.", "label": "disposable_card_limits"}
+{"id": "valid-00430", "text": "I deposited cash into my account and I'm having trouble seeing it on my account.", "label": "balance_not_updated_after_cheque_or_cash_deposit"}
+{"id": "valid-00665", "text": "Why wouldn't my contactless work for the metro?", "label": "contactless_not_working"}
+{"id": "valid-01579", "text": "Can you tell me if I can track the card you sent me?", "label": "card_arrival"}
+{"id": "valid-01972", "text": "I need immediate assistance in canceling a transfer which was a mistake. Please help me quickly so this does not go through.", "label": "cancel_transfer"}
+{"id": "valid-01903", "text": "Which countries are represented?", "label": "country_support"}
+{"id": "valid-01592", "text": "I didn't get the right amount of  cash because of the exchange rate.", "label": "wrong_exchange_rate_for_cash_withdrawal"}
+{"id": "valid-00700", "text": "How do you check my identity?", "label": "verify_my_identity"}
+{"id": "valid-00630", "text": "My passcode is not being accepted", "label": "passcode_forgotten"}
+{"id": "valid-00941", "text": "I need to make my card PIN a different number", "label": "change_pin"}
+{"id": "valid-01811", "text": "Does the app allow for exchanges between currencies?", "label": "exchange_via_app"}
+{"id": "valid-00067", "text": "The store card reader would not accept my card.", "label": "declined_card_payment"}
+{"id": "valid-01656", "text": "My statement does not reflect that a refund has been issued", "label": "Refund_not_showing_up"}
+{"id": "valid-01955", "text": "Not living in same place, need to change details", "label": "edit_personal_details"}
+{"id": "valid-01896", "text": "Is there a way for me to check my balance?", "label": "verify_source_of_funds"}
+{"id": "valid-01604", "text": "Why is there an extra \u20ac1 fee in my statement?", "label": "extra_charge_on_statement"}
+{"id": "valid-00480", "text": "I deposited money in the form of a cheque, but my balance has not increased.", "label": "balance_not_updated_after_cheque_or_cash_deposit"}
+{"id": "valid-01083", "text": "My top-up didn't go through; it still says pending. What's up with that?", "label": "pending_top_up"}
+{"id": "valid-00137", "text": "How's the exchange rate?", "label": "exchange_rate"}
+{"id": "valid-00097", "text": "Can you lookup my password?", "label": "passcode_forgotten"}
+{"id": "valid-01874", "text": "Do you provide cards to people not in the UK?", "label": "country_support"}
+{"id": "valid-01884", "text": "I need to renew a card that's about to expire", "label": "card_about_to_expire"}
+{"id": "valid-00157", "text": "I was charge a fee that I wasn't told about", "label": "transfer_fee_charged"}
+{"id": "valid-01323", "text": "Is there a limit for top ups?", "label": "top_up_limits"}
+{"id": "valid-00072", "text": "Can you please tell me why my transfer failed?", "label": "failed_transfer"}
+{"id": "valid-01942", "text": "What is the verification process used for?", "label": "verify_top_up"}
+{"id": "valid-00539", "text": "There are funds in my app that I did not receive.", "label": "cash_withdrawal_not_recognised"}
+{"id": "valid-01827", "text": "How do I activate my card that just arrived?", "label": "activate_my_card"}
+{"id": "valid-01079", "text": "Do cash withdrawals cost anything?", "label": "cash_withdrawal_charge"}
+{"id": "valid-00693", "text": "Hello, in these holidays i have been overcharged on the amount i have withdrawn on one of your ATMs. I did not had any clue about the horrible charges otherwise i would not have withdrawn.", "label": "wrong_exchange_rate_for_cash_withdrawal"}
+{"id": "valid-00437", "text": "I think the exchange rate for the cash I withdrew was wrong.", "label": "wrong_exchange_rate_for_cash_withdrawal"}
+{"id": "valid-00827", "text": "How do i top up my google pay?", "label": "apple_pay_or_google_pay"}
+{"id": "valid-00925", "text": "I was overcharged an additional pound.", "label": "extra_charge_on_statement"}
+{"id": "valid-00519", "text": "Can I set the account to auto top-up?", "label": "automatic_top_up"}
+{"id": "valid-00251", "text": "I need to deposit money to my account", "label": "transfer_into_account"}
+{"id": "valid-00774", "text": "Will I be charged for topping up by transfer?", "label": "top_up_by_bank_transfer_charge"}
+{"id": "valid-01227", "text": "How come the money from the merchant appeared back into my account?", "label": "reverted_card_payment?"}
+{"id": "valid-00926", "text": "My top up isnt working", "label": "top_up_failed"}
+{"id": "valid-01854", "text": "Why is my withdrawal from the ATM still showing as pending?", "label": "pending_cash_withdrawal"}
+{"id": "valid-00517", "text": "I took out money and there is a fee.  Why?", "label": "cash_withdrawal_charge"}
+{"id": "valid-01300", "text": "Someone took my card without my permission.", "label": "lost_or_stolen_card"}
+{"id": "valid-01875", "text": "I'm looking at my statement, and my refund is not on there.", "label": "Refund_not_showing_up"}
+{"id": "valid-01072", "text": "Can you explain your refund policy, please?", "label": "request_refund"}
+{"id": "valid-01151", "text": "I need my account checked because it appears there is a problem. I attempted to update my balance yesterday using cheque but it doesn't seem to have worked.  Should this not be faster than this?", "label": "balance_not_updated_after_cheque_or_cash_deposit"}
+{"id": "valid-00094", "text": "Where is my top-up verification code?", "label": "verify_top_up"}
+{"id": "valid-01547", "text": "Could not complete transfer, states 'declined'", "label": "declined_transfer"}
+{"id": "valid-01098", "text": "It appears I have a fee in my statement.", "label": "extra_charge_on_statement"}
+{"id": "valid-01035", "text": "I messed up and made a transaction using the wrong account.", "label": "cancel_transfer"}
+{"id": "valid-01511", "text": "I used the ATM to get money out and did not realize I would be charged as much as I was or I would not have done that!", "label": "wrong_exchange_rate_for_cash_withdrawal"}
+{"id": "valid-01979", "text": "My statement shows charges for things I never purchased. Were my account details stolen?", "label": "compromised_card"}
+{"id": "valid-00119", "text": "Has my account been frozen?  I tried to use my card but the ATM would not dispense cash.", "label": "declined_cash_withdrawal"}
+{"id": "valid-00845", "text": "What countries do your accounts send and receive to?", "label": "country_support"}
+{"id": "valid-01605", "text": "Why was I not able to get cash from the ATM?", "label": "declined_cash_withdrawal"}
+{"id": "valid-01672", "text": "I just saw a fee on my account. When do these get charged?", "label": "card_payment_fee_charged"}
+{"id": "valid-01891", "text": "There is a strange charge on my debit statement", "label": "direct_debit_payment_not_recognised"}
+{"id": "valid-01778", "text": "My PIN number was incorrect, and I can't access it.", "label": "pin_blocked"}
+{"id": "valid-01475", "text": "Do I need to convert my currency from GBP before transferring?", "label": "receiving_money"}
+{"id": "valid-00090", "text": "Is there a fee for physical cards?", "label": "order_physical_card"}
+{"id": "valid-01895", "text": "If I add money with an international card, are there any fees?", "label": "top_up_by_card_charge"}
+{"id": "valid-01768", "text": "I AM MISSING CASH FROM MY BANK ACCOUNT ACCORDING TO MY APP", "label": "cash_withdrawal_not_recognised"}
+{"id": "valid-01850", "text": "Are there any charges for using a bank card to top up", "label": "top_up_by_card_charge"}
+{"id": "valid-01516", "text": "Why is there a charge when I took out money?", "label": "cash_withdrawal_charge"}
+{"id": "valid-00473", "text": "How do I actually obtain a card myself?", "label": "order_physical_card"}
+{"id": "valid-00340", "text": "The exchange rate that was applied for an international purchase was wrong.", "label": "card_payment_wrong_exchange_rate"}
+{"id": "valid-00763", "text": "Is there a reason why my virtual card won't work?", "label": "virtual_card_not_working"}
+{"id": "valid-00538", "text": "Are there a certain amount of transactions i can do with one disposable card?", "label": "disposable_card_limits"}
+{"id": "valid-01649", "text": "I just noticed my transfer was declined and I don't know why. Can you help me?", "label": "declined_transfer"}
+{"id": "valid-01124", "text": "I already have a card and want to link it", "label": "card_linking"}
+{"id": "valid-01125", "text": "How do I activate a card?", "label": "activate_my_card"}
+{"id": "valid-00335", "text": "The amount of cash I received was not the full amount", "label": "wrong_amount_of_cash_received"}
+{"id": "valid-01983", "text": "Why is my transfer pending when I already made it?", "label": "pending_transfer"}
+{"id": "valid-00205", "text": "Why is my refund not visible on my statement?", "label": "Refund_not_showing_up"}
+{"id": "valid-01718", "text": "Is there something wrong with the transferring functions? I keep trying to transfer funds and only get an error message.", "label": "beneficiary_not_allowed"}
+{"id": "valid-00592", "text": "Can I get a physical card", "label": "order_physical_card"}
+{"id": "valid-00497", "text": "How much is the charge for a foreign currency exchange?", "label": "exchange_charge"}
+{"id": "valid-00071", "text": "My phone is missing or stolen.", "label": "lost_or_stolen_phone"}
+{"id": "valid-00302", "text": "I see a direct debit transaction in my history that I did not set up.", "label": "direct_debit_payment_not_recognised"}
+{"id": "valid-01040", "text": "The rate applied to my foreign currency at an ATM was incorrect.", "label": "wrong_exchange_rate_for_cash_withdrawal"}
+{"id": "valid-01832", "text": "what do I need to do if the ATM kept my card?", "label": "card_swallowed"}
+{"id": "valid-01794", "text": "Why is this beneficiary being rejected?", "label": "beneficiary_not_allowed"}
+{"id": "valid-00456", "text": "I see a reverted payment on my account. Why has this happened?", "label": "reverted_card_payment?"}
+{"id": "valid-01430", "text": "The machine didn't work earlier when I went to get money out and now my account says transaction in progress.Why?", "label": "pending_cash_withdrawal"}
+{"id": "valid-01830", "text": "If my card is about to expire how long would it take to receive a new one and how much would that cost me?", "label": "card_about_to_expire"}
+{"id": "valid-00735", "text": "I found my card that I thought I had lost, I need to reactive it, please help.", "label": "card_linking"}
+{"id": "valid-00604", "text": "Why was I charged a fee? I thought shopping was free?", "label": "card_payment_fee_charged"}
+{"id": "valid-01677", "text": "Why is my transfer taking so long to complete?", "label": "transfer_not_received_by_recipient"}
+{"id": "valid-00578", "text": "How much does it cost to get more cards?", "label": "getting_spare_card"}
+{"id": "valid-01930", "text": "I did a transaction this morning and now I want to cancel it.", "label": "cancel_transfer"}
+{"id": "valid-00022", "text": "Tell me what ATMs use this card.", "label": "atm_support"}
+{"id": "valid-00021", "text": "I entered in the wrong PIN.  Please help me unlock my account.", "label": "pin_blocked"}
+{"id": "valid-01303", "text": "What currencies can be used for top up?", "label": "supported_cards_and_currencies"}
+{"id": "valid-01112", "text": "I looked on the app and it says I withdrew cash.  I didn't!", "label": "cash_withdrawal_not_recognised"}
+{"id": "valid-00264", "text": "Is it possible to get one of your cards in the European Union?", "label": "country_support"}
+{"id": "valid-00920", "text": "Could you please tell me why my card payment didn't work?", "label": "declined_card_payment"}
+{"id": "valid-00424", "text": "I'm still waiting for my card.", "label": "card_arrival"}
+{"id": "valid-01940", "text": "How do I add money to my card?", "label": "topping_up_by_card"}
+{"id": "valid-00943", "text": "My transfer failed.  Help!", "label": "failed_transfer"}
+{"id": "valid-00999", "text": "I don't think the transaction has gone through, so can I cancel a transfer?", "label": "cancel_transfer"}
+{"id": "valid-00296", "text": "when will my transfer clear", "label": "pending_transfer"}
+{"id": "valid-01535", "text": "Why was I charged more than I should have been?", "label": "extra_charge_on_statement"}
+{"id": "valid-01386", "text": "What's the process for terminating an account?", "label": "terminate_account"}
+{"id": "valid-00014", "text": "When can I expect my card?", "label": "card_delivery_estimate"}
+{"id": "valid-01885", "text": "How do I terminate my account.", "label": "terminate_account"}
+{"id": "valid-01104", "text": "I want to get rid of the account, and delete personal information .", "label": "terminate_account"}
+{"id": "valid-01065", "text": "Since when were there charges for taking out cash from my account? It's always been free for me to do this before.  How much are the charges going to be?", "label": "cash_withdrawal_charge"}
+{"id": "valid-01751", "text": "Online banking is not showing my cheque or cash deposit so the balance is incorrect.", "label": "balance_not_updated_after_cheque_or_cash_deposit"}
+{"id": "valid-00938", "text": "I bought an item that I was charged a different exchange rate for.", "label": "card_payment_wrong_exchange_rate"}
+{"id": "valid-00643", "text": "How does a disposable virtual card work?", "label": "get_disposable_virtual_card"}
+{"id": "valid-00600", "text": "Do I have a card PIN?", "label": "get_physical_card"}
+{"id": "valid-01031", "text": "Help!  I forgot my password.", "label": "passcode_forgotten"}
+{"id": "valid-00027", "text": "I have transactions that I don't recognize - I think someone is using my card.", "label": "compromised_card"}
+{"id": "valid-01471", "text": "Are cards delivered to my location?", "label": "order_physical_card"}
+{"id": "valid-00184", "text": "I have been charged twice for the same thing!", "label": "transaction_charged_twice"}
+{"id": "valid-01280", "text": "I have yet to receive the cash I added to my account this morning.", "label": "balance_not_updated_after_cheque_or_cash_deposit"}
+{"id": "valid-01329", "text": "I thought transfers were free of charge.  I bought something abroad and got charged a ridiculous fee. How do I get this problem fixed.", "label": "transfer_fee_charged"}
+{"id": "valid-00972", "text": "How do I transfer money into my account?", "label": "transfer_into_account"}
+{"id": "valid-00039", "text": "Where can I order my virtual card?", "label": "getting_virtual_card"}
+{"id": "valid-01085", "text": "Am I allowed to hold money in multiple currencies?", "label": "fiat_currency_support"}
+{"id": "valid-01739", "text": "Tell me why my card payment has been declined.", "label": "declined_card_payment"}
+{"id": "valid-00518", "text": "Why couldn't I transfer to a beneficiairy?", "label": "beneficiary_not_allowed"}
+{"id": "valid-00374", "text": "There is money missing from my account.", "label": "cash_withdrawal_not_recognised"}
+{"id": "valid-00295", "text": "Help my prove my identity.", "label": "unable_to_verify_identity"}
+{"id": "valid-01771", "text": "I tried to top up with my card but it's not working. I had just done this a couple days previously and it worked. Can you tell me what's going on here please?", "label": "top_up_failed"}
+{"id": "valid-00326", "text": "Why isn't my card working anymore?", "label": "card_not_working"}
+{"id": "valid-00995", "text": "I wish to cancel a transfer", "label": "cancel_transfer"}
+{"id": "valid-00272", "text": "My payment was put back, I think.", "label": "reverted_card_payment?"}
+{"id": "valid-00559", "text": "There was a direct debit transaction I have don't think should be there.", "label": "direct_debit_payment_not_recognised"}
+{"id": "valid-01744", "text": "I was not able to use the ATM to get cash", "label": "declined_cash_withdrawal"}
+{"id": "valid-00683", "text": "I would like to get an account for my child.", "label": "age_limit"}
+{"id": "valid-00933", "text": "My card no longer works.", "label": "card_not_working"}
+{"id": "valid-01220", "text": "What is the currency exchange fee?", "label": "exchange_charge"}
+{"id": "valid-01007", "text": "I need to withdraw money. Where can I do that?", "label": "atm_support"}
+{"id": "valid-00394", "text": "I am here to change my adress.", "label": "edit_personal_details"}
+{"id": "valid-01866", "text": "Why am I being charged extra when I withdrew money?", "label": "cash_withdrawal_charge"}
+{"id": "valid-00162", "text": "Why did my transfer fail?  What can I do?", "label": "failed_transfer"}
+{"id": "valid-01792", "text": "If I get a transfer from Europe, how long until it is in my account?", "label": "transfer_timing"}
+{"id": "valid-01713", "text": "what are the locations i can withdraw money", "label": "atm_support"}
+{"id": "valid-00283", "text": "Explain to me why a transfer would be declined.", "label": "declined_transfer"}
+{"id": "valid-00192", "text": "How can I get money in my home currency while I'm traveling internationally? I wanted to take it out of a local ATM but am worried that I will get charged extra fees.", "label": "wrong_exchange_rate_for_cash_withdrawal"}
+{"id": "valid-00813", "text": "the exchange rate is wrong from something I got in another country", "label": "card_payment_wrong_exchange_rate"}
+{"id": "valid-01184", "text": "If I don't have much money in the account can I auto top-up?", "label": "automatic_top_up"}
+{"id": "valid-01439", "text": "What is needed for the identity verification?", "label": "verify_my_identity"}
+{"id": "valid-01737", "text": "Is there a way to set up an auto top-up?", "label": "automatic_top_up"}
+{"id": "valid-01018", "text": "I need to get a disposable virtual card?", "label": "get_disposable_virtual_card"}
+{"id": "valid-00890", "text": "My card payment has been declined, why?", "label": "declined_card_payment"}
+{"id": "valid-00289", "text": "If I were to do a transfer, what is the rate for that?", "label": "top_up_by_bank_transfer_charge"}
+{"id": "valid-01797", "text": "I stupidly initiated a rent payment from the wrong account yesterday. It can't be paid from that account, but it really needs to get paid on time. Am I able to move the payment to the right account?", "label": "cancel_transfer"}
+{"id": "valid-00502", "text": "How do I change my AUD into GBP?", "label": "exchange_via_app"}
+{"id": "valid-00005", "text": "Need to report a change of address.", "label": "edit_personal_details"}
+{"id": "valid-01748", "text": "When will my transfer post to my account?", "label": "transfer_timing"}
+{"id": "valid-01668", "text": "I am noticing that a refund of a large purchase still has not been credited to my account. I contacted the merchant a few days ago and he assured me that he would submit it right away. Is there a status update?", "label": "Refund_not_showing_up"}
+{"id": "valid-01812", "text": "I made a card payment by my card but it failed. Please let me know when the payment will get completed as its still pending.", "label": "pending_card_payment"}
+{"id": "valid-00808", "text": "I have a disposable virtual card. Is there a limit to how many times I can use it?", "label": "disposable_card_limits"}
+{"id": "valid-00284", "text": "In the App I see a payment that is not mine.", "label": "card_payment_not_recognised"}
+{"id": "valid-01570", "text": "Where are my funds? I topped off my car but it didn't seem to complete.", "label": "pending_top_up"}
+{"id": "valid-01163", "text": "When do I see my recent refund in my statement", "label": "Refund_not_showing_up"}
+{"id": "valid-01503", "text": "I'm trying to move money from my account to elsewhere, but it's giving me an error message.", "label": "declined_transfer"}
+{"id": "valid-01424", "text": "I was charged an extra pound for no reason. Why is that?", "label": "extra_charge_on_statement"}
+{"id": "valid-00372", "text": "I don't have the device I used to log onto the platform so I can't access it.", "label": "lost_or_stolen_phone"}
+{"id": "valid-01164", "text": "I have yet to receive my virtual card", "label": "getting_virtual_card"}
+{"id": "valid-01577", "text": "What went wrong when I tried to do my transfer?", "label": "failed_transfer"}
+{"id": "valid-00085", "text": "How do I verify my source of funds?", "label": "verify_source_of_funds"}
+{"id": "valid-01497", "text": "should i contact customer support if i can't edit details", "label": "edit_personal_details"}
+{"id": "valid-00697", "text": "The ATM at Metro bank on High St. Kensington didn't return my card, and the bank is now closed. How do I get back a card swallowed by an ATM?", "label": "card_swallowed"}
+{"id": "valid-01906", "text": "Can you tell me why my credit card was declined while trying to top-up?", "label": "top_up_failed"}
+{"id": "valid-01408", "text": "Does it cost anything to get a new card? Mine's about to expire and I'd also like to know how long it takes to get the new one.", "label": "card_about_to_expire"}
+{"id": "valid-00543", "text": "I topped off my card is that something you will charge me for?", "label": "top_up_by_card_charge"}
+{"id": "valid-00130", "text": "I had the wrong exchange rate applied to some cash I got abroad.", "label": "wrong_exchange_rate_for_cash_withdrawal"}
+{"id": "valid-01259", "text": "Can I use my account before my Identity verification has passed?", "label": "why_verify_identity"}
+{"id": "valid-00776", "text": "I am not sure but someone else might be using my card", "label": "compromised_card"}
+{"id": "valid-01465", "text": "Can you tell me what the cash withdrawal is in my statement?", "label": "cash_withdrawal_not_recognised"}
+{"id": "valid-01678", "text": "The app is telling me that I am not me.", "label": "unable_to_verify_identity"}
+{"id": "valid-00058", "text": "My transfer didn't work! Help!", "label": "failed_transfer"}
+{"id": "valid-01932", "text": "How do I activate and link my new card?", "label": "card_linking"}
+{"id": "valid-00946", "text": "I keep checking my statements but nothing shows up. I requested a refund a long time ago but seems it's not reaching my account for some reason. Would you please help me get the money back from the seller.", "label": "Refund_not_showing_up"}
+{"id": "valid-01165", "text": "I was double-charged for a transaction", "label": "transaction_charged_twice"}
+{"id": "valid-01047", "text": "How long does it take transfers from Europe to complete?", "label": "transfer_timing"}
+{"id": "valid-01487", "text": "How much would it cost me for a bank transfer to top up my account?", "label": "top_up_by_bank_transfer_charge"}
+{"id": "valid-00691", "text": "How do I reverse a transaction on my account?", "label": "request_refund"}
+{"id": "valid-01013", "text": "I noticed a new fee on my account. I didn't know there were fees for these payments. What is the policy?", "label": "card_payment_fee_charged"}
+{"id": "valid-01544", "text": "Can I edit my personal details?", "label": "edit_personal_details"}
+{"id": "valid-00487", "text": "My cheque is taking a while", "label": "balance_not_updated_after_cheque_or_cash_deposit"}
+{"id": "valid-01180", "text": "Do I receive the physical card for free", "label": "order_physical_card"}
+{"id": "valid-01757", "text": "How can I cancel this transaction?", "label": "cancel_transfer"}
+{"id": "valid-01814", "text": "I lost my phone.  What do I do to block someone else from using my account?", "label": "lost_or_stolen_phone"}
+{"id": "valid-00267", "text": "I was mugged.  They took everything.  I can't use the app.  What do I do?", "label": "lost_or_stolen_phone"}
+{"id": "valid-01507", "text": "Why are there fees for using a card?", "label": "card_payment_fee_charged"}
+{"id": "valid-00927", "text": "Card payment is showing as pending", "label": "pending_card_payment"}
+{"id": "valid-01195", "text": "Is my card lost? I am still waiting for it to be delivered.", "label": "card_arrival"}
+{"id": "valid-00953", "text": "My balance didn't change after I transferred some money.", "label": "balance_not_updated_after_bank_transfer"}
+{"id": "valid-00658", "text": "Why did my transfer to a beneficiary fail?", "label": "beneficiary_not_allowed"}
+{"id": "valid-01522", "text": "There is a vendor name I don't recognize on a payment from my account. I don't think I made this payment.", "label": "card_payment_not_recognised"}
+{"id": "valid-01249", "text": "I've checked multiple times to make sure the account number listed is the right one after attempting to make a transfer within the country the day before yesterday. The transfer is still not available so can you please find out what is going on?", "label": "transfer_not_received_by_recipient"}
+{"id": "valid-00163", "text": "I transferred some cash and it has not arrived yet.", "label": "transfer_not_received_by_recipient"}
+{"id": "valid-00406", "text": "I see an unfamiliar payment on my statement.", "label": "card_payment_not_recognised"}
+{"id": "valid-01448", "text": "Can you tell me why my card keeps getting declined every time I try to use it?", "label": "declined_card_payment"}
+{"id": "valid-01685", "text": "There was just a withdrawal but it wasn't me, I've never even visited the town where the withdrawal happened.", "label": "cash_withdrawal_not_recognised"}
+{"id": "valid-00563", "text": "I have used this account overseas recently. Has there been an increase in fees that I am unaware of?", "label": "transfer_fee_charged"}
+{"id": "valid-01378", "text": "Is there something wrong with my ATM Card?  Tried using it earlier and it did not work.", "label": "declined_cash_withdrawal"}
+{"id": "valid-01043", "text": "Will you be adding more currencies in the future?", "label": "fiat_currency_support"}
+{"id": "valid-01928", "text": "Please help me, as my topup amount has been reverted, i did it correctly. I think there is some defect in system.", "label": "top_up_reverted"}
+{"id": "valid-00841", "text": "I was declined when I tried to take out cash!", "label": "declined_cash_withdrawal"}
+{"id": "valid-00882", "text": "The exchange rate from my card payment isn't right.", "label": "card_payment_wrong_exchange_rate"}
+{"id": "valid-00860", "text": "can i verify my identity i the app", "label": "verify_my_identity"}
+{"id": "valid-00968", "text": "Do you have any top-up limits?", "label": "top_up_limits"}
+{"id": "valid-00206", "text": "How can I change currency type?", "label": "exchange_via_app"}
+{"id": "valid-00201", "text": "How do I use my card to top up?", "label": "topping_up_by_card"}
+{"id": "valid-01898", "text": "i withdrew cash and dont see it reflected on the balance", "label": "pending_cash_withdrawal"}
+{"id": "valid-00220", "text": "How many times can I enter a wrong PIN before it is blocked?", "label": "pin_blocked"}
+{"id": "valid-01860", "text": "I don't have a virtual card - how do I get one?", "label": "getting_virtual_card"}
+{"id": "valid-00741", "text": "Please explain your exchange rate policy.", "label": "exchange_rate"}
+{"id": "valid-00535", "text": "If I was travelling abroad, would I be able to hold currencies in euros?", "label": "fiat_currency_support"}
+{"id": "valid-01620", "text": "I made a transfer and the receiver said they haven't actually received the right amount, but it's a bit less. Now I have to transfer more money to make up for the missing bit. Can you please alert me about this, what has been going on?", "label": "transfer_fee_charged"}
+{"id": "valid-01273", "text": "What is the maximum times I can auto top-up?", "label": "automatic_top_up"}
+{"id": "valid-01242", "text": "would a visa or mastercard be more suited to me?", "label": "visa_or_mastercard"}
+{"id": "valid-00241", "text": "I used my card top-up but all of the money is missing.", "label": "topping_up_by_card"}
+{"id": "valid-01935", "text": "My top up is not showing up in my wallet!", "label": "topping_up_by_card"}
+{"id": "valid-01481", "text": "Why was I charged a fee for my withdrawal?", "label": "cash_withdrawal_charge"}
+{"id": "valid-01127", "text": "Why do you need so much information about me", "label": "why_verify_identity"}
+{"id": "valid-00467", "text": "The contactless payments are not working.", "label": "contactless_not_working"}
+{"id": "valid-00888", "text": "How long does it take for a top up to go through", "label": "pending_top_up"}
+{"id": "valid-00553", "text": "What do I need to do to cancel a transaction?", "label": "cancel_transfer"}
+{"id": "valid-00211", "text": "How can I periodically check the delivery of the card you sent?", "label": "card_arrival"}
+{"id": "valid-00035", "text": "I tried to withdraw some funds from my card, but was declined. How can I get my money?", "label": "declined_cash_withdrawal"}
+{"id": "valid-00660", "text": "My card will expire soon, When do I need to order a new one?", "label": "card_about_to_expire"}
+{"id": "valid-01855", "text": "How do I get my card on the app?", "label": "card_linking"}
+{"id": "valid-01945", "text": "Someone might be using my card that is not me.", "label": "compromised_card"}
+{"id": "valid-01882", "text": "I performed a transfer within the country the day before yesterday, but it has not gone through? Can you check on that? The account number is definitely correct, as I've checked.", "label": "transfer_not_received_by_recipient"}
+{"id": "valid-00099", "text": "I would like to make sure it is delivered on a certain date.", "label": "card_delivery_estimate"}
+{"id": "valid-01997", "text": "I have withdrawn cash from the ATM but it is showing in my account as a pending transation. Why is this?", "label": "pending_cash_withdrawal"}
+{"id": "valid-01404", "text": "Since I got married, I need to change my name.", "label": "edit_personal_details"}
+{"id": "valid-01820", "text": "I still have not received an answer as to why I was charged $1.00 in a transaction?", "label": "extra_charge_on_statement"}
+{"id": "valid-00648", "text": "What do I do to close my account?", "label": "terminate_account"}
+{"id": "valid-01795", "text": "I'm not able to activate my card how do I fix this problem?", "label": "activate_my_card"}
+{"id": "valid-00324", "text": "I'm confused as to why my transfer is still listed as pending on the website.", "label": "pending_transfer"}
+{"id": "valid-01407", "text": "A transaction to a friend still hasn't shown up.", "label": "transfer_not_received_by_recipient"}
+{"id": "valid-00198", "text": "I made a transfer and according to the receiver \"they haven't received the right amount\" Its lesser than it should be.Now I have to transfer more money to make up for the missing amount . Can you please help me about this, what should be done ?", "label": "transfer_fee_charged"}
+{"id": "valid-00837", "text": "The app is showing mt withdrawals that aren't  mine.", "label": "cash_withdrawal_not_recognised"}
+{"id": "valid-00325", "text": "pending transaction?", "label": "pending_card_payment"}
+{"id": "valid-00861", "text": "My transfer to a beneficiary was rejected.", "label": "beneficiary_not_allowed"}
+{"id": "valid-01641", "text": "My card payment failed.", "label": "declined_card_payment"}
+{"id": "valid-01234", "text": "I don't know what pending transaction means.", "label": "pending_card_payment"}
+{"id": "valid-00656", "text": "Will the transfer show up in my account soon?", "label": "transfer_timing"}
+{"id": "valid-00945", "text": "Hello, can you please inform me about international transfers? I am expecting a transfer I made from France two days ago and would like to know when it will arrive.", "label": "balance_not_updated_after_bank_transfer"}
+{"id": "valid-01432", "text": "How is the current exchange rate?", "label": "exchange_rate"}
+{"id": "valid-00382", "text": "Is there a charge for exchanging foreign currencies?", "label": "exchange_charge"}
+{"id": "valid-01005", "text": "My transfer is quite urgent, and finally worked out, but I've been waiting for it for quite some time. Can you tell me how long to expect to wait for it?", "label": "pending_transfer"}
+{"id": "valid-01244", "text": "Why does it matter that I prove my identity?", "label": "why_verify_identity"}
+{"id": "valid-01105", "text": "How long does a bank transfer take to show up in available funds?", "label": "balance_not_updated_after_bank_transfer"}
+{"id": "valid-01328", "text": "Why can't I complete the transfer?", "label": "failed_transfer"}
+{"id": "valid-01988", "text": "I need to update my demographics.", "label": "edit_personal_details"}
+{"id": "valid-01949", "text": "I didn't make a payment at this business.", "label": "card_payment_not_recognised"}
+{"id": "valid-00103", "text": "I have not received the completed transaction.", "label": "transfer_not_received_by_recipient"}
+{"id": "valid-00867", "text": "When will I have access to my pin number?", "label": "get_physical_card"}
+{"id": "valid-01406", "text": "I see a direct debit that I didn't authorize", "label": "direct_debit_payment_not_recognised"}
+{"id": "valid-01403", "text": "Why was my transfer stopped ?", "label": "beneficiary_not_allowed"}
+{"id": "valid-01835", "text": "My cash transaction isn't showing on my receipt", "label": "transfer_not_received_by_recipient"}
+{"id": "valid-00829", "text": "The transfer keeps rejected, I tried to transfer some money to friends but it keeps getting rejected for some reason, Would you please check the issue?", "label": "failed_transfer"}
+{"id": "valid-00824", "text": "My money is nowhere to be found? I talked up earlier and seen it. Now it has vanished. What is going on?", "label": "top_up_reverted"}
+{"id": "valid-00120", "text": "Why has another fee been placed on my statement?", "label": "extra_charge_on_statement"}
+{"id": "valid-01208", "text": "Is it possible for a friend to personally send me a payment?", "label": "receiving_money"}
+{"id": "valid-01493", "text": "how do I get top up to work for my card", "label": "apple_pay_or_google_pay"}
+{"id": "valid-01857", "text": "Good day, in reviewing my credit card activity over the last several days, I see a repeated charge for a restaurant that I went to. The charge was put through twice, so I would like one of the charges corrected and the amount that was withdrawn to be reinstated please.", "label": "transaction_charged_twice"}
+{"id": "valid-00853", "text": "How much for an actual card?", "label": "order_physical_card"}
+{"id": "valid-01192", "text": "Will I need a new card or can I put my old card back into the app?", "label": "card_linking"}
+{"id": "valid-01899", "text": "There's a \u20ac1 fee on my statement, why?", "label": "extra_charge_on_statement"}
+{"id": "valid-00287", "text": "I'm trying to take money from my account but its not letting me. Help!", "label": "declined_cash_withdrawal"}
+{"id": "valid-01994", "text": "My statement has a payment that I do not recall making", "label": "card_payment_not_recognised"}
+{"id": "valid-01263", "text": "I did a card payment but its status is still coming as pending. Please check and inform when it would complete.", "label": "pending_card_payment"}
+{"id": "valid-01627", "text": "My card arrived but I don't know how to get my PIN.", "label": "get_physical_card"}
+{"id": "valid-01462", "text": "How long does it take for a cash withdrawal to show?", "label": "pending_cash_withdrawal"}
+{"id": "valid-00068", "text": "How do I make my PIN work again?", "label": "pin_blocked"}
+{"id": "valid-01597", "text": "How can I tell if there will be a fee added to my payment or not?", "label": "card_payment_fee_charged"}
+{"id": "valid-00605", "text": "I reside in the US, but I want a card.", "label": "country_support"}
+{"id": "valid-00898", "text": "Is going to a bank only way to change my PIN?", "label": "change_pin"}
+{"id": "valid-00189", "text": "I think my card payment was reverted", "label": "reverted_card_payment?"}
+{"id": "valid-01837", "text": "Which currencies do you accept for adding money?", "label": "supported_cards_and_currencies"}
+{"id": "valid-01212", "text": "What is minimum age for an account?", "label": "age_limit"}
+{"id": "valid-00420", "text": "I want to transfer money using my credit card.", "label": "topping_up_by_card"}
+{"id": "valid-00274", "text": "How can I top up my account with a cheque?", "label": "top_up_by_cash_or_cheque"}
+{"id": "valid-00635", "text": "What to do if my card has been used without my permission?", "label": "compromised_card"}
+{"id": "valid-01294", "text": "In my statement, I got a \u20ac1 extra fee.", "label": "extra_charge_on_statement"}
+{"id": "valid-01583", "text": "I don't understand why there is an extra \u20ac1 fee in my statement.", "label": "extra_charge_on_statement"}
+{"id": "valid-01560", "text": "What currencies can be exchanged in the app?", "label": "exchange_via_app"}
+{"id": "valid-00167", "text": "I tried my PIN too many times and now my card won't work!", "label": "pin_blocked"}
+{"id": "valid-00843", "text": "Is there any way I could open an account for my daughter?", "label": "age_limit"}
+{"id": "valid-00620", "text": "My cheque is slow to cash", "label": "balance_not_updated_after_cheque_or_cash_deposit"}
+{"id": "valid-01206", "text": "What do I do to Top up my card?", "label": "topping_up_by_card"}
+{"id": "valid-01911", "text": "What should I do if someone else used my card?", "label": "compromised_card"}
+{"id": "valid-00521", "text": "why does it take so long to verify my id", "label": "unable_to_verify_identity"}
+{"id": "valid-00051", "text": "Can you tell me the limit for top ups?", "label": "top_up_limits"}
+{"id": "valid-00221", "text": "I need a refund and cancel a transaction on an item I purchased and i need it as soon as possible, please!", "label": "request_refund"}
+{"id": "valid-00475", "text": "Someone else used my card to withdraw cash from an ATM", "label": "cash_withdrawal_not_recognised"}
+{"id": "valid-00133", "text": "Is it possible to delete the account?", "label": "terminate_account"}
+{"id": "valid-00172", "text": "I need to cancel a transaction immediately.", "label": "cancel_transfer"}
+{"id": "valid-01077", "text": "I was charged too many times for one transaction.", "label": "transaction_charged_twice"}
+{"id": "valid-01963", "text": "Please help revert my transaction from this morning.", "label": "cancel_transfer"}
+{"id": "valid-00974", "text": "My top-up does not seem to have worked, what  went wrong?", "label": "top_up_failed"}
+{"id": "valid-01613", "text": "I was not distributed the correct amount of cash that I asked for", "label": "wrong_amount_of_cash_received"}
+{"id": "valid-00122", "text": "How do I top up using my Apple Watch?", "label": "apple_pay_or_google_pay"}
+{"id": "valid-01181", "text": "my cash withdrawal has not come out of my account yet.", "label": "pending_cash_withdrawal"}
+{"id": "valid-00276", "text": "I live in the EU, can I get one of your cards?", "label": "country_support"}
+{"id": "valid-01912", "text": "Would you be so kind as to activate my card? Thanks", "label": "activate_my_card"}
+{"id": "valid-01268", "text": "I could not get the cash I wanted", "label": "wrong_amount_of_cash_received"}
+{"id": "valid-00889", "text": "Where can I get my card PIN?", "label": "get_physical_card"}
+{"id": "valid-00242", "text": "What is this strange payment in my account?", "label": "card_payment_not_recognised"}
+{"id": "valid-00033", "text": "Why did you guys charge me an extra \u20ac1?", "label": "extra_charge_on_statement"}
+{"id": "valid-00740", "text": "I think I was charged extra on my payment on last Saturday.  Maybe the exchange rate was wrong?  I'd like a refund.", "label": "card_payment_wrong_exchange_rate"}
+{"id": "valid-01044", "text": "How do I dispute a debit that I didn't make?", "label": "direct_debit_payment_not_recognised"}
+{"id": "valid-01117", "text": "I cannot find my PIN.", "label": "get_physical_card"}
+{"id": "valid-01650", "text": "I can't find my phone and I'm worried someone is going to use it", "label": "lost_or_stolen_phone"}
+{"id": "valid-01492", "text": "What will I need to configure if my salary is in GBP?", "label": "receiving_money"}
+{"id": "valid-00588", "text": "Please delete this account.", "label": "terminate_account"}
+{"id": "valid-00646", "text": "What is taking so long on my transfer from the US?", "label": "transfer_timing"}
+{"id": "valid-00154", "text": "I was issued a card about a week ago. why hasn't it come in yet?", "label": "card_arrival"}
+{"id": "valid-00009", "text": "Help me please, My Apple Pay American Express top up does not work.", "label": "apple_pay_or_google_pay"}
+{"id": "valid-01197", "text": "Am I able to get a refund for a purchase?", "label": "request_refund"}
+{"id": "valid-00089", "text": "lost my card in atm", "label": "card_swallowed"}
+{"id": "valid-01362", "text": "I have a charge for something I didn't buy.", "label": "card_payment_not_recognised"}
+{"id": "valid-00453", "text": "I just found a payment from a while back in my account that I didn't make.  Can I still dispute it even though it was a couple of months ago?", "label": "direct_debit_payment_not_recognised"}
+{"id": "valid-00159", "text": "My card isn't here yet.", "label": "card_arrival"}
+{"id": "valid-00557", "text": "for god sake, just delete my account i am sick of this", "label": "terminate_account"}
+{"id": "valid-00744", "text": "Can my friends top up my account?", "label": "topping_up_by_card"}
+{"id": "valid-01214", "text": "I moved and need to change my address.", "label": "edit_personal_details"}
+{"id": "valid-01275", "text": "my pin hasn't arrived in the post! How do I cancel it or get a new one?", "label": "get_physical_card"}
+{"id": "valid-00681", "text": "Is there a reason why my card was declined when I attempted to withdraw money?", "label": "declined_cash_withdrawal"}
+{"id": "valid-01372", "text": "Does this app allow currencies to be exchanged?", "label": "exchange_via_app"}
+{"id": "valid-01505", "text": "Is it possible to have more than one disposable card?", "label": "disposable_card_limits"}
+{"id": "valid-01113", "text": "Is there a charge for sending out more cards?", "label": "getting_spare_card"}
+{"id": "valid-01675", "text": "Why is it necessary to verify the top up?", "label": "verify_top_up"}
+{"id": "valid-01977", "text": "i put money on my card and i dont see it on the balance", "label": "pending_top_up"}
+{"id": "valid-01291", "text": "I do not recognise this card payment.", "label": "card_payment_not_recognised"}
+{"id": "valid-01357", "text": "My pin needs unblocking, unblock it please?", "label": "pin_blocked"}
+{"id": "valid-01374", "text": "Too many times I entered the incorrect PIN.  How can I get my account unblocked?", "label": "pin_blocked"}
+{"id": "valid-01836", "text": "I transferred money from one account to another account and I charged a fee for it. Why is that?", "label": "transfer_fee_charged"}
+{"id": "valid-00873", "text": "Which cards do you support for top up?", "label": "supported_cards_and_currencies"}
+{"id": "valid-00257", "text": "why do i have to verify top up?", "label": "verify_top_up"}
+{"id": "valid-01171", "text": "I tried to buy something over the Internet yesterday and got a declined error. I tried again today and got the same message. What is the issue?", "label": "declined_transfer"}
+{"id": "valid-00158", "text": "There's a duplicate charge on my account?", "label": "transaction_charged_twice"}
+{"id": "valid-00830", "text": "I attempted to get cash in the ATM but I was denied", "label": "declined_cash_withdrawal"}
+{"id": "valid-00078", "text": "Even though I added money ey to the card, I couldn't use it", "label": "pending_top_up"}
+{"id": "valid-01494", "text": "My password doesn't work.", "label": "passcode_forgotten"}
+{"id": "valid-00690", "text": "I need help with understanding why my card is not working.", "label": "card_not_working"}
+{"id": "valid-01416", "text": "I am having to wait for my transfer to be fully processed. It seems to be taking a very long time in the pending phase. What is the normal turn around time that I can expect to see it completed?", "label": "pending_transfer"}
+{"id": "valid-00907", "text": "How old do I need to be?", "label": "age_limit"}
+{"id": "valid-01883", "text": "The ATM machines keep declining my card and I don't know why. I thought I had money in my account. Why is this happening?", "label": "declined_cash_withdrawal"}
+{"id": "valid-00525", "text": "Why am I getting double charged for multiple transactions?", "label": "transaction_charged_twice"}
+{"id": "valid-00466", "text": "Can my salary be received here?", "label": "receiving_money"}
+{"id": "valid-01512", "text": "I got a transfer fail message, but no explanation of why-- what happened?", "label": "failed_transfer"}
+{"id": "valid-00969", "text": "Why is it failing to top-up?", "label": "top_up_failed"}
+{"id": "valid-01808", "text": "My cash deposit from a week ago is still not in my account. Can you help me please?", "label": "balance_not_updated_after_cheque_or_cash_deposit"}
+{"id": "valid-01961", "text": "What do I owe for a new card?", "label": "order_physical_card"}
+{"id": "valid-00752", "text": "Is it possible to get both Visa and Mastercard from you?", "label": "visa_or_mastercard"}
+{"id": "valid-01433", "text": "My transfer didn't arrive to the recipient", "label": "transfer_not_received_by_recipient"}
+{"id": "valid-01123", "text": "How do I contact customer support about my declined transfer?", "label": "declined_transfer"}
+{"id": "valid-01301", "text": "What I topped up was reverted by the app.", "label": "top_up_reverted"}
+{"id": "valid-00243", "text": "Problem verifying my account", "label": "unable_to_verify_identity"}
+{"id": "valid-01015", "text": "Are top-ups allowed using Apple Pay?", "label": "apple_pay_or_google_pay"}
+{"id": "valid-01504", "text": "My card payments have stopped.", "label": "reverted_card_payment?"}
+{"id": "valid-01937", "text": "How come my card payment has been declined?", "label": "declined_card_payment"}
+{"id": "valid-00636", "text": "What top up charges are there for US cards?", "label": "top_up_by_card_charge"}
+{"id": "valid-01155", "text": "Am I charged for receiving money?", "label": "top_up_by_bank_transfer_charge"}
+{"id": "valid-01042", "text": "What was the extra charge for withdrawing money?", "label": "cash_withdrawal_charge"}
+{"id": "valid-01036", "text": "Why did you charge me more for my purchase? It was a foreign currency and you didn't offer market rate", "label": "card_payment_wrong_exchange_rate"}
+{"id": "valid-00855", "text": "Why is it saying I have a pending payment?", "label": "pending_card_payment"}
+{"id": "valid-01134", "text": "I tried to get funds in hard cash but it was rejected!", "label": "declined_cash_withdrawal"}
+{"id": "valid-01269", "text": "Why was I charged for getting cash?", "label": "cash_withdrawal_charge"}
+{"id": "valid-00149", "text": "I believe my exchange rate is incorrect", "label": "wrong_exchange_rate_for_cash_withdrawal"}
+{"id": "valid-01364", "text": "Does the app top up automatically?", "label": "automatic_top_up"}
+{"id": "valid-01608", "text": "How come I was charged an extra fee when paying with the card?", "label": "card_payment_fee_charged"}
+{"id": "valid-01548", "text": "How do I use a cheque to top up?", "label": "top_up_by_cash_or_cheque"}
+{"id": "valid-00957", "text": "What currency is acceptable for a top up?", "label": "supported_cards_and_currencies"}
+{"id": "valid-01900", "text": "Will you be able to exchange to EUR?", "label": "fiat_currency_support"}
+{"id": "valid-01901", "text": "What is the best way to get my virtual card?", "label": "getting_virtual_card"}
+{"id": "valid-01016", "text": "My credit card seems to have been declined for top up. Why is it not going through? Can you tell me what's going on?", "label": "top_up_failed"}
+{"id": "valid-01834", "text": "As advised by you, i requested seller to refund my money. A week has passed but i haven't got any update from seller. Please track the refund with the seller.", "label": "Refund_not_showing_up"}
+{"id": "valid-01304", "text": "What are eligible holding and exchange currencies?", "label": "fiat_currency_support"}
+{"id": "valid-00384", "text": "Will there be a charge when money is added to my account?", "label": "top_up_by_bank_transfer_charge"}
+{"id": "valid-00278", "text": "How long does it take for cards to be delivered after ordering them?", "label": "card_delivery_estimate"}
+{"id": "valid-00909", "text": "Can I set my own top-up limit?", "label": "top_up_limits"}
+{"id": "valid-00352", "text": "I would like more physical cards", "label": "getting_spare_card"}
+{"id": "valid-00900", "text": "Now that I have my card, how do I connect it to the app?", "label": "card_linking"}
+{"id": "valid-01360", "text": "Is there a location where I can change my PIN?", "label": "change_pin"}
+{"id": "valid-01818", "text": "My card will expire soon, do I need to order a new one?", "label": "card_about_to_expire"}
+{"id": "valid-01456", "text": "When I received my money, it was not in the correct amount. The exchange rate was not what it should have been.", "label": "wrong_exchange_rate_for_cash_withdrawal"}
+{"id": "valid-01769", "text": "I require verification of my source of funds.", "label": "verify_source_of_funds"}
+{"id": "valid-00589", "text": "My payment was stopped", "label": "reverted_card_payment?"}
+{"id": "valid-00798", "text": "Hi, is everything in good standing with my card? I am receiving multiple \"decline\" messages.", "label": "declined_card_payment"}
+{"id": "valid-00030", "text": "I need help fixing my contactless. It's not working anywhere I go today.", "label": "contactless_not_working"}
+{"id": "valid-00227", "text": "There's a direct debit payment that I don't recognize.", "label": "direct_debit_payment_not_recognised"}
+{"id": "valid-01925", "text": "Why is top-up verified?", "label": "verify_top_up"}
+{"id": "valid-01993", "text": "Can I order another card?", "label": "getting_spare_card"}
+{"id": "valid-01561", "text": "Why was my top up reverted?", "label": "top_up_reverted"}
+{"id": "valid-01623", "text": "Can I add a card back to the app?", "label": "card_linking"}
+{"id": "valid-01574", "text": "I have duplicate charges for the same transaction", "label": "transaction_charged_twice"}
+{"id": "valid-00942", "text": "Why do you keep declining my transfers? it's always been working really well so far but when I tried to buy something just now the card got declined, I tried couple of times already  but same thing is happening.", "label": "declined_transfer"}
+{"id": "valid-00611", "text": "How would I top up with a cheque?", "label": "top_up_by_cash_or_cheque"}
+{"id": "valid-01833", "text": "Can I change my PIN abroad?", "label": "change_pin"}
+{"id": "valid-01991", "text": "What currency is supported for exchanges and holding?", "label": "fiat_currency_support"}
+{"id": "valid-00451", "text": "Why hasn't my ID been verified?", "label": "unable_to_verify_identity"}
+{"id": "valid-00255", "text": "The exchange rate applied was incorrect when I was traveling outside the country.", "label": "wrong_exchange_rate_for_cash_withdrawal"}
+{"id": "valid-01941", "text": "A mortgage payment I'm making is giving me an error message.  This is the first time I'm making this payment and want to know what's wrong.", "label": "failed_transfer"}
+{"id": "valid-00079", "text": "Can you change my currency to EUR?", "label": "fiat_currency_support"}
+{"id": "valid-01780", "text": "I need to know why a money transfer is available.", "label": "pending_transfer"}
+{"id": "valid-00093", "text": "I tried to get cash in the ATM but it was not approved", "label": "declined_cash_withdrawal"}
+{"id": "valid-01789", "text": "Can you help me transfer money into my friend's bank account? I tried to do it but it keeps rejecting me. I need to get the money in there asap. I have enough and all the account info is correct.", "label": "failed_transfer"}
+{"id": "valid-01541", "text": "Are there cash machines where I can change my PIN?", "label": "change_pin"}
+{"id": "valid-01345", "text": "I bought something abroad and the exchange rate applied is wrong", "label": "card_payment_wrong_exchange_rate"}
+{"id": "valid-01526", "text": "I made a big purchase that I regretted and cancelled, the merchant said that my refund was submitted. Can you confirm to me that all of my money was truly returned to me?", "label": "Refund_not_showing_up"}
+{"id": "valid-00975", "text": "how to get a new card in china", "label": "card_about_to_expire"}
+{"id": "valid-00393", "text": "Are there charges for cash withdrawals?", "label": "cash_withdrawal_charge"}
+{"id": "valid-01545", "text": "Are there ATM fees?", "label": "cash_withdrawal_charge"}
+{"id": "valid-00486", "text": "Do you provide currency exchange to Euros?", "label": "fiat_currency_support"}
+{"id": "valid-01841", "text": "Why am I being charged more on exchange with things I bought abroad?", "label": "card_payment_wrong_exchange_rate"}
+{"id": "valid-00906", "text": "I need a new card.", "label": "getting_spare_card"}
+{"id": "valid-00815", "text": "I see money go out that I didn't withdraw.", "label": "cash_withdrawal_not_recognised"}
+{"id": "valid-01788", "text": "How can I find a way to transfer money without it being rejected?", "label": "declined_transfer"}
+{"id": "valid-00789", "text": "The expiration date on my card is very soon, and I need to get a new one.  What are the price and delivery options for my replacement card?", "label": "card_about_to_expire"}
