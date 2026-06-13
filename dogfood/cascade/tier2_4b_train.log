@@ -9,3 +9,4 @@ Iter 1: Val loss 10.577, Val took 53.240s
 Iter 50: Train loss 1.431, Learning Rate 1.000e-04, It/sec 0.237, Tokens/sec 21.512, Trained Tokens 4529, Peak mem 4.215 GB
 [WARNING] Some sequences are longer than 128 tokens. The longest sentence 137 will be truncated to 128. Consider pre-splitting your data to save memory.
 Iter 100: Train loss 0.393, Learning Rate 1.000e-04, It/sec 0.238, Tokens/sec 21.128, Trained Tokens 8971, Peak mem 4.215 GB
+Iter 150: Train loss 0.300, Learning Rate 1.000e-04, It/sec 0.254, Tokens/sec 22.589, Trained Tokens 13424, Peak mem 4.215 GB

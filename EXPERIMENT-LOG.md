@@ -321,3 +321,33 @@ true delta vs leg 6 is the wired limit + the 2B→4B model swap. Early telemetry
 pass **completed** (val loss 2.147 — legs 5/6 died exactly here) and training proceeded past
 it, wired peaking ~9.5GB then dropping to ~7.6GB as the cache threshold cycles — consistent
 with the hypothesis. Outcome entry to follow when the run resolves.
+
+---
+
+## 2026-06-12 (evening) — v2 BUILD SPRINT: Phases A–E substantially shipped in one session
+
+Full per-area detail in `dogfood/distiller/EXPERIMENT-LOG.md`, `dogfood/cascade/EXPERIMENT-LOG.md`,
+and PLAN-V2 §11 (phase status). Headlines:
+
+- **Phase A (distiller) DONE:** wired-limit unblock confirmed in practice (4B trains on 16GB,
+  peak 6.86GB); NaN root-caused to data (zero-trainable-token records, not LR); leg 9 trained
+  clean, early-stopped iter 700; **bar consumed honestly** — ratio 0.215 ✅, judge 0.94 ✅,
+  grounding 0.82 vs teacher 0.93 ❌. The judge-passes/gate-fails split is the recipe's thesis
+  proven on itself → RLVR round 2 motivated by a measured failure. Recipe 3 rewritten.
+- **Phase B (cascade) ~90%:** Banking77 in; **frontier ceiling probe — $0 LR beats frontier
+  zero-shot 0.883 vs 0.818 (+6.5)**; three-tier composition **0.9416 beats every single tier at
+  8× lower cost, conformal-certified** (UCB 0.067 ≤ 0.10); **flywheel cycle demonstrated**
+  (champion 0.813 → challenger 0.890, +7.8, promote). Recipe 1 → hybrid-cascade flagship.
+  Scripts: llm_classify, cascade_compose, flywheel, grounding_gate — all evidence-tested,
+  3 real bugs caught+fixed. 4B headline tier-2 training at session end.
+- **Phase C ~85%:** 7 concept docs (cascades, calibration/conformal, flywheels, SFT-vs-preference,
+  CPT, curriculum, MoE); tune-decide reworked to experiment-driven (ceiling probe → headroom);
+  eval round 3 cases 9–12 added; README accuracy-first + plugin v0.4.0.
+- **Phase D DONE:** Recipe 4 (finance CPT analyst) skeleton with pre-registered metric card.
+- **Phase E (capstone) ~80%:** `tune-loop` skill (MAPE champion/challenger orchestration) +
+  `promote.py` (bar-gated adjudication, one-look-slice ledger, descriptor versioning — smoke-
+  tested); Recipe 5 (self-improving system). Owed: multi-round live dogfood.
+- **DPO/ORPO spike (PLAN-V2 §8):** `mlx-lm-lora` 2.1.0 installs; `mlx_lm_lora.train` module +
+  DPO/ORPO/GRPO modes confirmed importable. Live training smoke queued behind the 4B (Metal).
+- **Owed to fully close v2:** 4B-tier-2 official-test headline; DPO/ORPO live smoke; RLVR
+  distiller round-2; ≥3-round tune-loop dogfood; full multi-agent eval round 3; live EDGAR CPT.
