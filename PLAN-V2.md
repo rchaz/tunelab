@@ -75,6 +75,16 @@ re-verify exact splits/license at implementation):
 Why this dataset: enough headroom between an embeddings+LR floor and a ~94% ceiling for every
 tier to demonstrably earn or lose its slot, against external gold nobody here controls.
 
+**Live measurement (2026-06-12, `dogfood/cascade/`), which reframes the flagship narrative:**
+on identical stratified validation records, tier-1 LR = **0.8831**, frontier zero-shot
+(session-native) = **0.8182** — the **$0 classifier beats the frontier by 6.5 points**. This is
+the headline (adopted, replacing the brief's "95–98%"): *most everyday classification doesn't
+need a frontier model; a tiny local fine-tune closes the rest of the gap to the 0.937 anchor.*
+Two consequences baked into the design: (a) tier-3 **must** use kNN few-shot — bare zero-shot
+sits below the tier-1 floor and would lower cascade accuracy; (b) the "fine-tuned beats general"
+hypothesis is already supported pre-training — the real headroom (~+5 pts) lives in the
+fine-tuned tier, so the ≥0.936 bar hinges on tier-2 quality.
+
 ### 4.2 The three tiers
 
 | Tier | Model | Confidence signal | Expected cost/latency profile |
