@@ -351,3 +351,11 @@ and PLAN-V2 §11 (phase status). Headlines:
   DPO/ORPO/GRPO modes confirmed importable. Live training smoke queued behind the 4B (Metal).
 - **Owed to fully close v2:** 4B-tier-2 official-test headline; DPO/ORPO live smoke; RLVR
   distiller round-2; ≥3-round tune-loop dogfood; full multi-agent eval round 3; live EDGAR CPT.
+
+## 2026-06-12 — DPO/ORPO spike COMPLETE (live training verified on Apple Silicon)
+- `mlx_lm_lora.train --train-mode dpo` ran live on Qwen3-0.6B-4bit (24 preference pairs:
+  chosen=teacher compression, rejected=raw blob). 10-iter smoke: loss 0.646→0.332,
+  **preference accuracy 0.60→1.00, reward margin 0.102→1.052** (model learned to prefer the
+  compressed output), peak 3.24GB, adapters saved + fused. The preference-tuning path
+  (PLAN-V2 §8) is verified end-to-end: install + module + LIVE training, not just shape.
+  ORPO/GRPO share the same entrypoint. Receipt: dogfood/distiller/dpo_smoke/.
