@@ -55,12 +55,17 @@ def normalize(s: str) -> str:
     return re.sub(r"[^a-z0-9]+", "_", s.strip().lower()).strip("_")
 
 
-THINK_RE = re.compile(r"<think>.*?(?:</think>|$)", re.DOTALL)
+# strip CLOSED think blocks (reasoning between the tags is discarded), then
+# strip any dangling <think>/</think> tags WITHOUT eating their content — an
+# unclosed "<think>label" must keep "label", not vanish (that was a real bug:
+# it produced spurious out-of-label-space misses on thinking-capable models).
+CLOSED_THINK_RE = re.compile(r"<think>.*?</think>", re.DOTALL)
+THINK_TAG_RE = re.compile(r"</?think>")
 
 
 def match_label(raw: str, by_norm: dict):
     """Exact normalized match first, then unique-prefix, else None."""
-    text = THINK_RE.sub("", raw).strip()
+    text = THINK_TAG_RE.sub("", CLOSED_THINK_RE.sub("", raw)).strip()
     norm = normalize(text)
     if norm in by_norm:
         return by_norm[norm], False

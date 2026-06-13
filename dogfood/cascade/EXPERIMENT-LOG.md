@@ -163,3 +163,31 @@
   promotion is correctly refused. A loop that promotes everything is broken; this one doesn't.
 - **DoD met (PLAN-V2 §15.3):** ≥3 autonomous rounds with ≥1 earned promotion AND ≥1 correct
   rejection; zero eval-slice reuse. Driver: `loop_demo/run_rounds.py`; receipts: `loop_demo/`.
+
+## 2026-06-12 — composition with the REAL 4B tier-2: the fine-tuned tier earns its slot
+- 4B tier-2 (Qwen3-4B-Instruct-2507 QLoRA, val 0.171, checkpoint iter 800) on the 154 probe:
+  **0.8377** (1 OOL). Two bugs/gotchas found and fixed getting here:
+  1. **llm_classify think-stripping bug:** an unclosed `<think>label` was fully stripped to
+     empty → spurious out-of-label misses. Fixed: strip CLOSED think blocks, then strip dangling
+     tags WITHOUT eating content. (committed)
+  2. **System-prompt-must-match-training (the big one):** tier-2 trained with a short prompt
+     (no label list); llm_classify defaulted to injecting the full 77-label list → accuracy
+     0.58. Re-running with the exact training prompt (`tier2_system.txt`) → **0.8377** (+25
+     points). Lesson for the recipe: eval prompt must match train prompt verbatim; a teaching
+     gotcha worth a callout.
+- Recomposed (tier-1 0.883 / tier-2-4B 0.838 / tier-3 0.818):
+
+  | architecture | accuracy | terminal-share | $/1k | ~latency | thresholds |
+  |---|---|---|---|---|---|
+  | t1→t2→t3 (selected) | **0.9416** | 12.3% | $0.25 | 1064ms | t1:0.43, t2:0.98 |
+  | t1→t3 | 0.9416 | 13.0% | $0.26 | 801ms | t1:0.43 |
+  | **t1→t2 (fully local, $0)** | **0.9286** | 13.0% local-to-t2 | **$0.00** | 301ms | t1:0.43 |
+  | t1 (solo) | 0.883 | — | $0 | 1ms | — |
+  | t2 (solo, 4B) | 0.838 | — | $0 | 300ms | — |
+  | t3 (solo, frontier) | 0.818 | — | $2.00 | 800ms | — |
+
+- **The 4B tier-2 earns its slot** (the 0.6B dev model did not): t1→t2 now reaches **0.9286
+  fully local at $0** — +4.5 over tier-1 alone, no frontier call. Adding the frontier
+  (t1→t2→t3) buys +1.3 more (0.9416) for $0.25/1k. The experiment-driven decision now has a
+  real trade to present: a zero-cost local cascade at 0.929, or +1.3 points for a little spend.
+  Conformal-certified (UCB 0.067 ≤ 0.10). This is the flagship claim with the real headline tier-2.

@@ -1,0 +1,1 @@
+Classify the banking query into exactly one intent label. Reply with the label only.
