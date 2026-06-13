@@ -1,18 +1,18 @@
 {
   "run_id": "20260612-qwen3-4b-distiller-leg7",
   "status": "running",
-  "pid": 34384,
-  "command": "mlx_lm.lora --model mlx-community/Qwen3-4B-Instruct-2507-4bit --train --data data --iters 1095 --batch-size 1 --learning-rate 1e-4 --num-layers 8 --max-seq-length 2048 --grad-checkpoint --adapter-path runs/20260612-qwen3-4b-distiller-leg7/adapters --steps-per-report 20 --steps-per-eval 73 --val-batches 12 --save-every 73 --seed 42 --mask-prompt --clear-cache-threshold 1073741824",
+  "pid": 53489,
+  "command": "mlx_lm.lora --model mlx-community/Qwen3-4B-Instruct-2507-4bit --train --data data --iters 1095 --batch-size 1 --learning-rate 5e-5 --num-layers 8 --max-seq-length 2048 --grad-checkpoint --adapter-path runs/20260612-qwen3-4b-distiller-leg7/adapters --steps-per-report 20 --steps-per-eval 73 --val-batches 12 --save-every 73 --seed 42 --mask-prompt --clear-cache-threshold 1073741824",
   "model": "mlx-community/Qwen3-4B-Instruct-2507-4bit",
   "adapter_path": "runs/20260612-qwen3-4b-distiller-leg7/adapters",
   "data_dir": "data/",
-  "log_path": "runs/20260612-qwen3-4b-distiller-leg7/train.log",
+  "log_path": "runs/20260612-qwen3-4b-distiller-leg7/train_leg8.log",
   "total_iters": 1095,
   "save_every": 73,
   "hparams": {
     "batch_size": 1,
     "grad_accumulation_steps": 1,
-    "learning_rate": 0.0001,
+    "learning_rate": 5e-05,
     "num_layers": 8,
     "max_seq_length": 2048,
     "grad_checkpoint": true,
@@ -23,7 +23,7 @@
     "note": "leg 7 of the distiller saga \u2014 wired-limit hypothesis (PLAN-V2 \u00a75); limit raised by rc 2026-06-12, reverts on reboot; mlx-lm 0.31.3 (confirmed latest)"
   },
   "started_at": "2026-06-12T23:42:05+00:00",
-  "updated_at": "2026-06-12T23:42:05+00:00",
+  "updated_at": "2026-06-13T00:20:37+00:00",
   "best_val": {
     "iter": null,
     "loss": null
@@ -31,6 +31,9 @@
   "resume_history": [
     {
       "note": "leg7 PRE-REGISTERED (EXPERIMENT-LOG 2026-06-12): predicted ~55/45 pass at 13.0GB wired; correction vs pre-registration \u2014 clear-cache-threshold was ALREADY 1GB in legs 4-6 (state.json hparams), so the only new levers vs leg 6 are the wired limit and the 2B\u21924B model swap."
+    },
+    {
+      "note": "leg7 RESOLVED the memory question: 240+ iters, 3 full val passes, peak 5.45GB, ZERO OOM under wired_limit 13312 \u2014 where legs 1-6 (2B) died before iter 1. But loss diverged to NaN between iter 40 (0.891, healthy) and 60 at lr 1e-4 on long compression records; all checkpoints post-NaN, discarded. leg8 = fresh start, lr halved to 5e-5 (the dogfood/level2 lesson), single factor changed."
     }
   ]
 }

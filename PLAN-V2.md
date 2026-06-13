@@ -370,3 +370,87 @@ CPT: [Synthetic continued pretraining / EntiGraph (ICLR 2025)](https://arxiv.org
 Curriculum: [curriculum pretraining](https://arxiv.org/abs/2506.11300) · [Difficulty Is Not Enough (AAAI)](https://ojs.aaai.org/index.php/AAAI/article/view/40400/44361).
 Speculative decoding: [EAGLE-3 in practice](https://huggingface.co/blog/lujangusface/tw-eagle3-gpu) · [EAGLE 3.1](https://www.marktechpost.com/2026/05/27/meet-eagle-3-1-the-speculative-decoding-algorithm-that-fixes-attention-drift-in-llm-inference/).
 MLX: [LEARNED_QUANTS.md (DWQ/AWQ/dynamic)](https://github.com/ml-explore/mlx-lm/blob/main/mlx_lm/LEARNED_QUANTS.md) · [mlx-lm](https://github.com/ml-explore/mlx-lm) · [Apple M5 MLX benchmarks](https://machinelearning.apple.com/research/exploring-llms-mlx-m5).
+
+---
+
+## 15. The capstone (added 2026-06-12): the self-improving system — Recipe 5 + `tune-loop` (Phase E)
+
+rc's framing, adopted: **the flywheel is not a feature of one recipe — it IS the AI system.**
+The system boundary covers data preparation, training, evaluation, serving, and feedback.
+What sits inside may be a single model, a cascade, an agent, or a deterministic multi-model
+workflow — the system doesn't care; it experiments with architectures × fine-tuning
+methodologies and adopts whatever measurably improves accuracy from the current state, on the
+user's own data. This is the champion/challenger pattern from classical MLOps, generalized to
+compound-AI architecture search, driven by the §14.3 MAPE loop.
+
+### 15.1 The pieces
+
+1. **System descriptor** (small versioned YAML — makes architectures enumerable, comparable,
+   reproducible): components (model + training method + calibration), routing/composition
+   logic, thresholds. Examples:
+   `single: FT-SLM(qwen3-4b, sft)` ·
+   `cascade: LR(static-emb) →[p<.70] FT-SLM →[margin<.20] frontier(knn-fewshot)` ·
+   `workflow: injection-gate → router → {cheap, frontier}`.
+2. **Runtime + prediction log** (§4.5 schema): every prediction from every component, plus
+   feedback — explicit (user corrections), automated (programmatic verifiers like the grounding
+   gate; downstream success signals), and structural (escalation-tier outputs are free labels
+   for the tiers below).
+3. **Curation:** dedupe → conflict resolution → confident-learning noise filter → time-stamped
+   snapshots. Feedback is never trained on raw.
+4. **Experiment engine** (Analyze/Plan): on trigger (≥N curated labels · drift · schedule),
+   assemble snapshot D_t, generate a challenger set from the **portfolio** (the ladder,
+   generalized: architecture families first, then per-family method refinements — LoRA vs DoRA,
+   rank, RLVR round, embedding upgrade — one factor per round), score cheap proxies first
+   (offline counterfactual composition, §4.3), train only survivors within a declared
+   compute/$ budget.
+5. **Promotion** (Execute): champion vs challengers on a *fresh, never-used* eval slice against
+   a pre-registered promotion bar (≥X accuracy at ≤Y cost at iso-latency; certified operating
+   point re-derived per §14.1). Promote or retain; either way the round is appended to
+   EXPERIMENT-LOG.md. Repeated no-promotions lengthen the trigger interval — the system
+   self-paces toward stability instead of churning.
+
+### 15.2 The three failure modes the design must own (else this is AutoML slop)
+
+1. **Feedback bias:** feedback over-samples escalated/uncertain cases — the logged distribution
+   is not the serving distribution. Owned by: a small always-on **uniform random audit slice**
+   (x% of traffic gets gold feedback regardless of confidence), stratified-by-tier reporting,
+   importance weighting where feasible.
+2. **Eval burn:** continuous improvement eats test sets. Owned by: time-based **rolling frozen
+   slices, each consumed exactly once** (the one-look rule, systematized); challenger selection
+   happens on validation windows; adjudication only on the newest untouched slice.
+3. **Search explosion:** architectures × methods is unbounded. Owned by: staged search (family
+   → refinement), per-round declared budget, and a minimum-improvement bar so rounds converge.
+
+### 15.3 Form factor and dogfood
+
+- **Recipe 5 (the capstone recipe)** + a **fifth skill, `tune-loop`**, that drives MAPE rounds
+  using the existing four skills as its tools — decide is Plan, data is curation, train is
+  Execute, eval is Analyze/adjudicate. The four skills are one revolution; tune-loop is the
+  crank. No serving infrastructure (no gateway/deploy product): artifacts stay local scripts,
+  logs, and descriptors.
+- **Dogfood, two stages:** (a) build the machinery on a **Banking77 replay stream** (Phase B
+  assets; gold labels revealed over simulated time, labeled as simulated) — cheap, controlled,
+  reproducible; (b) showcase on **the router's real traffic** (Recipe 2 — rc's own logs accrue
+  daily; automated feedback = blinded judge over cheap-tier outputs), which makes the capstone
+  a story about a system that already exists in this repo getting measurably better on live data.
+- **Definition of done (Phase E):** ≥3 autonomous rounds on the replay stream with receipts,
+  including at least one challenger promotion *earned* on the pre-registered bar AND at least
+  one promotion correctly *rejected*; zero eval-slice reuse; then ≥1 round on real router
+  traffic.
+
+### 15.4 A deliberate v1 reversal, logged
+
+PLAN.md §7 named autonomous config-mutation hill-climbing a non-goal ("inverts
+teach-while-doing"). The capstone deliberately reverses that — with the disciplines that make
+it teaching-grade rather than slop: pre-registered promotion bars, one-look slices, declared
+budgets, append-only logs, and human checkpoints at spend and promotion (delegable, like the
+standing "continue, don't wait" arrangement). The EXPERIMENT-LOG a learner reads afterwards is
+still the product.
+
+### 15.5 Sequencing (maps onto existing phases — nothing is thrown away)
+
+- **Phase B already builds one hand-cranked revolution:** tier components, offline composition,
+  prediction log, one demonstrated retrain cycle (§4.5).
+- **Phase C's tune-decide rework IS the experiment engine's Plan stage** (§6).
+- **Phase E (new, after D):** system descriptor + `tune-loop` + champion/challenger promotion +
+  the §15.2 bias/burn machinery + the two-stage dogfood. Recipe 5 written from those receipts.

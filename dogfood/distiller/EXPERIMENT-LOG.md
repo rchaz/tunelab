@@ -118,3 +118,23 @@
 - **Bar:** the 2026-06-11 pre-registered bar above remains UNCONSUMED and binds the eval of any
   checkpoint this run produces. Test set still looked at zero times.
 - **Blocked on:** rc running the sysctl (sudo). Everything else is staged.
+
+## 2026-06-12 — leg 7 ran (MEMORY WALL GONE) → NaN at lr 1e-4 → leg 8 launched at 5e-5
+- **Correction to the leg-7 pre-registration:** `--clear-cache-threshold` was already in use at
+  1GB in legs 4–6 (state.json hparams) — "absent from all six legs" was wrong. The true delta
+  vs leg 6: the wired limit (0 → 13312) and the model (2B → 4B).
+- **Memory outcome — the six-leg wall is gone:** rc raised the wired limit; leg 7 (Qwen3-4B,
+  leg-6-minimal config) completed the iter-1 val pass where legs 5/6 died, then ran 240+
+  training iterations with THREE full val passes. MLX peak 5.45GB; system wired cycled
+  7.6–9.5GB. Zero OOM. The confound stands as pre-registered (model and limit changed
+  together), so this is "consistent with the hypothesis," not a clean proof — but the
+  practical claim (16GB + raised wired limit trains a 4B on multi-thousand-token records) is
+  now a receipt. Predicted ~55/45 pass with peak 12–14.5GB → actual: pass, MLX peak 5.45GB —
+  far more headroom than predicted at batch 1 / 8 layers / grad-checkpoint / 1GB cache cycling.
+- **Training outcome — NaN divergence:** loss healthy and falling through iter 40
+  (val 2.147 → train 1.235 → 0.891), NaN by iter 60; all three saved checkpoints post-NaN,
+  discarded (safetensors deleted; train.log kept as the receipt). Diagnosis: lr 1e-4 too hot
+  for long masked-prompt compression records — the level2 dogfood already taught "halve the LR
+  when training destabilizes"; same lesson, new spelling.
+- **Leg 8 launched** (~17:25Z, pid in state.json): identical config, single factor changed —
+  lr 5e-5. The 2026-06-11 bar still binds; test set still untouched.
