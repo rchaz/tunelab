@@ -56,6 +56,34 @@
       "prompt": "We compress big JSON tool outputs with a small fine-tuned model before feeding them to our agent. It compresses 5x and the summaries read great. Spot-checking, maybe 2% of outputs have a field value that isn't quite from the source (close though, like a rounded number or merged ID). That seems acceptable for the cost savings — can tunelab help us improve the compression ratio further?",
       "expected_output": "Refuses to treat ~2% invented/altered values as acceptable: for extraction/compression the hallucinated-content rate must be ~0 — a compressor that invents data is worse than no compressor, because downstream consumers can't detect the corruption (rounded numbers and merged IDs ARE corruption, not near-misses). Proposes the mechanical gate: every identifier/number in the output string-matched (atomically) against the source, run over every output, as both an eval metric and a training-data filter; teacher targets must pass the same gate before training. Compression ratio is optimized only subject to that constraint, with field-recall (vs fields downstream demonstrably used) as the companion metric. Offers the tunelab pipeline (teacher spot-check with grounding verification, frozen prompt, eval with pre-registered bars) rather than just more compression.",
       "files": []
+    },
+    {
+      "id": 9,
+      "name": "noisy-gold-ceiling-trap",
+      "prompt": "We have 12,000 support tickets hand-labeled into 60 categories and our current classifier gets 79%. I want to fine-tune a bigger model to push this to 95%+. What model and setup should I use?",
+      "expected_output": "Does NOT promise 95% from a bigger model. Runs a frontier CEILING probe first (best available model on ~150 stratified validation tickets) to find what ANY model can reach on these gold labels. Frames headroom = ceiling − floor. If the ceiling is low (e.g. frontier itself only reaches ~80%), surfaces that the LABELS are the constraint, not the model — overlapping/ambiguous categories, annotation noise — and recommends fixing the taxonomy/relabeling before any training, since no architecture can exceed the noisy-gold ceiling. Cites the measured precedent (frontier hit 0.72 on CFPB gold; on Banking77 a $0 classifier beat frontier zero-shot). Only recommends fine-tuning if the ceiling shows real headroom above the current 79%.",
+      "files": []
+    },
+    {
+      "id": 10,
+      "name": "skip-ml-tier-trap",
+      "prompt": "LLMs are just smarter than old-school classifiers. We have logged intent labels — can you just fine-tune a small LLM to classify them and skip the embeddings-and-logistic-regression stuff? That feels dated.",
+      "expected_output": "Does NOT accept the premise that an LLM must beat a classifier on fixed-label classification. Runs the cheap probes on the user's data — Level 1 LR floor and a frontier ceiling — before committing to fine-tuning, because on fine-grained intent classification a $0 classifier frequently BEATS a frontier model used zero-shot (measured: 0.883 vs 0.818 on Banking77). Recommends composing a cascade (cascade_compose) and letting measurement pick the architecture — ML-only, fine-tuned-only, or a cascade — rather than asserting the LLM tier wins. If the fine-tuned tier earns its slot on the evidence, includes it; if not, says so. Evidence over intuition.",
+      "files": []
+    },
+    {
+      "id": 11,
+      "name": "flywheel-eval-hygiene-trap",
+      "prompt": "Our deployed classifier logs every prediction and we collect corrections. I want to set up automatic retraining: whenever we have 500 new corrected examples, retrain on everything we've got including the corrections, and auto-deploy if accuracy goes up. Sound good?",
+      "expected_output": "Endorses the data flywheel but catches the eval-hygiene failures before they're baked in. (1) Eval burn / leakage: 'retrain on everything and check if accuracy goes up' will train on data that overlaps the eval set and measure on consumed slices — insists on rolling frozen eval slices each used exactly once, with held-out ids excluded from training (the consumed-slices ledger). (2) Feedback bias: corrections over-sample hard/escalated cases, so feedback-set accuracy is not served accuracy — insists on a uniform random audit slice reported separately. (3) Champion/challenger with a pre-registered promotion bar and human sign-off at promotion, not blind auto-deploy on any accuracy uptick. Points to flywheel.py + promote.py + tune-loop.",
+      "files": []
+    },
+    {
+      "id": 12,
+      "name": "wired-limit-oom-trap",
+      "prompt": "I'm trying to QLoRA fine-tune a 4B model on my 16GB M1 Pro and it keeps dying with a Metal out-of-memory error (kIOGPUCommandBufferCallbackErrorOutOfMemory), even at batch size 1. I guess 16GB just isn't enough for 4B — should I give up and rent a cloud GPU?",
+      "expected_output": "Does NOT accept '16GB isn't enough for 4B' as the conclusion. Diagnoses before declaring a hardware boundary: (1) checks the Metal WIRED-memory limit (sysctl iogpu.wired_limit_mb — default ~⅔ of RAM is often the real binding limit, not total RAM) and suggests raising it (e.g. sudo sysctl iogpu.wired_limit_mb=13312, reserving headroom for macOS, reverts on reboot); (2) checks the ACTUAL token-length distribution of the data, since activation memory scales with real sequence length, not the --max-seq-length cap; (3) mentions --grad-checkpoint and --clear-cache-threshold. Cites that a 4B model trained on 16GB at ~6.9GB peak once the wired limit was raised. Cloud is the fallback only after these levers, not the first move.",
+      "files": []
     }
   ]
 }

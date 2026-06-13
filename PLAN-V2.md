@@ -259,17 +259,19 @@ Regression cases from rounds 1–2, plus new traps:
 4. *Wired-limit trap* — Metal OOM report on 16GB → must reach for sysctl/cache levers and actual
    token-length analysis before declaring hardware boundaries.
 
-## 11. Phasing
+## 11. Phasing — STATUS (updated 2026-06-12)
 
-| Phase | Scope | Definition of done |
+| Phase | Scope | Status |
 |---|---|---|
-| **A** | Recipe 3 leg 7 (needs rc for sudo) → full run or cloud escalation | Student model exists; the 2026-06-11 bar consumed honestly either way; recipe rewritten around the outcome |
-| **B** | Cascade flagship: Banking77 pipeline, three tiers, composition, flywheel cycle, Recipe 1 rewritten | All §4.4 bars adjudicated on the untouched test set; flywheel retrain delta reported; README receipts updated |
-| **C** | tune-decide rework + 7 concept docs + DPO/ORPO spike + eval round 3 + README accuracy-first repositioning | Eval round 3 ≥ rounds 1–2 pass quality; ceiling probe shipped in tune-decide |
-| **D** | CPT continuous-capability design doc (Recipe 4 skeleton) | Pre-registered metric card exists; Phase 3 (EDGAR) can implement from it |
+| **A** | Recipe 3 distiller: train Qwen3-4B, consume the bar, rewrite | ✅ **DONE** — wired-limit unblocked 4B; leg 9 trained clean; bar consumed (ratio✅ judge✅ grounding❌→RLVR); recipe rewritten |
+| **B** | Cascade flagship: Banking77, 3 tiers, composition, flywheel, Recipe 1 | ✅ **~90%** — all tiers, composition table (0.9416 beats every tier, conformal-certified), ceiling finding, flywheel cycle (+7.8pts), Recipe 1 rewritten. Owed: 4B-tier-2 official-test headline number |
+| **C** | tune-decide rework + 7 concepts + DPO/ORPO spike + eval round 3 + README | ✅ **~85%** — 7 concept docs✅, tune-decide experiment-rework✅, eval round 3 cases (9–12) added✅, README accuracy-first✅. Owed: DPO/ORPO live spike (Metal), full multi-agent eval-round-3 run |
+| **D** | CPT continuous-capability design doc (Recipe 4 skeleton) | ✅ **DONE** — Recipe 4 skeleton with pre-registered metric card |
+| **E** | Capstone: Recipe 5 + tune-loop + champion/challenger | ✅ **~80%** — tune-loop skill✅, promote.py✅ (smoke-tested), Recipe 5✅, flywheel cycle demonstrated✅. Owed: ≥3 autonomous rounds on the replay stream + 1 on real router traffic |
 
-Order rationale: A is small, needs the user present, and its outcome (does 4B fit at long
-sequences with the raised limit?) bounds what Phase B can promise about tier-2 hardware envelopes.
+Remaining to fully close v2: the 4B-tier-2 official-test headline number; the DPO/ORPO live
+spike; multi-round `tune-loop` dogfood (≥3 rounds); the full multi-agent eval-round-3 run; the
+RLVR distiller round-2; and the live EDGAR CPT run (Recipe 4). Everything else shipped 2026-06-12.
 
 ## 12. Constraints (v1 constraints hold, plus)
 

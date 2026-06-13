@@ -1,7 +1,7 @@
 {
   "name": "tunelab",
-  "version": "0.3.0",
-  "description": "The fine-tuning lab for Claude Code: decide whether you need fine-tuning at all, distill your LLM logs into small local models (MLX/LoRA), continued-pretrain for domain fluency, evaluate with held-out discipline — and learn the why at every step.",
+  "version": "0.4.0",
+  "description": "Build AI systems that beat any single model: hybrid cascades (ML → fine-tuned SLM → frontier) with conformal-certified routing, a data flywheel that self-improves via champion/challenger, distillation with a mechanical grounding gate, and local MLX training — decide by experiment, evaluate with held-out discipline, and learn the why at every step.",
   "author": {
     "name": "Rahul Chandrasekaran"
   },
@@ -18,6 +18,10 @@
     "claude-code",
     "claude-code-plugin",
     "continued-pretraining",
-    "model-distillation"
+    "model-distillation",
+    "model-cascade",
+    "llm-routing",
+    "data-flywheel",
+    "conformal-prediction"
   ]
 }
