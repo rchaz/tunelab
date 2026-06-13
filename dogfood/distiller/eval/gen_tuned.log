@@ -1,10 +1,0 @@
-Installed 34 packages in 141ms
-loading mlx-community/Qwen3-4B-Instruct-2507-4bit + runs/20260612-qwen3-4b-distiller-leg7/adapters-best
-Fetching 11 files:   0%|          | 0/11 [00:00<?, ?it/s]Fetching 11 files: 100%|██████████| 11/11 [00:00<00:00, 28409.69it/s]
-  10/68
-  20/68
-  30/68
-  40/68
-  50/68
-  60/68
-wrote 68 predictions -> eval/preds_tuned.jsonl

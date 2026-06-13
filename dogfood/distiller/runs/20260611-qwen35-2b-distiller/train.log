@@ -1,12 +1,0 @@
-Loading pretrained model
-Fetching 10 files:   0%|          | 0/10 [00:00<?, ?it/s]Fetching 10 files:  10%|█         | 1/10 [00:00<00:01,  7.20it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-Fetching 10 files:  30%|███       | 3/10 [01:53<04:53, 41.87s/it]Fetching 10 files: 100%|██████████| 10/10 [01:53<00:00, 11.31s/it]
-Loading datasets
-Training
-Trainable parameters: 0.298% (5.606M/1881.825M)
-Starting training..., iters: 1365
-Calculating loss...:   0%|          | 0/12 [00:00<?, ?it/s]Calculating loss...:   8%|▊         | 1/12 [00:15<02:45, 15.03s/it]Calculating loss...:  17%|█▋        | 2/12 [00:25<02:01, 12.17s/it]Calculating loss...:  25%|██▌       | 3/12 [00:38<01:54, 12.72s/it]Calculating loss...:  33%|███▎      | 4/12 [00:49<01:35, 11.96s/it]Calculating loss...:  42%|████▏     | 5/12 [00:59<01:19, 11.33s/it]Calculating loss...:  50%|█████     | 6/12 [01:05<00:56,  9.40s/it]Calculating loss...:  58%|█████▊    | 7/12 [01:16<00:49,  9.90s/it]Calculating loss...:  67%|██████▋   | 8/12 [01:27<00:41, 10.38s/it]Calculating loss...:  75%|███████▌  | 9/12 [01:35<00:28,  9.59s/it]Calculating loss...:  83%|████████▎ | 10/12 [01:49<00:21, 11.00s/it]Calculating loss...:  92%|█████████▏| 11/12 [02:04<00:12, 12.22s/it]Calculating loss...: 100%|██████████| 12/12 [02:12<00:00, 11.02s/it]Calculating loss...: 100%|██████████| 12/12 [02:12<00:00, 11.07s/it]
-Iter 1: Val loss 0.841, Val took 132.873s
-libc++abi: terminating due to uncaught exception of type std::runtime_error: [METAL] Command buffer execution failed: Insufficient Memory (00000008:kIOGPUCommandBufferCallbackErrorOutOfMemory)
-/Users/rc/.local/share/uv/python/cpython-3.14.3-macos-aarch64-none/lib/python3.14/multiprocessing/resource_tracker.py:396: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown: {'/mp-cumkw6pt'}
-  warnings.warn(

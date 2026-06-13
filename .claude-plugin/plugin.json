@@ -1,7 +1,7 @@
 {
   "name": "tunelab",
   "version": "0.4.0",
-  "description": "Build AI systems that beat any single model: hybrid cascades (ML → fine-tuned SLM → frontier) with conformal-certified routing, a data flywheel that self-improves via champion/challenger, distillation with a mechanical grounding gate, and local MLX training — decide by experiment, evaluate with held-out discipline, and learn the why at every step.",
+  "description": "Cut your AI bill without losing accuracy. tunelab helps you move repetitive LLM work — classifying, routing, extracting, drafting — onto small models that run for free on your Mac. It decides by experiment (testing on your own data first), trains locally with MLX, evaluates honestly, and explains every step so you learn how it works.",
   "author": {
     "name": "Rahul Chandrasekaran"
   },

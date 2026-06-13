@@ -1,76 +1,50 @@
-# Recipe 5 — The self-improving system (the capstone)
+# Recipe 5 — The self-improving system
 
-**The whole point of everything else. A deployed AI system — one model, a cascade, an agent, or a
-deterministic multi-model workflow — that logs every prediction, collects feedback, and runs
-champion/challenger experiments to discover and adopt a better architecture over time. Driven by
-`tune-loop`. Every mechanism below is demonstrated on real Banking77 data (2026-06-12, $0.00).**
+**Who this is for:** you've shipped something from one of the other recipes, and now you want it to *keep getting better* on its own as real usage accumulates — without you babysitting it or letting it quietly degrade.
 
-## The shift
-
-Recipes 1–4 build models. This one builds the *loop* that keeps them improving:
+**The plain idea.** Recipes 1–4 build models. This one builds the *loop* that keeps them improving:
 
 ```
-serve → log every prediction → collect feedback → curate → experiment across
-architectures × methods → promote only what beats the champion → repeat
+serve → log every prediction → collect feedback → try better versions →
+keep one only if it beats the current best → repeat
 ```
 
-The system boundary covers data prep, training, evaluation, serving, and feedback. What sits
-inside is just the current champion — the loop is free to replace it (swap a tier, add an RLVR
-round, change the whole architecture) when evidence says so. This is champion/challenger from
-classical MLOps, generalized to compound-AI architecture search, run as a Monitor–Analyze–
-Plan–Execute control loop.
+This is **champion/challenger**: there's always a current "champion" in production. The loop trains "challengers," tests them fairly, and promotes one *only* when it genuinely wins. Driven by `tune-loop`, with the other four skills as its tools.
 
 ## The pieces (all already built across tunelab)
 
 | Stage | Tool | What it does |
 |---|---|---|
-| Descriptor | `system/descriptor.json` | the champion architecture as versioned data — enumerable, comparable |
-| Monitor + Analyze | `flywheel.py status` | audit-slice accuracy, drift (PSI), per-tier coverage, trigger evaluation |
-| Plan | `flywheel.py plan` + `cascade_compose.py` | curate (holdout-excluded), generate challengers, score cheap proxies offline |
-| Execute | tune-train + tune-eval | train survivors, score on a fresh slice |
-| Promote | `promote.py` | adjudicate vs the pre-registered bar on a one-look slice; bump the descriptor on a win |
+| Describe | `descriptor.json` | the current system, written down as data so versions can be compared |
+| Watch | `flywheel.py status` | tracks accuracy and drift, decides when a retrain is worth it |
+| Plan | `flywheel.py plan` | curates new data (keeping the test set separate) and proposes challengers |
+| Train & grade | tune-train + tune-eval | trains the challengers, scores them on fresh data |
+| Promote | `promote.py` | compares to the champion against a pre-set bar; promotes only a real winner |
 
 ## Demonstrated: one turn of the loop, measured
 
-A champion classifier trained on a **starved 2,000-record** slice of Banking77:
+A champion classifier trained on a deliberately starved 2,000-record slice of Banking77:
 
-- `flywheel.py status` reads the prediction log: **audit-slice accuracy 0.72** (the honest served
-  estimate, reported separately from the biased feedback pile at 0.72 — bias-awareness working),
-  triggers FIRE (307 new labels ≥ 200; accuracy 0.72 < 0.90 floor) → retrain candidate.
-- Challenger retrained after one feedback cycle (full 8,005 records).
-- `promote.py`: champion **0.8128** vs challenger **0.8904** = **+7.8 points**, clears the bar,
-  beats the champion → **PROMOTE**, descriptor bumped to the next version.
+- `flywheel.py status` reads the prediction log: real accuracy **0.72**, enough new labels arrived, and accuracy is below the floor → **retrain triggered.**
+- A challenger is retrained after one feedback cycle (now on the full 8,005 records).
+- `promote.py`: champion **0.813** vs challenger **0.890** = **+7.8 points** → **promote**, version bumped.
 
-The lift *is* the receipt. Run it again and the slice-reuse guard refuses to adjudicate twice on
-the same eval slice — the discipline is mechanical, not aspirational.
+Run it again and the system *refuses* to re-grade on the same test slice — the discipline is enforced by code, not by good intentions.
 
-## The three failure modes — and how the design owns each
+## Why a self-improving loop is easy to get wrong — and how this one doesn't
 
-A self-improving loop is easy to build badly. The guardrails that make it trustworthy:
+Three classic traps, each with a built-in guardrail:
 
-1. **Feedback bias** — feedback over-samples hard/escalated cases. Owned by a uniform **random
-   audit slice**; that slice (0.72 in the demo, vs an even more misleading biased read) is the
-   honest accuracy, reported separately.
-2. **Eval burn** — the loop eats test sets. Owned by **rolling frozen slices consumed exactly
-   once** — `promote.py` keeps a consumed-slices ledger and hard-errors on reuse.
-3. **Search explosion** — architectures × methods is unbounded. Owned by **staged search**
-   (architecture family first, then one refinement per round), a declared per-round budget, and a
-   minimum-improvement bar so rounds converge instead of churning.
+1. **Feedback is biased.** People report problems more than successes, so the feedback pile looks worse than reality. Fixed by also keeping a small **random sample** as the honest accuracy estimate, reported separately.
+2. **The loop burns through test sets.** Reuse a test set and it stops being a fair test. Fixed by **frozen slices used exactly once**, tracked in a ledger that errors on reuse.
+3. **Too many things to try.** The space of possible changes is endless. Fixed by a **staged search** (pick the architecture first, then one refinement per round) with a declared budget and a minimum-improvement bar, so it converges instead of churning.
 
-## The discipline that separates this from AutoML slop
+## What separates this from "AutoML that hill-climbs forever"
 
-Pre-registered promotion bars · one-look eval slices · declared budgets · append-only logs ·
-**human checkpoints at spend and promotion** (delegable). tunelab v1 named autonomous
-hill-climbing a non-goal; the capstone reverses that deliberately — and these disciplines are the
-reason it's teaching-grade. The EXPERIMENT-LOG a learner walks away with is still the product.
+Bars set in advance · test slices used once · declared budgets · append-only logs · **human sign-off at the points that spend money or change production** (you can delegate these, but they exist). The whole thing stays auditable and teaching-grade — the experiment log a learner walks away with is still the real product.
 
 ## Where it runs
 
-Two dogfood stages: (1) the machinery on a **Banking77 replay stream** (controlled, simulated
-feedback, labeled as such — done above); (2) the showcase on **real router traffic** (Recipe 2 —
-logs that accrue daily, with a blinded judge as automated feedback). No serving infrastructure is
-shipped: artifacts stay local scripts, logs, and descriptors. `tune-loop` is the crank; the other
-four skills are the machine.
+Two stages: (1) the machinery on a replayed Banking77 stream (controlled, clearly labeled as simulated — shown above); (2) the showcase on real router traffic (Recipe 2), where logs accumulate daily and a blinded judge acts as automated feedback. No serving infrastructure ships — everything is local scripts, logs, and version descriptors. `tune-loop` is the crank; the other four skills are the machine.
 
-Driver + full schema: `skills/tune-loop/SKILL.md`. Run log: `dogfood/cascade/EXPERIMENT-LOG.md`
-(flywheel cycle).
+Driver and full schema: [`skills/tune-loop/SKILL.md`](../skills/tune-loop/SKILL.md). Run log: [`dogfood/cascade/EXPERIMENT-LOG.md`](../dogfood/cascade/EXPERIMENT-LOG.md).

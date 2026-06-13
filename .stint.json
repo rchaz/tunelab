@@ -1,8 +1,0 @@
-{
-  "shared_dirs": [],
-  "shared_files": [],
-  "post_create": [],
-  "main_branch_policy": "allow",
-  "force_cleanup": "prompt",
-  "adopt_changes": "always"
-}

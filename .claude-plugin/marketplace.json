@@ -7,7 +7,7 @@
     {
       "name": "tunelab",
       "source": "./",
-      "description": "Build AI systems that beat any single model: hybrid cascades (ML to fine-tuned SLM to frontier) with conformal-certified routing, a self-improving data flywheel, distillation with a grounding gate, and local MLX training — decide by experiment, evaluate with held-out discipline."
+      "description": "Cut your AI bill without losing accuracy — move repetitive LLM work onto small models that run free on your Mac. Decides by experiment on your own data, trains locally with MLX, evaluates honestly, and teaches you the why at every step."
     }
   ]
 }

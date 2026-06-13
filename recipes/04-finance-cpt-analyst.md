@@ -1,63 +1,55 @@
-# Recipe 4 — Finance filings analyst (CPT showcase) — SKELETON
+# Recipe 4 — Finance filings analyst
 
-**Level 3 · continued pretraining as a *maintained system*, not a one-shot · SEC EDGAR is free
-and reproducible by anyone. This recipe is a pre-registered skeleton: the metric card and
-pipeline are fixed here; the live run is the next CPT-capable session.**
+**Who this is for:** you work in a domain with its own dense, specialized language — SEC filings, legal contracts, medical notes — and a general model only half-understands the idiom.
 
-## The problem
+**The plain idea.** Some domains speak a language the base model barely knows. You can't fix that by retrieving facts (that's what RAG does) — you have to make the model *fluent* in the domain. **Continued pretraining (CPT)** does that: you keep training a base model on a big pile of raw domain text so it gets comfortable with how the domain actually writes.
 
-Some domains speak a language the base model only half-knows — dense filings-speak, a niche legal
-sublanguage. RAG fetches *facts*; it doesn't fix *fluency*. Continued pretraining (CPT) on a
-domain corpus buys the fluency, and the production pattern is **CPT for domain idiom + RAG for
-fresh facts with citations** (see [concepts/cpt-vs-rag.md](../concepts/cpt-vs-rag.md)). The
-numbers come from retrieved source spans; the *reading* of them comes from a model that speaks the
-domain natively.
+The production pattern is **CPT for fluency + RAG for facts**: the model reads the domain natively, and the actual numbers come from retrieved, cited source documents — never from the model's memory (see [fine-tuning vs RAG](../concepts/cpt-vs-rag.md)).
 
-## Why this is a system, not a run
+> **Jargon, once:** *perplexity* = how surprised the model is by a piece of text. Lower perplexity = the text feels more natural to the model = more fluent.
 
-A model CPT'd on last quarter's filings drifts as the domain moves. So CPT is a loop, the same
-flywheel logic applied to a corpus:
+## Why this is a system, not a one-time job
+
+A model trained on last quarter's filings drifts as the domain moves. So CPT is a loop:
 
 ```
-corpus refresh → delta-chunk the new filings → incremental CPT (low LR, replay) →
-small SFT restore pass → eval gates → ship or hold → repeat
+new filings come in → train on just the new text → small refresh pass →
+check it didn't break → ship or hold → repeat
 ```
 
-Each stage has a non-obvious requirement (full detail:
-[concepts/continuous-pretraining.md](../concepts/continuous-pretraining.md)): delta-chunk only
-new text; LR re-warm then re-decay at ~10% of pretraining LR; mix general-data **replay** (or use
-LoRA-CPT) to prevent catastrophic forgetting; an SFT restore pass because CPT yields a
-text-completer, not an assistant.
+Each step has a non-obvious requirement (full detail in [continued pretraining](../concepts/continuous-pretraining.md)): only train on genuinely new text; use a low, carefully-shaped learning rate; mix in some general data so the model doesn't *forget* its general skills ("catastrophic forgetting"); and run a small instruction-tuning pass afterward, because raw CPT produces a text-completer, not a helpful assistant.
 
-## Data source
+## The live result (research mode)
 
-SEC EDGAR 10-K / 10-Q / earnings-call transcripts — public-domain, fetchable without auth, and
-the canonical "the language itself is foreign" corpus. For a small corpus (under the ~10M-token
-gate), **EntiGraph-style synthetic CPT** amplifies it: prompt a strong model to generate diverse
-text connecting the corpus's entities, then CPT on the synthetic corpus (trades API cost for the
-domain tokens you don't have).
+A small, honest demonstration — **not** a production-scale run:
 
-## Pre-registered metric card (logged before any CPT run)
+- **Corpus:** 3 real 10-K filings (Apple, Microsoft, NVIDIA), fetched free from SEC EDGAR (public, no login), cleaned to ~231,000 tokens.
+- **Model:** Qwen3-0.6B base, trained locally with LoRA. Peak memory 5.47GB.
+- **Result — domain fluency improved:**
 
-- **Primary — downstream SFT lift:** a task fine-tune (hawkish/dovish classification, or
-  guidance-change extraction) on the CPT'd base vs the same fine-tune on the un-CPT'd base. The
-  *lift from CPT* is the headline number — necessary because perplexity alone doesn't prove
-  usefulness.
-- **Domain perplexity Δ** on held-out filings (did fluency improve?).
-- **Guardrail — catastrophic forgetting:** a general-benchmark slice before/after (did we break
-  the base?). Numeric-fact policy: the model never sources figures from weights — extraction must
-  cite retrieved spans; spot-audit.
-- Probe sets exist off-the-shelf (FinanceBench, FinQA).
+  | Training step | Perplexity on held-out filings |
+  |---|---|
+  | 0 (baseline) | 7.30 |
+  | 50 | 6.55 |
+  | 100 | 6.42 |
+  | 200 | **6.33** |
 
-## CPT gate (all three must hold — or research-mode bypass)
+  **A 13.3% drop in perplexity** — the base model got measurably more fluent in filings-speak, with a smooth, converging curve.
 
-(a) the knowledge is stable (not weekly-changing facts — those are RAG's job); (b) ~10M+ tokens
-of raw domain text (or synthetic amplification); (c) a latency/cost/offline motive. Research-mode
-bypass: small-corpus CPT is allowed for *learning*, with expectations reset to perplexity/fluency,
-not QA accuracy.
+This is the **fluency-vs-facts lesson made visible**: the model speaks the domain better, but this run makes **no claim about answering questions more accurately** — exactly what a small research-mode run should and shouldn't claim. For real factual answers, you still pair CPT with RAG.
 
-## Status
+## When CPT is actually the right call
 
-Skeleton only — metric card and pipeline pre-registered here. The live EDGAR run, the synthetic-
-amplification path, and the maintained-loop integration with `tune-loop` are the next CPT-capable
-session's deliverables.
+CPT is the heaviest rung on the ladder — only reach for it when all three hold:
+
+1. The knowledge is **stable** (not facts that change weekly — those are RAG's job).
+2. You have **millions of words** of raw domain text (or you generate synthetic domain text to amplify a smaller corpus).
+3. Your motive is **speed, cost, or offline use** — no retrieval round-trip, shorter prompts, runs on-device.
+
+Otherwise: RAG for facts, or a lighter rung on the ladder. (Research mode relaxes the size requirement when the goal is *learning*, with expectations reset to fluency, not accuracy — which is exactly what the run above did.)
+
+## What's done and what's next
+
+Done: a live perplexity demonstration on real filings. Still ahead (larger scale): the instruction-tuning refresh pass, a forgetting check, a downstream task showing the CPT model beats the un-CPT'd one on a real job, and wiring the refresh loop into `tune-loop`.
+
+Full run log: [`dogfood/edgar/EXPERIMENT-LOG.md`](../dogfood/edgar/EXPERIMENT-LOG.md).

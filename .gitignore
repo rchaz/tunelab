@@ -2,12 +2,22 @@ __pycache__/
 *.pyc
 .venv/
 adapters/
+*_adapters/
 fused-model/
 *.gguf
 *.joblib
 *.safetensors
+*.log
 data/
 .DS_Store
+
+# dogfood keeps only its .md write-ups + cited benchmark results;
+# raw prediction/data dumps are not tracked
+dogfood/**/*.jsonl
+
+# local git-stint worktrees (personal workflow, not for the repo)
+.stint/
+.stint.json
 
 # secrets — never commit
 .env

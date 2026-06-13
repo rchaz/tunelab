@@ -1,11 +1,0 @@
-Loading pretrained model
-Fetching 10 files:   0%|          | 0/10 [00:00<?, ?it/s]Fetching 10 files: 100%|██████████| 10/10 [00:00<00:00, 10691.57it/s]
-Loading datasets
-Training
-Trainable parameters: 0.149% (2.803M/1881.825M)
-Starting training..., iters: 1825
-Calculating loss...:   0%|          | 0/16 [00:00<?, ?it/s]Calculating loss...:   6%|▋         | 1/16 [00:04<01:00,  4.06s/it]Calculating loss...:  12%|█▎        | 2/16 [00:07<00:52,  3.76s/it]Calculating loss...:  19%|█▉        | 3/16 [00:09<00:35,  2.71s/it]Calculating loss...:  25%|██▌       | 4/16 [00:12<00:36,  3.04s/it]Calculating loss...:  31%|███▏      | 5/16 [00:16<00:37,  3.42s/it]Calculating loss...:  38%|███▊      | 6/16 [00:17<00:26,  2.67s/it]Calculating loss...:  44%|████▍     | 7/16 [00:19<00:20,  2.27s/it]Calculating loss...:  50%|█████     | 8/16 [00:20<00:16,  2.03s/it]Calculating loss...:  56%|█████▋    | 9/16 [00:22<00:13,  1.93s/it]Calculating loss...:  62%|██████▎   | 10/16 [00:26<00:15,  2.53s/it]Calculating loss...:  69%|██████▉   | 11/16 [00:29<00:13,  2.65s/it]Calculating loss...:  75%|███████▌  | 12/16 [00:32<00:10,  2.66s/it]Calculating loss...:  81%|████████▏ | 13/16 [00:33<00:06,  2.22s/it]Calculating loss...:  88%|████████▊ | 14/16 [00:35<00:04,  2.13s/it]Calculating loss...:  94%|█████████▍| 15/16 [00:37<00:02,  2.10s/it]Calculating loss...: 100%|██████████| 16/16 [00:40<00:00,  2.38s/it]Calculating loss...: 100%|██████████| 16/16 [00:40<00:00,  2.52s/it]
-Iter 1: Val loss 1.079, Val took 40.282s
-libc++abi: terminating due to uncaught exception of type std::runtime_error: [METAL] Command buffer execution failed: Insufficient Memory (00000008:kIOGPUCommandBufferCallbackErrorOutOfMemory)
-/Users/rc/.local/share/uv/python/cpython-3.14.3-macos-aarch64-none/lib/python3.14/multiprocessing/resource_tracker.py:396: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown: {'/mp-8ejx3kso'}
-  warnings.warn(

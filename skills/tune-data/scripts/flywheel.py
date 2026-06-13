@@ -37,7 +37,7 @@ Triggers (any fires -> retrain candidate):
   --drift-psi P          confidence-distribution PSI vs reference >= P
   --accuracy-floor A     rolling feedback-window accuracy < A
 
-Design honesty (see PLAN-V2 §15.2): feedback over-samples hard/escalated cases,
+Design honesty: feedback over-samples hard/escalated cases,
 so feedback-window accuracy is NOT the served accuracy. `status` reports the
 audit-slice accuracy (feedback_source=audit, a uniform random sample) SEPARATELY
 and flags when only biased feedback is available. Curation in `plan` excludes

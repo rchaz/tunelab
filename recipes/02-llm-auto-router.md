@@ -1,96 +1,61 @@
 # Recipe 2 — LLM auto-router
 
-**Level 1 · route every query to the cheapest capable model · every number below is from a real
-run on the author's own agent-harness traffic (June 2026, M1 Pro, $0.00 API spend).**
+**Who this is for:** your app sends every request to one expensive model, but most requests are easy. You want to automatically send the easy ones to a cheap model and keep only the hard ones on the expensive one.
 
-## The problem
+**The plain idea.** A *router* looks at each incoming query and decides — *before* making the call — whether a cheap model can handle it or it needs the frontier model. The catch: the router sits in front of every request, so it has to be nearly instant (a ~10ms budget). That's why it's a tiny classifier on text embeddings, not another LLM.
 
-If an LLM app sends every call to a frontier model, it pays frontier prices for work a cheap
-model handles — and most production traffic is exactly that work. A router decides, per query,
-*before* the call: cheap model or frontier? The constraint that shapes everything: the router
-sits in the request path, so it gets a **latency budget of ~10ms** — which is why this is
-embeddings + logistic regression (Level 1), not an SLM.
+Every number below is from a real run on the author's own coding-agent traffic (June 2026, M1 Pro, **$0 API spend**).
 
-## Metric card (pre-registered before any score existed)
+## Set the bar first
 
-- **Primary:** cost reduction at iso-quality — % of traffic routed cheap while frontier-bound
-  work stays frontier-bound. Report the threshold curve, not one point: the threshold is a
-  product knob.
-- **The guardrail that owns the design: false-cheap rate.** A hard query routed cheap fails a
-  user; a cheap query routed expensive just costs margin. Bar for this run: family-held-out
-  macro-F1 ≥ 0.90 **and zero observed false-cheap at the shipped threshold**.
-- Router latency < 10ms. Calibration of the cheap-suffices probability (LR gives it natively).
+- **Main goal:** route as much traffic as possible to the cheap model *without* hurting quality. Report the whole trade-off curve, not one point — how aggressive to be is a dial you set later.
+- **The guardrail that matters most: don't send a hard query to the cheap model.** Getting that wrong fails a user; the reverse (sending an easy query to the expensive model) just wastes a little money. Bar: accuracy ≥ 0.90 on never-seen request types, **and zero hard-queries-routed-cheap** at the shipped setting.
+- Router latency < 10ms.
 
-## Data: your own logs, with their real mess
+## The data: your own logs, mess and all
 
-The training population was the author's Claude Code transcripts — ~92k logged prompts. Real
-logs are not flat samples; structure them before labeling:
+The training data was ~92,000 logged prompts from real coding sessions. Real logs aren't a clean sample — you have to structure them first:
 
-1. **Dedupe at 0.95** (5,294 events → 1,747 unique): agent-harness traffic is templated, and the
-   collapse warning fires exactly as designed. Keep template *variants* (payloads differ).
-2. **Cluster into families at 0.80** (→ 149 families; top-10 = 63% of traffic). Label at the
-   family level, propagate to variants, and *verify propagation* (payload-flip check: would any
-   realistic payload flip the route? 10/10 top families: no).
-3. **Split by family, never by record.** Variants of one template in both train and test is
-   leakage that reads as 99% accuracy and means nothing.
+1. **Remove near-duplicates** (5,294 → 1,747 unique). Agent traffic is heavily templated; the de-duplication warning fires exactly as designed. Keep template *variants* where the actual payload differs.
+2. **Group into families** by similarity (→ 149 families; the top 10 cover 63% of all traffic). Label at the family level, then spread the label to variants — and verify that spreading was safe.
+3. **Split by family, never by individual record.** If variants of the same template land in both training and test data, you get a fake "99% accuracy" that means nothing. This is called *leakage*, and it's the #1 way evaluations lie.
 
-Labels were session-native (the Claude Code session labels its own logs — no API key) under a
-frozen rubric: `cheap_ok` = bounded transforms (classify into fixed labels, summarize given
-text, extract/reformat, select from enums); `needs_frontier` = planning/decomposition, agentic
-side effects, open-ended synthesis; **uncertain → frontier**.
+Labels were generated for free by the Claude Code session itself (no API key needed), under a frozen rule: cheap-OK = bounded tasks (classify, summarize given text, reformat); needs-frontier = planning, open-ended synthesis; **when in doubt → frontier.**
 
-## What actually happened: the bar failed first
+## What actually happened: the bar failed first (and that's the useful part)
 
-Round 1 (29 held-out families): macro-F1 0.988 — and **one of 23 frontier records routed
-cheap. Bar failed.** The autopsy is the most useful part of this recipe:
+Round 1 scored 0.988 accuracy — but **one hard query out of 23 got routed cheap. Bar failed.** The autopsy is the most instructive part of this recipe:
 
-The false-cheap was a template twin. Two real prompts share ~90% of their text ("you are an
-architecture advisor… here are the available blocks…"); one asks ONLY for selections from the
-given enums (`cheap_ok`), the other's response schema also demands an `expanded_vision` and 3–5
-designed questions (`needs_frontier`). The labels were right. The router was wrong: **embedding
-routers blur template twins whose difference is a short output-schema suffix inside a long
-shared prompt** — and the failing family was entirely unseen, which is the grouped split doing
-its job. This failure mode is invisible to record-level splits and headline accuracy; only the
-false-cheap guardrail catches it.
+The mistake was a "template twin." Two prompts shared ~90% of their text; one asked only for selections from a fixed menu (cheap-OK), the other *also* demanded open-ended designed questions (needs-frontier). The labels were correct — the *router* was fooled, because **an embedding-based router blurs two prompts whose only real difference is a short instruction buried inside a long, near-identical prompt.** This failure is invisible to record-level splits and to headline accuracy. Only the "zero hard-queries-routed-cheap" guardrail caught it.
 
-The fix, straight from the decision matrix — more data for the weak boundary, not a new bar:
-19 boundary variants hard-mined from unseen sessions, the rubric's deciding line made explicit
-(*the response schema decides, not the boilerplate*), retrain, and judge on a **fresh** test
-(the round-1 holdout was spent the moment it triggered a fix).
+The fix was *more data for the weak spot*, not a weaker bar: 19 boundary examples mined from unseen sessions, the deciding rule made explicit, retrain, and test on a **fresh** set (the round-1 test set was "spent" the moment it triggered a fix and can't be reused).
 
-## Round 2: pass, on harder data
+## Round 2: passes, on harder data
 
-Fresh test = 60 never-before-seen families, 1,328 records, 274 frontier-bound:
+Fresh test = 60 never-before-seen families, 1,328 records:
 
-| metric | result | bar |
+| Metric | Result | Bar |
 |---|---|---|
-| macro-F1 | **0.999** | ≥ 0.90 ✅ |
-| false-cheap at t=0.5 | **0 / 274** | 0 ✅ |
-| coverage at t=0.5 | 79.3% | (the knob) |
+| Accuracy | **0.999** | ≥ 0.90 ✅ |
+| Hard-queries-routed-cheap | **0 / 274** | 0 ✅ |
+| Traffic handled by cheap model | 79.3% | (the dial) |
 
-## Receipts (volume-true, all 7,794 raw events)
+## The payoff (measured over all 7,794 real events)
 
 | | |
 |---|---|
-| routed cheap at zero observed false-cheap | **39.0% of events** |
-| est. cost, all-frontier | $72.06 |
-| est. cost, hybrid | $53.04 — **26.4% saving** |
-| router latency | ~0.6ms/query incl. model load (~0.2ms marginal) — 15× under budget |
-| API spend to build | $0.00 (local embeddings, session-native labels) |
+| Routed to cheap model with zero misses | **39.0% of events** |
+| Cost, all-frontier | $72.06 |
+| Cost, hybrid | $53.04 — **26.4% saved** |
+| Router latency | ~0.6ms per query — 15× under budget |
+| API spend to build it | **$0.00** |
 
-Cost model stated plainly: chars/4 input tokens + 300 output tokens per event; Opus-tier
-$5/$25 vs Haiku-tier $1/$5 per MTok (verified June 2026). Your traffic shape will differ — the
-volume-weighted family structure (here: 63% of events in 10 templates) is what makes routing
-pay, and it's also why receipts must be computed over the raw event stream, not unique queries.
+Cost model stated plainly: input tokens ≈ characters/4 plus 300 output tokens per event; Opus-tier $5/$25 vs Haiku-tier $1/$5 per million tokens (verified June 2026). Your traffic will differ — the reason routing pays is that a few templates dominate the volume, which is also why savings must be measured over the *raw event stream*, not unique queries.
 
-## Honest bounds
+## What's solid and what isn't
 
-- "Zero false-cheap" is bounded by a 274-record frontier sample and session-native label
-  quality — both improve with scale; the drift monitor (re-score fresh traffic monthly) is the
-  maintenance contract.
-- Cold start without logs: a static category→model table, replaced by the learned router as
-  logs accrue — public benchmark scores correlate loosely with *your* distribution.
-- The routed-to-frontier 21% includes the borderline cases by design (uncertain → frontier);
-  those are the next round's most valuable training data.
+- "Zero misses" is bounded by a 274-record sample and the quality of session-generated labels; both improve with scale. Re-checking fresh traffic monthly is the maintenance plan.
+- No logs yet? Start with a simple category→model table and let the learned router replace it as logs accumulate.
+- The ~21% kept on the frontier includes the borderline cases on purpose — those are the most valuable data for the next round.
 
-Full run log including both rounds: `dogfood/router/EXPERIMENT-LOG.md`.
+Full run log, both rounds: [`dogfood/router/EXPERIMENT-LOG.md`](../dogfood/router/EXPERIMENT-LOG.md).
