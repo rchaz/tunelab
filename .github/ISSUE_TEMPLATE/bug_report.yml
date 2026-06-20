@@ -1,0 +1,62 @@
+name: Bug Report
+description: Something isn't working as expected
+labels: ["bug"]
+body:
+  - type: checkboxes
+    attributes:
+      label: Prerequisites
+      options:
+        - label: I searched existing issues for duplicates
+          required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - tune-decide
+        - tune-data
+        - tune-train
+        - tune-eval
+        - tune-loop
+        - Concepts / Recipes
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: versions
+    attributes:
+      label: Environment
+      description: "OS, Python version, uv version, hardware (Apple Silicon model if training)"
+      placeholder: "macOS 15, Python 3.12, uv 0.7, M1 Pro 16GB"
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Include the full error message or unexpected output.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Optional — paste relevant output or attach screenshots.

@@ -37,12 +37,16 @@ And here's the surprising part: you usually shouldn't pick just one rung. The be
 
 ## Install
 
-```
-/plugin marketplace add rchaz/tunelab
-/plugin install tunelab@tunelab
+```bash
+git clone https://github.com/rchaz/tunelab.git
+cd your-project
+mkdir -p .claude/skills
+cp -r /path/to/tunelab/skills/* .claude/skills/
 ```
 
-Or clone this repo and copy `skills/*` into `.claude/skills/` in any project.
+That's it — the skills activate automatically next time you start Claude Code in that project.
+
+**Prerequisites:** [uv](https://docs.astral.sh/uv/) (scripts declare their own dependencies inline, so there's nothing else to install). For training (`tune-train`), you need an Apple Silicon Mac with ~8GB free RAM.
 
 ## How to use it
 
