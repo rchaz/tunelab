@@ -39,14 +39,31 @@ And here's the surprising part: you usually shouldn't pick just one rung. The be
 
 tunelab is a plugin for [Claude Code](https://claude.ai/code) — install Claude Code first if you haven't.
 
+**Recommended — one-line install.** From inside Claude Code, add the marketplace and install the plugin:
+
+```
+/plugin marketplace add rchaz/tunelab
+/plugin install tunelab@tunelab
+```
+
+That's it — the five skills activate automatically, along with their concept explainers and recipes. Pull updates later with `/plugin marketplace update tunelab`.
+
+<details>
+<summary><b>Manual install</b> (if you'd rather not use the plugin system)</summary>
+
+Copy the skills **and** the `concepts/` and `recipes/` folders into your project — the skills link to those explainers, so leaving them out breaks the "explains every step" part:
+
 ```bash
 git clone https://github.com/rchaz/tunelab.git ~/tunelab
 cd your-project
-mkdir -p .claude/skills
-cp -r ~/tunelab/skills/* .claude/skills/
+mkdir -p .claude/skills .claude/concepts .claude/recipes
+cp -r ~/tunelab/skills/*   .claude/skills/
+cp -r ~/tunelab/concepts/* .claude/concepts/
+cp -r ~/tunelab/recipes/*  .claude/recipes/
 ```
 
-That's it — the skills activate automatically next time you start Claude Code in that project.
+The skills activate next time you start Claude Code in that project.
+</details>
 
 **Prerequisites:** [Claude Code](https://claude.ai/code), [uv](https://docs.astral.sh/uv/), and Python 3.10+. Scripts declare their own dependencies inline, so there's nothing else to install. For training (`tune-train`), you need an Apple Silicon Mac (M1 or newer) with ~8GB free RAM.
 
