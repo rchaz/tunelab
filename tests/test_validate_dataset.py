@@ -13,7 +13,7 @@ import subprocess
 import sys
 import tempfile
 
-ROOT = "/Users/rc/code/tunelab"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRIPT = os.path.join(ROOT, "skills", "tune-data", "scripts", "validate_dataset.py")
 FIX = os.path.join(ROOT, "tests", "fixtures", "dataprep")
 

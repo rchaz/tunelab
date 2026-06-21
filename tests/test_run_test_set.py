@@ -12,8 +12,10 @@ import os
 import subprocess
 import sys
 
-SCRIPT = "/Users/rc/code/tunelab/skills/tune-eval/scripts/run_test_set.py"
-FIXTURES = "/Users/rc/code/tunelab/tests/fixtures/evallocal"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SCRIPTS = os.path.join(ROOT, "skills", "tune-eval", "scripts")
+SCRIPT = os.path.join(SCRIPTS, "run_test_set.py")
+FIXTURES = os.path.join(ROOT, "tests", "fixtures", "evallocal")
 MODEL = "mlx-community/Qwen3-0.6B-4bit"
 
 failures = []
@@ -27,9 +29,9 @@ def check(name, cond, detail=""):
         print(f"FAIL: {name} {detail}", file=sys.stderr)
 
 
-STRIP_CODE = """
+STRIP_CODE = f"""
 import sys
-sys.path.insert(0, "/Users/rc/code/tunelab/skills/tune-eval/scripts")
+sys.path.insert(0, {SCRIPTS!r})
 from run_test_set import strip_thinking as s
 assert s("<think>reasoning</think>\\n\\nbilling") == "billing", "matched pair"
 assert s("<think>a</think>x<think>b</think> y") == "x y", "multiple pairs"
