@@ -63,7 +63,15 @@ def get_field(rec, i, key, where):
 def make_embedder(backend, model_id):
     if backend == "local":
         print(f"loading {model_id} (downloads from Hugging Face on first run)", file=sys.stderr)
-        model = StaticModel.from_pretrained(model_id)
+        try:
+            model = StaticModel.from_pretrained(model_id)
+        except Exception as e:
+            sys.exit(
+                f"could not load embedding model {model_id!r}: {e}\n"
+                "The first run downloads it from Hugging Face (a few hundred MB). Check your internet "
+                "connection and retry. If Hugging Face is unreachable or the model id moved, retry with "
+                "--embed-model minishlab/potion-base-32M (same package, no API key)."
+            )
 
         def encode(texts):
             vecs = np.asarray(model.encode(texts), dtype=np.float32)
