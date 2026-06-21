@@ -37,16 +37,18 @@ And here's the surprising part: you usually shouldn't pick just one rung. The be
 
 ## Install
 
+tunelab is a plugin for [Claude Code](https://claude.ai/code) — install Claude Code first if you haven't.
+
 ```bash
-git clone https://github.com/rchaz/tunelab.git
+git clone https://github.com/rchaz/tunelab.git ~/tunelab
 cd your-project
 mkdir -p .claude/skills
-cp -r /path/to/tunelab/skills/* .claude/skills/
+cp -r ~/tunelab/skills/* .claude/skills/
 ```
 
 That's it — the skills activate automatically next time you start Claude Code in that project.
 
-**Prerequisites:** [uv](https://docs.astral.sh/uv/) (scripts declare their own dependencies inline, so there's nothing else to install). For training (`tune-train`), you need an Apple Silicon Mac with ~8GB free RAM.
+**Prerequisites:** [Claude Code](https://claude.ai/code), [uv](https://docs.astral.sh/uv/), and Python 3.10+. Scripts declare their own dependencies inline, so there's nothing else to install. For training (`tune-train`), you need an Apple Silicon Mac (M1 or newer) with ~8GB free RAM.
 
 ## How to use it
 
@@ -59,6 +61,8 @@ Just tell Claude Code what you're trying to do. For example:
 > "Our intent classifier is stuck at 79% accuracy — can we do better?"
 
 The right skill activates automatically and guides you from there. You'll be asked a few questions, then it starts running experiments and showing results.
+
+**What to expect on first run:** The first time you run a classification or evaluation task, tunelab downloads an embedding model (~500MB). This is a one-time download — subsequent runs use the cached copy. Training a small classifier takes seconds; fine-tuning a model takes minutes to hours depending on dataset size.
 
 ---
 
@@ -96,11 +100,11 @@ Yes — and here's the headline, measured on [Banking77](https://huggingface.co/
 
 The most surprising finding: on this task, the **free classifier beat the frontier model by 6.5 points.** Bigger isn't always better — the right tool for each input is. Full run logs, including every failure and dead end, live in [`dogfood/`](dogfood/). Recipe 1 walks through the whole build.
 
-## What you need
+## What you need (by task)
 
-- **To train** (`tune-train`): an Apple Silicon Mac (M1 or newer), [uv](https://docs.astral.sh/uv/), and ~8GB free RAM for 1–4B models.
-- **To decide and evaluate**: nothing special — these work on any computer, no API key required. Embeddings run locally by default.
-- **To generate labels at scale**: optional. For small datasets, the Claude Code session itself does the labeling for free. For large jobs, set `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`.
+- **To decide and evaluate** (`tune-decide`, `tune-eval`): any computer — no API key required. Embeddings run locally.
+- **To train** (`tune-train`): an Apple Silicon Mac (M1 or newer) with ~8GB free RAM for 1–4B models.
+- **To generate labels at scale** (`tune-data`): optional. For small datasets, the Claude Code session itself does the labeling for free. For large jobs, set `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`.
 
 ## Want to understand the concepts?
 
