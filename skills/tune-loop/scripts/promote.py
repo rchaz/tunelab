@@ -36,6 +36,17 @@ def die(msg, code=2):
     sys.exit(code)
 
 
+def load_json(path, what):
+    """Load a JSON file, failing with a clean one-line message (never a traceback)."""
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except FileNotFoundError:
+        die(f"{what} file not found: {path}")
+    except json.JSONDecodeError as e:
+        die(f"{what} file is not valid JSON ({path}): {e}")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--champion", required=True, help="champion eval json")
@@ -59,8 +70,8 @@ def main():
         die(f"eval slice '{args.slice_id}' was already consumed (in {args.ledger}). "
             f"Adjudicate on a FRESH slice — reusing one invalidates the comparison.")
 
-    champ = json.load(open(args.champion))
-    chal = json.load(open(args.challenger))
+    champ = load_json(args.champion, "champion eval")
+    chal = load_json(args.challenger, "challenger eval")
     if args.metric not in champ or args.metric not in chal:
         die(f"metric '{args.metric}' missing from an eval json", code=2)
     c_score, x_score = champ[args.metric], chal[args.metric]
@@ -95,7 +106,7 @@ def main():
 
     # discipline: bump descriptor version on promote
     if promote and args.descriptor_in and args.descriptor_out:
-        d = json.load(open(args.descriptor_in))
+        d = load_json(args.descriptor_in, "descriptor")
         d["version"] = d.get("version", 0) + 1
         d["_promoted_from_slice"] = args.slice_id
         d["_promoted_metric"] = {args.metric: x_score}
