@@ -15,9 +15,11 @@ data/
 # raw prediction/data dumps are not tracked
 dogfood/**/*.jsonl
 
-# local git-stint worktrees (personal workflow, not for the repo)
+# local git-stint and claude code config (personal workflow, not for the repo)
 .stint/
 .stint.json
+.claude/settings.json
+.claude/rules/git-stint.md
 
 # secrets — never commit
 .env
