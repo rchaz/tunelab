@@ -18,8 +18,7 @@ dogfood/**/*.jsonl
 # local git-stint and claude code config (personal workflow, not for the repo)
 .stint/
 .stint.json
-.claude/settings.json
-.claude/rules/git-stint.md
+.claude/
 
 # secrets — never commit
 .env
