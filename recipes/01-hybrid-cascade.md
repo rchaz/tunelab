@@ -41,7 +41,7 @@ Good evaluation writes down what "success" means *before* seeing any score, so r
 ### 1. Tier 1 — the free classifier (seconds)
 
 ```bash
-uv run <tunelab>/skills/tune-decide/scripts/train_classifier.py \
+uv run .claude/skills/tune-decide/scripts/train_classifier.py \
   --data data/train.jsonl --model-out tier1.joblib --seed 42
 ```
 
@@ -58,7 +58,7 @@ Reuse Tier 1's index to find the most similar labeled examples and put them in t
 ### 4. Compose — let the system pick the best arrangement
 
 ```bash
-uv run <tunelab>/skills/tune-eval/scripts/cascade_compose.py \
+uv run .claude/skills/tune-eval/scripts/cascade_compose.py \
   --tier t1=tier1_preds.jsonl --conf-key t1=confidence \
   --tier t2=tier2_preds.jsonl --conf-key t2=conf_margin \
   --tier t3=tier3_preds.jsonl \
