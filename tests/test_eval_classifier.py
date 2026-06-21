@@ -14,8 +14,9 @@ import subprocess
 import sys
 import tempfile
 
-SCRIPT = "/Users/rc/code/tunelab/skills/tune-eval/scripts/eval_classifier.py"
-FIXTURES = "/Users/rc/code/tunelab/tests/fixtures/evallocal"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SCRIPT = os.path.join(ROOT, "skills", "tune-eval", "scripts", "eval_classifier.py")
+FIXTURES = os.path.join(ROOT, "tests", "fixtures", "evallocal")
 
 failures = []
 

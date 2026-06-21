@@ -26,8 +26,8 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v7
 
-      - name: Run tests
-        run: bash tests/run_all.sh
+      - name: Run tests (CI-safe subset; heavy data/model tests run locally via run_all.sh)
+        run: bash tests/run_ci.sh
 
   ci-complete:
     needs: test
