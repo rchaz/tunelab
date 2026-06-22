@@ -66,6 +66,20 @@ uv run .claude/skills/tune-eval/scripts/cascade_compose.py \
   --max-terminal-share 0.15 --target-local-risk 0.10
 ```
 
+**Where each `tierN_preds.jsonl` comes from.** A tier file is that tier run once over the *same* held-out set, one JSONL record per item, joined across tiers on `id`:
+
+```
+{"id": ..., "predicted": <this tier's answer>, "expected"|"label": <gold>, "<conf-key>": <number>}
+```
+
+`predicted` is the tier's answer and the gold lives under `expected` (or `label`) — **different fields**, so make sure your test set carries an `id` and a gold label before you run any tier. Produce each with the matching script:
+
+- **Tier 1 (classifier):** `train_classifier.py --predict test.jsonl --model-in tier1.joblib --output tier1_preds.jsonl` — emits `predicted` + `confidence` and passes your test set's `id`/gold straight through.
+- **Tier 2 (local fine-tuned model):** `run_test_set.py` (or `llm_classify.py`, which also emits token-margin confidence) in tune-eval — these are the **MLX/local** tier emitters.
+- **Tier 3 (API frontier):** `distill_generate.py --mode classify --gold-key label` in **tune-data** — `--gold-key` makes it emit `{id, text, predicted, expected}`, ready to score and compose. (Its *default* output puts the prediction in `label` for distillation; that is **not** a tier file — without `--gold-key` the composer refuses it rather than scoring the frontier against itself.)
+
+The last `--tier` is terminal — it always answers, so it needs no confidence key.
+
 This simulates every arrangement across every confidence threshold and reports the best operating point — with a **statistical guarantee** on how often the local tiers will be wrong ("conformal" prediction gives a distribution-free, finite-sample bound, not an eyeballed guess).
 
 **The result (154-record probe; 0.6B dev model for Tier 2):**

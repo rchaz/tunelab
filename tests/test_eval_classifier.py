@@ -87,6 +87,18 @@ def main():
               r2.returncode != 0 and ":2:" in r2.stderr and "KeyError" in r2.stderr, r2.stderr)
         check("no traceback on bad line", "Traceback" not in r2.stderr, r2.stderr)
 
+        # Gold may be named 'label' (classifier passthrough / raw datasets), not
+        # only 'expected'; 'predicted' is still required.
+        labeled = os.path.join(tmp, "preds_label.jsonl")
+        with open(labeled, "w") as f:
+            for e, p in [("a", "a"), ("a", "a"), ("b", "b"), ("b", "a")]:
+                f.write('{"label": "%s", "predicted": "%s"}\n' % (e, p))
+        r3 = subprocess.run(["python3", SCRIPT, "--predictions", labeled],
+                            capture_output=True, text=True)
+        check("'label' accepted as the gold key (accuracy 0.750)",
+              r3.returncode == 0 and "accuracy = 0.750" in r3.stdout,
+              r3.stdout + r3.stderr)
+
     if failures:
         sys.exit(f"{len(failures)} check(s) failed: {failures}")
 

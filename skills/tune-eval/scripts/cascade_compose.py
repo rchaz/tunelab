@@ -36,9 +36,13 @@ optimal one.
 
   uv run cascade_compose.py --self-test   # fixture check of the math
 
-Tier files: JSONL with id, label (gold), predicted, <conf-key>, and
-optionally latency_ms / cost_usd per record. The LAST --tier is terminal
-(always answers; needs no confidence). Records are joined on id.
+Tier files: JSONL with id, gold (key 'label' OR 'expected'), predicted,
+<conf-key>, and optionally latency_ms / cost_usd per record. 'predicted' is the
+tier's answer, never the gold — a distiller output (prediction under 'label',
+no 'predicted') is rejected, not read as gold. A frontier ceiling probe made
+with `distill_generate.py --mode classify --gold-key <k>` is already in this
+shape. The LAST --tier is terminal (always answers; needs no confidence).
+Records are joined on id.
 """
 
 import argparse
@@ -64,6 +68,20 @@ def load_tier(path, conf_key):
     if conf_key and missing:
         sys.exit(f"{path}: {missing} records missing conf key '{conf_key}'")
     return rows
+
+
+def tier_gold(r):
+    """Gold label of a tier record. Accepts 'label' (the cascade convention) or
+    'expected' (run_test_set.py / eval_classifier.py convention) so a frontier
+    probe scored by the standard tools drops in without renaming. 'predicted' is
+    always the tier's own answer — distinct from gold — so a distiller output
+    (which puts its prediction in 'label' and has no 'predicted') can never be
+    silently read here as if it were gold."""
+    if "label" in r:
+        return r["label"]
+    if "expected" in r:
+        return r["expected"]
+    sys.exit("tier records need a gold field: 'label' or 'expected'")
 
 
 def isotonic_calibrate(scores, correct):
@@ -198,7 +216,7 @@ def main():
     dropped = max(len(r) for r in raw.values()) - len(ids)
     if dropped:
         eprint(f"join on id: {len(ids)} common records ({dropped} unmatched dropped)")
-    gold = np.array([raw[names[0]][i]["label"] for i in ids])
+    gold = np.array([tier_gold(raw[names[0]][i]) for i in ids])
 
     tiers = {}
     for n in names:
@@ -317,8 +335,13 @@ def self_test():
     # rough invariants, asserted by re-running main logic
     print("self-test fixture written to", d, "— running composition:")
     main()
+    # gold-key alias: 'label' and 'expected' must both resolve; a record with
+    # neither would sys.exit (not asserted here, as it terminates the process).
+    assert tier_gold({"label": "x", "predicted": "y"}) == "x"
+    assert tier_gold({"expected": "x", "predicted": "y"}) == "x"
     print("SELF-TEST PASS (cascade with oracle terminal must reach >= best solo tier; "
-          "inspect table above: a->b->c and a->c rows should dominate solo a)")
+          "inspect table above: a->b->c and a->c rows should dominate solo a; "
+          "gold-key alias label|expected OK)")
     return 0
 
 

@@ -334,6 +334,40 @@ def main():
     assert "effort=none" in r.stderr, r.stderr  # gpt-5.x still gets reasoning
     print("PASS: gpt-5.x reasoning models still send reasoning effort=none")
 
+    # --- --gold-key emits cascade/eval-ready {id,text,predicted,expected} -------
+    # Lets a frontier ceiling probe over labeled data score + compose with no
+    # manual re-join (gold under 'expected', prediction under 'predicted').
+    with tempfile.TemporaryDirectory() as tmp:
+        inp = os.path.join(tmp, "in.jsonl")
+        write_jsonl(inp, [{"id": "g1", "text": "hello", "label": "billing"},
+                          {"id": "g2", "text": "world", "label": "spam"}])
+        out = os.path.join(tmp, "o.jsonl")
+        r = run(["--mode", "classify", "--input", inp, "--labels", ",".join(LABELS),
+                 "--system", "s", "--output", out,
+                 "--train-out", os.path.join(tmp, "t.jsonl"),
+                 "--gold-key", "label", "--provider", "openai"], env=openai_env())
+        assert r.returncode == 0, r.stderr
+        recs = read_jsonl(out)
+        assert len(recs) == 2, recs
+        for rec, gold in zip(recs, ["billing", "spam"]):
+            assert set(rec) == {"id", "text", "predicted", "expected"}, rec
+            assert rec["expected"] == gold, rec        # gold preserved, not clobbered
+            assert rec["predicted"] in LABELS, rec     # prediction under its own key
+            assert "label" not in rec, rec
+        print("PASS: --gold-key emits cascade/eval-ready {id,text,predicted,expected} "
+              "(gold preserved under 'expected', prediction under 'predicted')")
+
+    # --- --gold-key naming a missing field fails loud before any API call -------
+    with tempfile.TemporaryDirectory() as tmp:
+        inp = os.path.join(tmp, "in.jsonl")
+        write_jsonl(inp, [{"id": "g1", "text": "hello"}])  # no 'label' field
+        r = run(["--mode", "classify", "--input", inp, "--labels", ",".join(LABELS),
+                 "--system", "s", "--output", os.path.join(tmp, "o.jsonl"),
+                 "--train-out", os.path.join(tmp, "t.jsonl"),
+                 "--gold-key", "label", "--provider", "openai"], env=openai_env())
+        assert r.returncode != 0 and "gold-key" in r.stderr, r.stderr
+        print("PASS: --gold-key naming a missing field exits non-zero with a clear message")
+
     # --- incomplete (truncated) openai response is skipped, never written ---
     with tempfile.TemporaryDirectory() as tmp:
         inp = os.path.join(tmp, "in.jsonl")

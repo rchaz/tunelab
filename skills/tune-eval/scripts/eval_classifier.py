@@ -3,7 +3,9 @@
 
   python3 eval_classifier.py --predictions preds_tuned.jsonl [--report report.md]
 
-Input lines: {"expected": "...", "predicted": "..."} (extra keys ignored).
+Input lines: {"expected": "...", "predicted": "..."} (extra keys ignored). The
+gold field may also be named "label" (so classifier/passthrough outputs score
+without renaming); "predicted" is always required.
 Prints accuracy, macro-F1, per-class precision/recall/F1, and a confusion matrix.
 Macro-F1 averages over gold classes only — labels that were predicted but never
 appear in expected are flagged separately as hallucinated (with small models
@@ -41,7 +43,12 @@ def main():
                 continue
             try:
                 rec = json.loads(line)
-                pairs.append((norm(rec["expected"]), norm(rec["predicted"])))
+                # Gold key: 'expected' (run_test_set convention) or 'label' (raw
+                # datasets / classifier passthrough). 'predicted' is always
+                # required, so a distiller output (prediction under 'label', no
+                # 'predicted') fails loud rather than scoring against itself.
+                gold = rec["expected"] if "expected" in rec else rec["label"]
+                pairs.append((norm(gold), norm(rec["predicted"])))
             except (json.JSONDecodeError, KeyError, TypeError) as e:
                 sys.exit(f"{args.predictions}:{lineno}: bad prediction line ({type(e).__name__}: {e})")
     if not pairs:
