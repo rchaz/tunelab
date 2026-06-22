@@ -8,7 +8,7 @@
 explicitly named files are taken whatever the extension). Tokens are
 approximated as chars/4 throughout.
 
-CPT wants 1-4k-token chunks broken on natural boundaries (PLAN §6 Path D):
+CPT wants 1-4k-token chunks broken on natural boundaries:
 splits happen at markdown headings first, then blank-line paragraphs; a
 single paragraph is only hard-split when it alone exceeds --max-tokens.
 Adjacent small pieces merge up toward --target-tokens, and leftover

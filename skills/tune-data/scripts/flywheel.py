@@ -50,6 +50,7 @@ import hashlib
 import json
 import sys
 from collections import Counter, defaultdict
+from math import log
 
 
 SCHEMA_FIELDS = ["ts", "input_hash", "text", "tier", "prediction", "confidence",
@@ -98,13 +99,8 @@ def psi(reference, current, bins=10):
     for ri, ci in zip(r, c):
         ri = ri or 1e-6
         ci = ci or 1e-6
-        total += (ci - ri) * (json_log(ci / ri))
+        total += (ci - ri) * log(ci / ri)
     return total
-
-
-def json_log(x):
-    from math import log
-    return log(x)
 
 
 def cmd_init(args):
