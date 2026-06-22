@@ -322,6 +322,18 @@ def main():
     assert "SHIM max_output_tokens=1024 store=False effort=none" in r.stderr, r.stderr
     print("PASS: openai generate default max_output_tokens=1024")
 
+    # --- non-reasoning openai models omit `reasoning` (gpt-4o etc. 400 on it) --
+    # The real Responses API rejects `reasoning` on gpt-4o/4.1/etc.; gating lets a
+    # user probe their actual incumbent as the ceiling instead of getting a 400.
+    r = one_shot("classify", ["--provider", "openai", "--model", "gpt-4o"], dbg)
+    assert r.returncode == 0, r.stderr
+    assert "effort=None" in r.stderr, r.stderr  # param omitted -> shim prints None
+    print("PASS: gpt-4o (non-reasoning) omits the reasoning param — incumbent "
+          "ceiling probe no longer 400s")
+    r = one_shot("classify", ["--provider", "openai", "--model", "gpt-5.4-nano"], dbg)
+    assert "effort=none" in r.stderr, r.stderr  # gpt-5.x still gets reasoning
+    print("PASS: gpt-5.x reasoning models still send reasoning effort=none")
+
     # --- incomplete (truncated) openai response is skipped, never written ---
     with tempfile.TemporaryDirectory() as tmp:
         inp = os.path.join(tmp, "in.jsonl")
@@ -362,8 +374,8 @@ def main():
                  "--train-out", os.path.join(tmp, "t.jsonl"),
                  "--provider", "openai"], env=openai_env())
         assert r.returncode != 0, r.stderr
-        assert ("aborting: first 5 calls all failed with api errors — check "
-                "--model/--provider (gpt-5.5 on openai)") in r.stderr, r.stderr
+        assert ("aborting: first 5 calls all failed with api errors — last error: "
+                "shim-injected api error (model=gpt-5.5, provider=openai") in r.stderr, r.stderr
         assert r.stderr.count("skipped (api error") == 5, r.stderr
         print("PASS: run aborts non-zero after the first 5 calls all fail "
               "with api errors (6th record never attempted) — a typo'd "

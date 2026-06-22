@@ -85,6 +85,15 @@ def make_client(provider):
     return anthropic.Anthropic(max_retries=5), anthropic.APIError
 
 
+def openai_reasoning_supported(model):
+    """The Responses `reasoning` param is only accepted by reasoning models
+    (GPT-5.x, o-series). Sending it to gpt-4o / gpt-4.1 / etc. is a hard 400 —
+    which would block probing a non-reasoning incumbent (often the user's own
+    gpt-4o) as the ceiling. Gate on the model id so any OpenAI model works."""
+    m = model.lower()
+    return m.startswith(("gpt-5", "o1", "o3", "o4"))
+
+
 def call_teacher(provider, client, model, system, user, schema, max_tokens):
     """One teacher call -> (text, in_tok, out_tok).
 
@@ -101,9 +110,10 @@ def call_teacher(provider, client, model, system, user, schema, max_tokens):
             max_output_tokens=max_tokens,
             # Responses API persists responses for 30 days by default.
             store=False,
-            # Cost-predictable labeling: GPT-5.x reasoning bills as output.
-            reasoning={"effort": "none"},
         )
+        if openai_reasoning_supported(model):
+            # Cost-predictable labeling: GPT-5.x reasoning bills as output.
+            kwargs["reasoning"] = {"effort": "none"}
         if schema:
             kwargs["text"] = {"format": {
                 "type": "json_schema", "name": "label", "schema": schema, "strict": True,
@@ -266,7 +276,9 @@ def main():
                 if api_err_streak == n == ABORT_AFTER_FAILS:
                     sys.exit(
                         f"aborting: first {ABORT_AFTER_FAILS} calls all failed with api errors "
-                        f"— check --model/--provider ({args.model} on {args.provider}); "
+                        f"— last error: {e} "
+                        f"(model={args.model}, provider={args.provider} — if the model id is "
+                        f"valid, the error above is the real cause); "
                         f"records already in --output stay resumable")
                 continue
             except ProviderRefusal as e:

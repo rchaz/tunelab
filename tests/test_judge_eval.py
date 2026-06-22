@@ -252,8 +252,8 @@ def main():
         r = run(["--a", pa, "--b", pb, "--criteria", "c",
                  "--output", os.path.join(tmp, "verdicts.jsonl")])
         assert r.returncode != 0, r.stderr
-        assert ("aborting: first 5 calls all failed with api errors — check "
-                "--model/--provider (claude-opus-4-8 on anthropic)") in r.stderr, \
+        assert ("aborting: first 5 calls all failed with api errors — last error: "
+                "shim-injected api error (model=claude-opus-4-8, provider=anthropic") in r.stderr, \
             r.stderr
         assert r.stderr.count("skipped (api error") == 5, r.stderr
         print("PASS: judge aborts non-zero after the first 5 calls all fail "
@@ -274,6 +274,24 @@ def main():
         assert len(read_jsonl(verdicts)) == 4
         print("PASS: --provider openai judge runs green with a poisoned "
               "anthropic module first on PYTHONPATH — never imports anthropic")
+
+    # --- non-reasoning openai models omit `reasoning` (gpt-4o etc. 400 on it) --
+    # The real Responses API rejects `reasoning` on gpt-4o/4.1/etc.; gating lets a
+    # non-GPT-5 model serve as the judge instead of failing every call with a 400.
+    with tempfile.TemporaryDirectory() as tmp:
+        pa, pb = os.path.join(tmp, "a.jsonl"), os.path.join(tmp, "b.jsonl")
+        for path, tag in ((pa, "base"), (pb, "tuned")):
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(json.dumps({"id": "g1", "input": "ticket",
+                        "expected": "ref", "predicted": f"{tag} g1"}) + "\n")
+        r = run(["--a", pa, "--b", pb, "--criteria", "c",
+                 "--output", os.path.join(tmp, "v.jsonl"),
+                 "--provider", "openai", "--model", "gpt-4o"],
+                env=openai_env(SHIM_DEBUG="1"))
+        assert r.returncode == 0, r.stderr
+        assert "effort=None" in r.stderr, r.stderr  # param omitted -> shim prints None
+        print("PASS: gpt-4o (non-reasoning) judge omits the reasoning param — "
+              "a non-GPT-5 judge model no longer 400s")
 
     # --- per-provider key gate ------------------------------------------------
     with tempfile.TemporaryDirectory() as tmp:
