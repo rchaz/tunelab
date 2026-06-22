@@ -23,6 +23,9 @@ Generation (teacher produces the target output per input):
                       an "id" field is used for resume, else the line number)
   --output:    raw results {"id", "text", "label"|"generated"}
   --train-out: MLX chat-format training records, ready for dedupe/split
+  --gold-key:  (classify) name the gold field in --input to emit a cascade/eval-
+               ready {"id","text","predicted","expected"} instead — for a frontier
+               ceiling probe over labeled data (see tune-eval cascade_compose.py)
 
 When this script is NOT the right tool: for small datasets (up to a few hundred
 items) the session-native teacher tier is the Phase-1 default — the tune-data
@@ -85,6 +88,15 @@ def make_client(provider):
     return anthropic.Anthropic(max_retries=5), anthropic.APIError
 
 
+def openai_reasoning_supported(model):
+    """The Responses `reasoning` param is only accepted by reasoning models
+    (GPT-5.x, o-series). Sending it to gpt-4o / gpt-4.1 / etc. is a hard 400 —
+    which would block probing a non-reasoning incumbent (often the user's own
+    gpt-4o) as the ceiling. Gate on the model id so any OpenAI model works."""
+    m = model.lower()
+    return m.startswith(("gpt-5", "o1", "o3", "o4"))
+
+
 def call_teacher(provider, client, model, system, user, schema, max_tokens):
     """One teacher call -> (text, in_tok, out_tok).
 
@@ -101,9 +113,10 @@ def call_teacher(provider, client, model, system, user, schema, max_tokens):
             max_output_tokens=max_tokens,
             # Responses API persists responses for 30 days by default.
             store=False,
-            # Cost-predictable labeling: GPT-5.x reasoning bills as output.
-            reasoning={"effort": "none"},
         )
+        if openai_reasoning_supported(model):
+            # Cost-predictable labeling: GPT-5.x reasoning bills as output.
+            kwargs["reasoning"] = {"effort": "none"}
         if schema:
             kwargs["text"] = {"format": {
                 "type": "json_schema", "name": "label", "schema": schema, "strict": True,
@@ -194,6 +207,13 @@ def main():
     ap.add_argument("--mode", choices=["classify", "generate"], required=True)
     ap.add_argument("--input", required=True)
     ap.add_argument("--input-key", default="text")
+    ap.add_argument("--gold-key", default=None,
+                    help="classify mode: name the gold-label field in --input to emit a "
+                         "cascade/eval-ready raw output {id, text, predicted, expected} "
+                         "instead of the distillation default {id, text, label}. Use for a "
+                         "frontier ceiling probe over already-labeled data (tune-decide "
+                         "Step 2.5 / recipe 01-hybrid-cascade) so it scores and composes "
+                         "with no manual re-join.")
     ap.add_argument("--labels", help="comma-separated label set (classify mode)")
     ap.add_argument("--system", required=True, help="teacher system prompt — defines the task")
     ap.add_argument("--output", required=True, help="raw teacher outputs (JSONL, appended)")
@@ -221,6 +241,14 @@ def main():
     rows = read_jsonl(args.input)
     for i, r in enumerate(rows):
         r.setdefault("id", i)
+    if args.gold_key is not None:
+        if args.mode != "classify":
+            sys.exit("--gold-key is only meaningful in classify mode")
+        missing = [r["id"] for r in rows if args.gold_key not in r]
+        if missing:
+            sys.exit(f"--gold-key '{args.gold_key}' missing from {len(missing)} of {len(rows)} "
+                     f"input record(s) (first id={missing[0]}); it must name the gold-label "
+                     f"field present on every --input record")
 
     done = set()
     if os.path.exists(args.output):
@@ -266,7 +294,9 @@ def main():
                 if api_err_streak == n == ABORT_AFTER_FAILS:
                     sys.exit(
                         f"aborting: first {ABORT_AFTER_FAILS} calls all failed with api errors "
-                        f"— check --model/--provider ({args.model} on {args.provider}); "
+                        f"— last error: {e} "
+                        f"(model={args.model}, provider={args.provider} — if the model id is "
+                        f"valid, the error above is the real cause); "
                         f"records already in --output stay resumable")
                 continue
             except ProviderRefusal as e:
@@ -286,7 +316,12 @@ def main():
                     print(f"  id={rec['id']} skipped (unparseable structured output)", file=sys.stderr)
                     skipped += 1
                     continue
-                raw_f.write(json.dumps({"id": rec["id"], "text": text, "label": target}, ensure_ascii=False) + "\n")
+                if args.gold_key is not None:
+                    out_rec = {"id": rec["id"], "text": text,
+                               "predicted": target, "expected": rec[args.gold_key]}
+                else:
+                    out_rec = {"id": rec["id"], "text": text, "label": target}
+                raw_f.write(json.dumps(out_rec, ensure_ascii=False) + "\n")
             else:
                 target = answer.strip()
                 raw_f.write(json.dumps({"id": rec["id"], "text": text, "generated": target}, ensure_ascii=False) + "\n")

@@ -71,8 +71,8 @@ Present the recommendation **with economics** — do the cost math out loud (e.g
 
 The interview narrows the options; **experiments on the user's own data pick the winner.** Before recommending an architecture for any classification/routing/extraction task with labeled data, run three cheap probes and read the *headroom*:
 
-1. **Floor — Level 1 LR** (`train_classifier.py`, seconds, $0): what a $0 classifier reaches.
-2. **Ceiling — the frontier probe** on ~150 stratified validation items (`distill_generate.py --mode classify` with the frontier teacher, or session-native): what the *best available model* reaches on the user's gold labels. This bounds what ANY architecture can achieve.
+1. **Floor — Level 1 LR** (`train_classifier.py`, seconds, $0): what a $0 classifier reaches. Score it with `tune-eval`'s `eval_classifier.py` (accepts gold under `expected` or `label`).
+2. **Ceiling — the frontier probe** on ~150 stratified validation items (`distill_generate.py --mode classify --gold-key <your-gold-field>` — the script lives in **tune-data**; or label session-native): what the *best available model* reaches on the user's gold labels. The `--gold-key` flag makes the output `{id, text, predicted, expected}`, so the same file scores with `eval_classifier.py` and drops straight into `cascade_compose.py` as the frontier tier — no manual re-join. (Don't probe the ceiling with `llm_classify.py`/`run_test_set.py`; those are the local-MLX tier runners, not API-frontier probes.) This bounds what ANY architecture can achieve.
 3. **Headroom = ceiling − floor.** This is the budget that justifies — or kills — a fine-tuned tier *before* hours of training.
 
 Read it mechanically, and be ready for the counterintuitive result (measured on Banking77, `dogfood/cascade/`): the **floor beat the ceiling** — a $0 LR scored 0.883 vs the frontier's zero-shot 0.818 on fine-grained 77-way intent. Two lessons that change the recommendation:

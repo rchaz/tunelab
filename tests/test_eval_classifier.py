@@ -87,6 +87,31 @@ def main():
               r2.returncode != 0 and ":2:" in r2.stderr and "KeyError" in r2.stderr, r2.stderr)
         check("no traceback on bad line", "Traceback" not in r2.stderr, r2.stderr)
 
+        # Gold may be named 'label' (classifier passthrough / raw datasets), not
+        # only 'expected'; 'predicted' is still required.
+        labeled = os.path.join(tmp, "preds_label.jsonl")
+        with open(labeled, "w") as f:
+            for e, p in [("a", "a"), ("a", "a"), ("b", "b"), ("b", "a")]:
+                f.write('{"label": "%s", "predicted": "%s"}\n' % (e, p))
+        r3 = subprocess.run(["python3", SCRIPT, "--predictions", labeled],
+                            capture_output=True, text=True)
+        check("'label' accepted as the gold key (accuracy 0.750)",
+              r3.returncode == 0 and "accuracy = 0.750" in r3.stdout,
+              r3.stdout + r3.stderr)
+
+        # --json emits the machine-readable metrics tune-loop's promote.py consumes.
+        jpath = os.path.join(tmp, "eval.json")
+        r4 = subprocess.run(
+            ["python3", SCRIPT, "--predictions", os.path.join(FIXTURES, "preds_known.jsonl"),
+             "--json", jpath], capture_output=True, text=True)
+        ok_json = False
+        if r4.returncode == 0 and os.path.exists(jpath):
+            import json as _json
+            j = _json.load(open(jpath))
+            ok_json = abs(j.get("accuracy", 0) - 0.85) < 1e-6 and j.get("n") == 20 and "macro_f1" in j
+        check("--json writes {accuracy,n,macro_f1} promote.py can read", ok_json,
+              (open(jpath).read() if os.path.exists(jpath) else "no json file") + r4.stderr)
+
     if failures:
         sys.exit(f"{len(failures)} check(s) failed: {failures}")
 

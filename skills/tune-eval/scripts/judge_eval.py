@@ -71,6 +71,14 @@ def make_client(provider):
     return anthropic.Anthropic(max_retries=5), anthropic.APIError
 
 
+def openai_reasoning_supported(model):
+    """The Responses `reasoning` param is only accepted by reasoning models
+    (GPT-5.x, o-series). Sending it to gpt-4o / gpt-4.1 / etc. is a hard 400, so
+    gate on the model id to let any OpenAI model serve as the judge."""
+    m = model.lower()
+    return m.startswith(("gpt-5", "o1", "o3", "o4"))
+
+
 def call_judge(provider, client, model, system, user, schema):
     """One judge call -> (verdict JSON text, in_tok, out_tok).
 
@@ -78,20 +86,22 @@ def call_judge(provider, client, model, system, user, schema):
     errors propagate for the caller's except clause.
     """
     if provider == "openai":
-        resp = client.responses.create(
+        kwargs = dict(
             model=model,
             instructions=system,
             input=user,
             # Reasoning tokens share the output budget (and bill as output) —
             # same headroom rationale as the anthropic path's thinking budget.
             max_output_tokens=8192,
-            reasoning={"effort": "low"},
             # Responses API persists responses for 30 days by default.
             store=False,
             text={"format": {
                 "type": "json_schema", "name": "verdict", "schema": schema, "strict": True,
             }},
         )
+        if openai_reasoning_supported(model):
+            kwargs["reasoning"] = {"effort": "low"}
+        resp = client.responses.create(**kwargs)
         # Response.usage is Optional in the SDK; a usage-less response
         # under-counts to 0 rather than crashing the whole run.
         usage = getattr(resp, "usage", None)
@@ -204,7 +214,9 @@ def main():
                 if api_err_streak == n == ABORT_AFTER_FAILS:
                     sys.exit(
                         f"aborting: first {ABORT_AFTER_FAILS} calls all failed with api errors "
-                        f"— check --model/--provider ({args.model} on {args.provider}); "
+                        f"— last error: {e} "
+                        f"(model={args.model}, provider={args.provider} — if the model id is "
+                        f"valid, the error above is the real cause); "
                         f"nothing was judged, fix and re-run")
                 continue
             except ProviderRefusal as e:

@@ -78,6 +78,29 @@ def main():
         fail(f"descriptor not bumped/annotated on promote: {d}")
     print("PASS: PROMOTE bumps descriptor version 3 -> 4 and records the slice")
 
+    # 3b. --challenger-descriptor: on PROMOTE the challenger becomes the new champion
+    # (the record says WHAT won), with version continuing the champion's lineage.
+    chal_desc = write_json(os.path.join(tmp, "challenger_desc.json"),
+                           {"version": 1, "name": "router", "train": "lora:runs/x/adapters"})
+    champ_desc = write_json(os.path.join(tmp, "champ_desc.json"),
+                            {"version": 5, "name": "router", "train": "none (base)"})
+    desc_out2 = os.path.join(tmp, "descriptor_out2.json")
+    r = run(["--champion", champ, "--challenger", chal_win, "--bar", "0.85",
+             "--min-margin", "0.02", "--metric", "accuracy",
+             "--slice-id", "s-chaldesc", "--ledger", os.path.join(tmp, "led3b.txt"),
+             "--descriptor-in", champ_desc, "--challenger-descriptor", chal_desc,
+             "--descriptor-out", desc_out2])
+    if r.returncode != 0:
+        fail(f"promote-with-challenger-descriptor exited {r.returncode}: {r.stderr}")
+    d = json.load(open(desc_out2))
+    if d.get("train") != "lora:runs/x/adapters":
+        fail(f"promoted descriptor should be the CHALLENGER's architecture, got: {d}")
+    if d.get("version") != 6:  # max(challenger 1, champion 5) + 1
+        fail(f"promoted version should continue champion lineage (6), got {d.get('version')}")
+    if d.get("_promoted_from_slice") != "s-chaldesc":
+        fail(f"promoted descriptor missing provenance: {d}")
+    print("PASS: --challenger-descriptor -> challenger becomes new champion; version 5 -> 6")
+
     # 4. Reusing a consumed slice id -> discipline violation (exit 2).
     r = run(["--champion", champ, "--challenger", chal_win, "--bar", "0.85",
              "--min-margin", "0.02", "--metric", "accuracy",
