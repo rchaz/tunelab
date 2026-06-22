@@ -17,9 +17,11 @@ trustworthy rather than AutoML slop are enforced here, mechanically:
     --champion champion_eval.json --challenger challenger_eval.json \
     --bar 0.936 --min-margin 0.0 --metric accuracy \
     --slice-id valid-window-2026-06-12 --ledger system/consumed_slices.txt \
-    --descriptor-in system/descriptor.json --descriptor-out system/descriptor.json
+    --descriptor-in system/descriptor.json --challenger-descriptor system/challenger.json \
+    --descriptor-out system/descriptor.json
 
-  eval json (from tune-eval): {"metric_name": value, ..., "cost_per_1k": x, "n": N}
+  eval json (produced by tune-eval's `eval_classifier.py --json`, or any scorer):
+    {"metric_name": value, ..., "cost_per_1k": x, "n": N}  (must contain --metric)
 
 Exit 0 = decision made (promote or retain, printed + logged). Exit 2 = a
 discipline violation (slice reuse, missing bar) — the loop must stop and surface it.
@@ -59,6 +61,10 @@ def main():
     ap.add_argument("--ledger", required=True, help="consumed-slices ledger file")
     ap.add_argument("--descriptor-in")
     ap.add_argument("--descriptor-out")
+    ap.add_argument("--challenger-descriptor",
+                    help="the challenger's descriptor json; on PROMOTE this becomes the new "
+                         "champion descriptor (records WHAT won — e.g. the tuned run/adapter — "
+                         "not just a version bump on the old champion)")
     ap.add_argument("--log", help="append the decision to this EXPERIMENT-LOG.md")
     args = ap.parse_args()
 
@@ -104,14 +110,25 @@ def main():
     with open(args.ledger, "a") as f:
         f.write(args.slice_id + "\n")
 
-    # discipline: bump descriptor version on promote
-    if promote and args.descriptor_in and args.descriptor_out:
-        d = load_json(args.descriptor_in, "descriptor")
-        d["version"] = d.get("version", 0) + 1
+    # On promote, write the new champion descriptor. If the challenger's
+    # descriptor is given, IT becomes the champion — so the record says WHAT won
+    # (the tuned run/adapter), not just a version bump on the outgoing champion.
+    # Version continues the champion's lineage. Without a challenger descriptor,
+    # fall back to bumping the incoming descriptor (legacy behavior).
+    if promote and args.descriptor_out and (args.challenger_descriptor or args.descriptor_in):
+        prev_version = (load_json(args.descriptor_in, "descriptor").get("version", 0)
+                        if args.descriptor_in else 0)
+        if args.challenger_descriptor:
+            d = load_json(args.challenger_descriptor, "challenger descriptor")
+            source = "challenger"
+        else:
+            d = load_json(args.descriptor_in, "descriptor")
+            source = "version-bump"
+        d["version"] = max(d.get("version", 0), prev_version) + 1
         d["_promoted_from_slice"] = args.slice_id
         d["_promoted_metric"] = {args.metric: x_score}
         json.dump(d, open(args.descriptor_out, "w"), indent=2)
-        print(f"\ndescriptor promoted to version {d['version']} -> {args.descriptor_out}",
+        print(f"\ndescriptor promoted to version {d['version']} ({source}) -> {args.descriptor_out}",
               file=sys.stderr)
 
     if args.log:

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Score classification predictions against gold labels. Stdlib only.
 
-  python3 eval_classifier.py --predictions preds_tuned.jsonl [--report report.md]
+  python3 eval_classifier.py --predictions preds_tuned.jsonl [--report report.md] [--json eval.json]
+
+  --json writes {accuracy, macro_f1, n, ...} — feed it to tune-loop's promote.py.
 
 Input lines: {"expected": "...", "predicted": "..."} (extra keys ignored). The
 gold field may also be named "label" (so classifier/passthrough outputs score
@@ -34,6 +36,10 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--predictions", required=True)
     ap.add_argument("--report", help="also write a markdown report here")
+    ap.add_argument("--json", dest="json_out",
+                    help="also write machine-readable metrics here "
+                         "({accuracy, macro_f1, n, ...}) — the eval json tune-loop's "
+                         "promote.py consumes (champion_eval.json / challenger_eval.json)")
     args = ap.parse_args()
 
     pairs = []
@@ -121,6 +127,13 @@ def main():
         with open(args.report, "w") as f:
             f.write("# Classification evaluation\n\n```\n" + out + "\n```\n")
         print(f"\nreport -> {args.report}", file=sys.stderr)
+
+    if args.json_out:
+        with open(args.json_out, "w") as f:
+            json.dump({"accuracy": round(accuracy, 6), "macro_f1": round(macro_f1, 6),
+                       "n": len(pairs), "classes": len(expected_labels),
+                       "hallucinated": len(hallucinated)}, f, indent=2)
+        print(f"json -> {args.json_out}", file=sys.stderr)
 
 
 if __name__ == "__main__":

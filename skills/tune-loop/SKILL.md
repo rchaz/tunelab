@@ -69,6 +69,25 @@ checkpoint.** Promote (write a new descriptor version) only if a challenger BEAT
 retain the champion (cost/latency tiebreak). Append the round — challengers, scores, decision,
 the slice consumed — to EXPERIMENT-LOG.md either way.
 
+**Wiring the adjudication inputs (explicit — there is no magic step):** score each model with
+`eval_classifier.py --predictions preds.jsonl --json champion_eval.json` (and again for the
+challenger) — `--json` emits exactly the `{accuracy, ...}` file `promote.py` reads. For the
+**first** promotion, before any flywheel exists, there is no `system/` dir yet — seed one: write a
+v1 `system/descriptor.json` describing the current champion and a `system/challenger.json`
+describing the contender (its run id / adapter path), then:
+
+```bash
+uv run .../tune-loop/scripts/promote.py \
+  --champion champion_eval.json --challenger challenger_eval.json \
+  --bar <pre-registered> --min-margin 0.02 --metric accuracy \
+  --slice-id <fresh-slice-id> --ledger system/consumed_slices.txt \
+  --descriptor-in system/descriptor.json --challenger-descriptor system/challenger.json \
+  --descriptor-out system/descriptor.json
+```
+
+On PROMOTE the **challenger** descriptor becomes the new champion (so the record says what won —
+the tuned adapter — not just a bumped version on the old one).
+
 ## The three failure modes this design must own
 
 1. **Feedback bias** — feedback over-samples escalated/hard cases; the log is not the serving
