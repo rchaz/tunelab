@@ -89,6 +89,7 @@ Worked, end-to-end examples — each one is a real run with real numbers:
 3. **[Tool-result distiller](recipes/03-tool-result-distiller.md)** — shrink bulky tool output before it re-enters an agent's context (and an honest story about why this one *didn't* ship).
 4. **[Finance filings analyst](recipes/04-finance-cpt-analyst.md)** — teach a model the language of SEC filings with continued pretraining.
 5. **[Self-improving system](recipes/05-self-improving-system.md)** — wire it all into a loop that keeps getting better from feedback.
+6. **[Cheap ticket triage](recipes/06-cheap-ticket-triage.md)** — replace a frontier ticket classifier with a free local one, and the honest data/eval traps along the way (leakage faking 100%, a fine-tune that lost at scale, an eval grading its own homework).
 
 ## Does it actually work?
 

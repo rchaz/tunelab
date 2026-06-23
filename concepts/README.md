@@ -22,6 +22,8 @@ Short, plain-English explainers for every idea tunelab uses. You don't need to r
 
 - [Validation vs test](validation-vs-test.md) — why you need two held-out sets, and the "look once" rule.
 - [Calibration & selective prediction](calibration-and-selective-prediction.md) — can you trust a model's confidence score, and when should it escalate instead of guess?
+- [Label ceiling & annotator agreement](label-ceiling-and-annotator-agreement.md) — when two good labelers only agree X%, no model can truly beat X%; how to measure and read it.
+- [Synthetic evals & circularity](synthetic-eval-and-circularity.md) — why a teacher-made eval can't fairly grade the teacher, and why you keep a small real-labeled anchor.
 
 ## Systems & frontier ideas
 
