@@ -56,9 +56,10 @@ the thing that has to be trustworthy (see
 
 ## The counterintuitive result tunelab measured
 
-On Banking77 (fine-grained 77-way intent), a **$0 logistic regression beat the
-frontier model used zero-shot by 6.5 points** (0.883 vs 0.818 on identical
-records). The lesson isn't "small always wins" — it's that the *right tool per
+On Banking77 (fine-grained 77-way intent), a **$0 logistic regression beat Claude
+Opus 4.8 used zero-shot by 6.5 points** (0.883 vs 0.818) — and still beat GPT-5.5,
+the strongest frontier we measured, by 2.6 (0.857), on identical records. The
+lesson isn't "small always wins" — it's that the *right tool per
 slice* wins. A bare frontier call as the escalation tier would have *lowered*
 cascade accuracy; the frontier only earns its slot with retrieval/few-shot
 help. Build the cascade from what the evidence says each tier is good at, not

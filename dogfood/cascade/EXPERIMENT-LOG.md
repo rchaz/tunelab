@@ -215,3 +215,69 @@
 - **No spin:** the comparative claim is earned on held-out data; the absolute 0.95-class number is
   not, for this config. That gap is the honest finding, and it's exactly what the next iteration
   (better tier-2 hparams + the frontier tier) addresses. Bar consumed; this dataset's test is spent.
+
+## 2026-06-23 — FRONTIER CEILING RE-RUN (Opus 4.8 session-native; GPT-5.5 deferred)
+- **Why:** the README hero and recipe 01 attributed the 0.818 frontier zero-shot ceiling to
+  GPT-5.5, but the original probe (2026-06-12, see entry above) was measured session-native on
+  **Claude Fable 5** — never on Opus or GPT-5.5. Fable is stronger than both, so 0.818 might have
+  been *generous* to the frontier tier. Re-ran to get real numbers under the named models.
+- **Method:** identical 154-record stratified probe (`ceiling_probe.jsonl`, 2/class × 77), same
+  zero-shot classifier system prompt ("assign to exactly one label … reply with the label only"),
+  gold under `label`, scored `predicted == expected`. Opus output: `tier3_ceiling_opus48.jsonl`.
+- **Opus 4.8 — session-native** (the Cowork session model classified each record directly, the
+  apples-to-apples match to the Fable baseline, which was *also* session-native — NOT the API path):
+  - **126/154 = 0.8182** — bit-identical to the Fable baseline.
+  - 28 misses, all Banking77 label-boundary ambiguity, not refusals/parse errors. Examples:
+    "What cards do you offer?" → gold `visa_or_mastercard` (pred `supported_cards_and_currencies`);
+    "Where is my PIN located?" → gold `get_physical_card` (pred `change_pin`); "Should i uninstall
+    the app before i try it again?" → gold `contactless_not_working`.
+- **GPT-5.5 — DEFERRED (not run).** The dogfood sandbox's egress proxy blocks it: `CONNECT
+  api.openai.com:443` → `403 Forbidden`, `X-Proxy-Error: blocked-by-allowlist` (api.anthropic.com
+  and pypi are allowlisted; OpenAI is not). The key is valid (`sk-proj…`, 164 chars) and the call
+  is well-formed — the request simply can't leave the sandbox. Must be run where OpenAI egress is
+  open (`distill_generate.py --provider openai --model gpt-5.5 --gold-key label …`).
+- **Frontier zero-shot ceiling, 154-record probe:**
+  | model | accuracy | vs Fable | vs LR floor 0.883 |
+  |---|---|---|---|
+  | Claude Fable 5 (2026-06-12, session-native) | 126/154 = 0.8182 | — | −6.5 |
+  | Claude Opus 4.8 (this run, session-native) | 126/154 = 0.8182 | ±0 | −6.5 |
+  | GPT-5.5 (OpenAI API, zero-shot) | 132/154 = 0.8571 | +3.9 | −2.6 |
+- **Implication — delta is immaterial, NO re-composition needed.** Tier-3 input is unchanged at
+  0.818, so every downstream number holds verbatim: cascade **0.9416**, +12.3 over frontier-solo,
+  **8× cheaper** ($0.25 vs $2.00 /1k), free-classifier-beats-frontier-by-**6.5**. The original
+  Fable figure was a faithful stand-in for the frontier tier — now corroborated by Opus 4.8.
+- **Doc fixes this run:** README hero re-attributed `GPT-5.5 → Claude Opus 4.8` (the *verified*
+  0.818 holder); recipe 01 "surprising result" table now lists all three frontier rows (Fable +
+  Opus measured, GPT-5.5 footnoted as pending).
+## 2026-06-23 — GPT-5.5 LEG RUN (OpenAI reachable; the deferred probe, completed)
+- **Run:** `distill_generate.py --provider openai --model gpt-5.5 --gold-key label` over the
+  identical 154-record probe, same zero-shot system prompt. OpenAI egress is open here
+  (`api.openai.com/v1/models` → 200, key valid `sk-proj…`/164 chars). 154/154 written, 0 skipped,
+  0 refusals, 0 out-of-label-space. Output: `tier3_ceiling_gpt55.jsonl`.
+- **Command gotcha caught at smoke (worth a recipe callout):** `distill_generate.py --labels` is a
+  **comma-separated string, not a file path**. Passing `--labels dogfood/.../labels.json` made the
+  enum schema a single literal label = the file path, so every prediction was that path string
+  (5/5 garbage at smoke). Fixed by joining `labels.json` into the 77-label CSV. Re-smoke: 4/5
+  correct, sane labels. The structured-output enum is what makes the failure loud instead of silent.
+- **GPT-5.5 — 132/154 = 0.8571.** Above the Claude session-native ceiling (0.8182) by **+3.9**,
+  but still **−2.6 under the $0 LR floor (0.883)**. All 22 misses are Banking77 label-boundary
+  ambiguity (e.g. "The top-up is broken." → pred `top_up_failed`, gold `pending_top_up`; "Where is
+  my PIN located?" → pred `change_pin`, gold `get_physical_card`) — the same near-synonym regime
+  the Claude probes hit, no refusals/parse errors.
+- **Decision: delta IMMATERIAL, NO re-composition.** GPT-5.5 (0.857) stays in the frontier regime —
+  below the free classifier (0.883) and far below the composed cascade (0.9416). The cascade's
+  canonical Tier 3 is the **session-native frontier at 0.818** (the apples-to-apples $0 path); the
+  +12.3 / 8× / 6.5 claims are anchored there and hold verbatim. Even treating GPT-5.5 as a
+  hypothetical Tier-3 swap, the frontier handles only ~12–13% terminal share and its +3.9 solo
+  points come from records mostly OUTSIDE the hard escalated residual (its misses ARE the ambiguous
+  cases that escalate), so the bound on cascade movement is ~0 — and the tier-1/tier-2 per-record
+  prediction files were never committed, confirming the composition is anchored on the documented
+  session-native Tier 3, not a per-frontier swap.
+- **Thesis impact — strengthened, not weakened:** the free classifier now beats **all three**
+  measured frontier zero-shots (6.5 pts over the Claude models, 2.6 over the strongest, GPT-5.5).
+  The "free model beats the frontier on fine-grained classification" headline survives the
+  strongest frontier in the panel.
+- **Doc fixes this run:** recipe 01 GPT-5.5 row filled (0.857) + footnote trimmed (session-native
+  vs API path, Tier-3 anchor clarified) + "beats by 6.5" prose now states the 2.6–6.5 range;
+  log table row updated (above). README hero left as-is per the gate — GPT-5.5 is BELOW the LR
+  classifier (0.883), so the verified Opus 4.8 = 81.8% framing stands unchanged.

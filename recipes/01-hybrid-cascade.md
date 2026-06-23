@@ -20,10 +20,14 @@ On Banking77, measured on the exact same inputs:
 
 | Approach | Accuracy |
 |---|---|
-| Frontier model, no examples ("zero-shot") | 0.818 |
+| Frontier zero-shot — Claude Fable 5 (session-native) | 0.818 |
+| Frontier zero-shot — Claude Opus 4.8 (session-native) | 0.818 |
+| Frontier zero-shot — GPT-5.5 (API) | 0.857 |
 | **Free classifier** (logistic regression on embeddings) | **0.883** |
 
-The free classifier **beats the frontier model by 6.5 points.** This isn't a fluke — for fine-grained classification, a small model trained on your labels routinely beats a big general model that's only seen the question. Two consequences:
+† Measured the same way — 154-record stratified probe, zero-shot. The Claude numbers are session-native; GPT-5.5 is the OpenAI API path. The cascade below uses the session-native frontier (0.818) as its Tier 3; even the strongest measured frontier (GPT-5.5, 0.857) still lands below the free classifier.
+
+The free classifier **beats every measured frontier zero-shot** — by 6.5 points over the Claude models, and still 2.6 over the strongest of them (GPT-5.5). This isn't a fluke — for fine-grained classification, a small model trained on your labels routinely beats a big general model that's only seen the question. Two consequences:
 
 - Using a bare frontier model as the top tier would actually *lower* the cascade's accuracy. It only earns its slot when you **show it the most similar labeled examples first** (called "few-shot"), pulled from the same index Tier 1 already built.
 - The real accuracy headroom lives in the **fine-tuned** tier, not the general one.
