@@ -1,6 +1,6 @@
 # Recipe 4 — Cheap ticket triage (replacing a frontier classifier)
 
-**Who this is for:** you pay a frontier model (GPT-4o, Claude, etc.) to sort support tickets into a handful of fixed buckets — every ticket, every day — and you want that to run free and local without losing accuracy. The catch this recipe is really about: **you don't have a clean labeled dataset to train on, and the one you think you have is lying to you.**
+**Who this is for:** you pay a frontier model (GPT-5.5, Claude, etc.) to sort support tickets into a handful of fixed buckets — every ticket, every day — and you want that to run free and local without losing accuracy. The catch this recipe is really about: **you don't have a clean labeled dataset to train on, and the one you think you have is lying to you.**
 
 **The plain idea.** For fixed-label triage the *model* is the easy part — a free classifier on embeddings usually clears the bar (that's [Recipe 1](01-hybrid-cascade.md)). The hard part is the **data** and the **eval**. This recipe is the honest, dead-ends-kept-in story of going from "150 tickets and a fake 100% score" to a free classifier that matches a frontier model on real tickets — and of three traps that each looked like success: leakage that faked a perfect score, a fine-tune that won on a tiny test set and lost on a big one, and an eval that graded its own homework.
 
