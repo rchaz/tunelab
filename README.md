@@ -4,7 +4,101 @@
 
 If you have an app that calls a big model (Claude, GPT, etc.) for the same kind of task over and over — classifying tickets, routing requests, extracting fields, drafting replies — you're probably overpaying. Most of that work can run on a tiny model on your own machine for ~$0, and often *more accurately*. tunelab helps you find out which work that is, build the cheaper version, and prove it actually works.
 
-You don't run anything by hand. You install the plugin, describe your problem to Claude Code in plain English, and it walks you through the rest.
+Two ways in: **run the quickstart below** to see it work in one command, or **install the plugin** and just describe your problem to Claude Code in plain English — it drives everything from there.
+
+---
+
+## Quickstart — see it work in 3 commands (no plugin, no API key)
+
+Want proof before reading another word? Clone the repo and run any of these. Each is a complete, self-contained demo on a real dataset — [Banking77](https://huggingface.co/datasets/banking77), real banking-support messages sorted into 77 fine-grained intents — that prints its result and then shows how to point it at your own data. The only prerequisite is [uv](https://docs.astral.sh/uv/).
+
+```bash
+git clone https://github.com/rchaz/tunelab && cd tunelab
+
+uv run quickstart.py cost       # a FREE local classifier that beats a frontier model  ($0, any computer)
+uv run quickstart.py loop       # promote a better model only when it REALLY wins       ($0, any computer)
+uv run quickstart.py finetune   # teach a tiny local model your exact output format     (Apple Silicon, ~2 min)
+```
+
+`cost` and `loop` finish in seconds with no API key and no GPU (one-time ~500MB embedding-model download on first run). `finetune` trains a real LoRA locally on Apple Silicon. Add `--verbose` to any of them to see every underlying command.
+
+<details>
+<summary><b><code>cost</code></b> — replace a frontier API call with a free local model ($0, any computer)</summary>
+
+```
+· training a tiny classifier on 8,005 labeled messages …
+· scoring on 3,080 held-out messages it never trained on …
+
+┌──────────────────────────────────────────────────────────────────┐
+│ RESULT — free local classifier vs frontier model                 │
+├──────────────────────────────────────────────────────────────────┤
+│ Free local classifier                             88.5%   ·   $0 │
+│ Frontier model, zero-shot¹                    81.8%   ·   ~$2/1k │
+│                                                                  │
+│ On this task the FREE local model wins by +6.7 points            │
+└──────────────────────────────────────────────────────────────────┘
+
+¹ frontier baseline pre-recorded from recipes/01-hybrid-cascade.md (no API call made)
+```
+
+The free local classifier beats a frontier model *used on its own* — proof that the cheapest rung on the ladder often already clears your bar. (The flagship recipe builds this into a **94% cascade** — see [_Does it actually work?_](#does-it-actually-work) below.)
+</details>
+
+<details>
+<summary><b><code>loop</code></b> — promote a challenger only when it really wins ($0, any computer)</summary>
+
+A "champion" trained on 1,000 examples vs a "challenger" trained on all 8,005, adjudicated on a held-out slice:
+
+```
+## champion/challenger adjudication — slice banking77-test
+- metric: accuracy; pre-registered bar: 0.7477; min-margin: 0.005
+- champion:   0.7477
+- challenger: 0.8851
+- margin: +0.1373; clears bar: True; beats champion by margin: True
+- **DECISION: PROMOTE**
+
+┌──────────────────────────────────────────────────────────────────┐
+│ RESULT — champion / challenger adjudication                      │
+├──────────────────────────────────────────────────────────────────┤
+│ Champion (1k examples)                                     74.8% │
+│ Challenger (8k examples)                                   88.5% │
+│ Margin                                              +13.7 points │
+│                                                                  │
+│ Decision                                      PROMOTE challenger │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+The bar is set *before* the scores are seen, and the eval slice is spent once (a ledger enforces it) — that discipline is what keeps a self-improving loop honest instead of AutoML slop. A noise-band win keeps the incumbent.
+</details>
+
+<details>
+<summary><b><code>finetune</code></b> — teach a tiny model your exact output format (Apple Silicon, ~2 min)</summary>
+
+```
+BEFORE fine-tuning — base model, zero-shot:
+  'How do I locate my card?'                → 'Request Information'        (gold: card_arrival)
+  'The wrong amount of cash came out of...' → 'Loss of cash'              (gold: wrong_amount_of_cash_received)
+  "What should I do if the passcode does…"  → 'Request a new passcode.'   (gold: passcode_forgotten)
+
+AFTER fine-tuning — same base model + your LoRA adapter:
+  'How do I locate my card?'                → 'activate_my_card'                 (gold: card_arrival)
+  'The wrong amount of cash came out of...' → 'wrong_amount_of_cash_received' ✓  (gold: wrong_amount_of_cash_received)
+  "What should I do if the passcode does…"  → 'passcode_forgotten' ✓             (gold: passcode_forgotten)
+
+┌──────────────────────────────────────────────────────────────────┐
+│ RESULT — what the fine-tune bought you                           │
+├──────────────────────────────────────────────────────────────────┤
+│ Before:  base model emits free-text — wrong format               │
+│ After:   4/4 outputs are valid snake_case labels                 │
+│                                                                  │
+│ Exact-match on held-out demo tickets:  2/4                       │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+A 0.5B model goes from emitting free-text to your exact `snake_case` contract after a ~1-minute LoRA — that output discipline is what makes a tiny local model a usable drop-in. Train longer or on more data to push accuracy further.
+</details>
+
+**Already in Claude Code?** Just say *"run the tunelab quickstart"* — it'll drive these and explain each step. To use tunelab on **your own** problem, install the plugin (below) and describe it in plain English.
 
 ---
 
