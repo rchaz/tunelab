@@ -98,9 +98,26 @@ How does it beat the frontier-alone score of 0.818 by 12 points? Because Tier 1 
 
 The system also did the honest thing: with the weak 0.6B dev model, Tier1→Tier3 *ties* the full three-tier setup, meaning the fine-tuned tier "isn't pulling its weight yet." That's the measurement-driven decision working — it tells you when a tier isn't earning its slot. (The real 4B model is what makes the middle tier count.)
 
-### 5. The flywheel — the system improves itself
+### 5. Keep it improving — the self-improving loop
 
-Every prediction gets logged. Corrections and escalations become free training data, which feeds `flywheel.py` — it watches for drift and proposes a retrained challenger. **Demonstrated on Banking77:** a model trained on a starved 2,000-record slice (0.813) was beaten by a challenger retrained after one feedback cycle (0.890, **+7.8 points**). See [data flywheels](../concepts/data-flywheels-and-active-learning.md).
+A cascade isn't a one-time build; the real product is the **loop** that keeps it sharp as real usage accumulates. Every prediction gets logged, and corrections and escalations become free training data:
+
+```
+serve → log every prediction → collect feedback → try better versions →
+keep one only if it beats the current best → repeat
+```
+
+This is **champion/challenger**: there's always a current champion in production; the loop trains challengers, grades them on *fresh* data, and promotes one **only when it genuinely wins**. It's driven by the `tune-loop` skill, with the other four skills as its tools — `flywheel.py` watches for drift and curates the new data, `promote.py` adjudicates a challenger against a pre-set bar.
+
+**Demonstrated on Banking77:** a champion trained on a deliberately starved 2,000-record slice read real accuracy **0.813**; after one feedback cycle a challenger retrained on the full 8,005 records scored **0.890** — **+7.8 points**, so `promote.py` bumped the version. Run it again and the loop *refuses* to re-grade on the same test slice: the discipline is enforced by code, not good intentions.
+
+A self-improving loop is easy to get wrong — three classic traps, each with a built-in guardrail:
+
+1. **Feedback is biased** — people report problems more than successes, so the feedback pile looks worse than reality. Fixed by also keeping a small **random sample** as the honest accuracy estimate, reported separately.
+2. **The loop burns through test sets** — reuse one and it stops being a fair test. Fixed by **frozen slices used exactly once**, tracked in a ledger that errors on reuse.
+3. **Endless things to try** — fixed by a **staged search** (architecture first, then one refinement per round) with a declared budget and a minimum-improvement bar, so it converges instead of churning.
+
+What separates this from "AutoML that hill-climbs forever": bars set in advance, test slices used once, declared budgets, append-only logs, and **human sign-off at the points that spend money or change production**. The whole thing stays auditable and teaching-grade — the experiment log a learner walks away with is the real product. (Driver and full schema: [`skills/tune-loop/SKILL.md`](../skills/tune-loop/SKILL.md); see also [data flywheels](../concepts/data-flywheels-and-active-learning.md).)
 
 ## The honest test result (3,080 records, looked at exactly once)
 

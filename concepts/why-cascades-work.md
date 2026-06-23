@@ -37,7 +37,7 @@ the thing that has to be trustworthy (see
   the cascade pattern at the token level. Same idea, different granularity.
 - **Mixture-of-Experts** routes *within* a model to a subset of experts per
   token; a tunelab cascade routes *between* models in a system. The analogy is
-  real but loose — see [moe-routing.md](moe-routing.md).
+  real but loose.
 
 ## When a cascade can't help
 

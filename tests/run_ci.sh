@@ -6,8 +6,8 @@
 # tests means a green check that honestly says "the scripts' logic is intact".
 #
 # LOCAL_ONLY (run via tests/run_all.sh, not here) — add heavy/data/model tests:
-#   test_centroid_classify  needs dogfood/level1/data/raw.jsonl (gitignored) + embedding model
-#   test_train_classifier   needs that dataset + xgboost + embedding model
+#   test_centroid_classify  embedding model; CFPB data (gitignored, local-only) optional — accuracy check skips if absent
+#   test_train_classifier   embedding model + xgboost; CFPB data (gitignored, local-only) optional — accuracy checks skip if absent
 #   test_run_test_set       downloads mlx-community/Qwen3-0.6B-4bit (~0.34GB) and runs MLX
 set -u
 cd "$(dirname "$0")/.."

@@ -1,4 +1,4 @@
-# ticket-triage (Recipe 6) — EXPERIMENT-LOG
+# ticket-triage (Recipe 4) — EXPERIMENT-LOG
 
 A 5-bucket support-ticket triage (account_access, billing, bug_report,
 feature_request, shipping) replacing an expensive frontier classifier. Motive =
@@ -125,7 +125,7 @@ cost; hardware = Apple M1 Pro, 16 GB. The real decision trail, dead ends kept in
   eval / 1.000 gold, ~$0.013/1k) + confidence routing. LoRA & bigger SLMs
   unnecessary.
 
-## 2026-06-22 — verification pass (recomputed from artifacts for Recipe 6)
+## 2026-06-22 — verification pass (recomputed from artifacts for Recipe 4)
 Reproduced the headline numbers directly from the saved prediction files so the
 recipe cites measured, not remembered, values:
 - Scoreboard, independent eval n=465 (acc / macro-F1):

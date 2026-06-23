@@ -14,7 +14,6 @@ Short, plain-English explainers for every idea tunelab uses. You don't need to r
 - [LoRA vs QLoRA](lora-vs-qlora.md) — cheap ways to fine-tune large models on small hardware.
 - [SFT vs preference tuning vs RLVR](sft-vs-preference-tuning.md) — a decision tree for *how* to fine-tune.
 - [Continued pretraining](continuous-pretraining.md) — teaching a model a whole domain's language.
-- [Curriculum & progressive training](curriculum-and-progressive-training.md) — does the order of training examples matter?
 - [Parameters vs hyperparameters](parameters-vs-hyperparameters.md) — what the model learns vs. what you set.
 - [Epochs & overfitting](epochs-and-overfitting.md) — why training too long makes a model *worse*.
 
@@ -28,4 +27,3 @@ Short, plain-English explainers for every idea tunelab uses. You don't need to r
 ## Systems & frontier ideas
 
 - [Data flywheels & active learning](data-flywheels-and-active-learning.md) — how a live system turns its own usage into better training data.
-- [Mixture-of-experts routing](moe-routing.md) — how some models route work to specialized sub-networks internally.

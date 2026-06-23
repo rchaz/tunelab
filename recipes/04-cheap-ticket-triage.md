@@ -1,4 +1,4 @@
-# Recipe 6 — Cheap ticket triage (replacing a frontier classifier)
+# Recipe 4 — Cheap ticket triage (replacing a frontier classifier)
 
 **Who this is for:** you pay a frontier model (GPT-4o, Claude, etc.) to sort support tickets into a handful of fixed buckets — every ticket, every day — and you want that to run free and local without losing accuracy. The catch this recipe is really about: **you don't have a clean labeled dataset to train on, and the one you think you have is lying to you.**
 

@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Evidence tests for skills/tune-decide/scripts/train_classifier.py.
 
-Invokes the real script via `uv run` subprocess. Uses the real CFPB data at
-dogfood/level1/data/raw.jsonl (10 classes, 300/class) for the accuracy checks
-and committed fixtures for the failure-path checks. First run downloads the
-~125MB local embedding model from Hugging Face (cached afterwards).
+Invokes the real script via `uv run` subprocess. The train/determinism/predict
+accuracy checks use the real CFPB data at dogfood/level1/data/raw.jsonl (10 classes,
+300/class) when present; that file is gitignored and local-only, so when it is absent
+those checks are skipped and the committed-fixture failure-path checks still run.
+First run downloads the ~125MB local embedding model from Hugging Face (cached
+afterwards).
 
 Prints one 'PASS: <check>' line per check; exits non-zero on the first failure.
 """
@@ -45,95 +47,103 @@ def write_jsonl(path, rows):
 
 def main():
     tmp = tempfile.mkdtemp(prefix="tunelab-trainclf-test-")
-
-    # Build a 1000-row stratified subset (100/class) + 20 held-out rows (2/class)
-    # from the real CFPB data.
-    by_label = defaultdict(list)
-    with open(RAW) as f:
-        for line in f:
-            if line.strip():
-                rec = json.loads(line)
-                by_label[rec["label"]].append(rec)
-    labels = sorted(by_label)
-    if len(labels) != 10:
-        fail(f"expected 10 CFPB classes, found {len(labels)}")
-    train_rows = [r for lb in labels for r in by_label[lb][:100]]
-    heldout_rows = [r for lb in labels for r in by_label[lb][100:102]]
-    train_path = os.path.join(tmp, "train1000.jsonl")
-    heldout_path = os.path.join(tmp, "heldout20.jsonl")
-    write_jsonl(train_path, train_rows)
-    write_jsonl(heldout_path, heldout_rows)
-
-    # 1. Train on 1000 rows, local backend: exit 0, honest holdout metrics,
-    #    accuracy >= 0.55 (benchmark ~0.70+ at this size; 0.55 = regression floor).
-    bundle = os.path.join(tmp, "clf.joblib")
-    r1 = run(["--data", train_path, "--model-out", bundle])
-    if r1.returncode != 0:
-        fail(f"train run exited {r1.returncode}: {r1.stderr}")
-    m_acc = re.search(r"held-out accuracy: ([0-9.]+) \(n=(\d+)\)", r1.stdout)
-    m_f1 = re.search(r"held-out macro-F1: ([0-9.]+)", r1.stdout)
-    if not m_acc:
-        fail(f"no held-out accuracy line on stdout: {r1.stdout}")
-    if not m_f1:
-        fail(f"no held-out macro-F1 line on stdout: {r1.stdout}")
-    acc = float(m_acc.group(1))
-    if acc < 0.55:
-        fail(f"held-out accuracy {acc} below the 0.55 regression floor")
-    if "classifier: LogisticRegression" not in r1.stderr:
-        fail(f"missing one-line WHY for the LR default on stderr: {r1.stderr}")
-    if "saved ->" in r1.stdout:
-        fail("'saved ->' diagnostic went to stdout (convention: stderr)")
-    if "saved ->" not in r1.stderr:
-        fail(f"missing 'saved ->' line on stderr: {r1.stderr}")
-    print(
-        f"PASS: train on 1000 CFPB rows (local backend) exits 0; "
-        f"held-out accuracy {acc} >= 0.55 and macro-F1 {m_f1.group(1)} printed"
-    )
-
-    # 2. Determinism: identical command (same default seed) -> identical metrics.
-    r2 = run(["--data", train_path, "--model-out", os.path.join(tmp, "clf2.joblib")])
-    if r2.returncode != 0:
-        fail(f"second seeded train run exited {r2.returncode}: {r2.stderr}")
-    acc_line_1 = [l for l in r1.stdout.splitlines() if "held-out accuracy" in l]
-    acc_line_2 = [l for l in r2.stdout.splitlines() if "held-out accuracy" in l]
-    f1_line_1 = [l for l in r1.stdout.splitlines() if "macro-F1" in l]
-    f1_line_2 = [l for l in r2.stdout.splitlines() if "macro-F1" in l]
-    if acc_line_1 != acc_line_2 or f1_line_1 != f1_line_2:
-        fail(f"same seed, different metrics: {acc_line_1} vs {acc_line_2}, {f1_line_1} vs {f1_line_2}")
-    print(f"PASS: same train command twice (same seed) -> identical held-out accuracy line {acc_line_1[0]!r}")
-
-    # 3. Predict on 20 held-out rows: every row gets predicted + confidence in [0,1];
-    #    the bundle round-trips backend/embed_model (stderr echo + conflict refusals).
     preds_path = os.path.join(tmp, "preds.jsonl")
-    rp = run(["--predict", heldout_path, "--model-in", bundle, "--output", preds_path])
-    if rp.returncode != 0:
-        fail(f"predict run exited {rp.returncode}: {rp.stderr}")
-    if rp.stdout != "":
-        fail(f"predict mode wrote to stdout (diagnostics belong on stderr): {rp.stdout!r}")
-    if f"embedding with local:{LOCAL_MODEL}" not in rp.stderr:
-        fail(f"bundle backend/embed_model not echoed from the bundle: {rp.stderr}")
-    if "wrote 20 predictions" not in rp.stderr:
-        fail(f"missing 'wrote 20 predictions' on stderr: {rp.stderr}")
-    with open(preds_path) as f:
-        preds = [json.loads(line) for line in f if line.strip()]
-    if len(preds) != 20:
-        fail(f"expected 20 prediction rows, got {len(preds)}")
-    for i, p in enumerate(preds):
-        if p.get("predicted") not in labels:
-            fail(f"prediction row {i} has predicted={p.get('predicted')!r}, not a training label")
-        c = p.get("confidence")
-        if not isinstance(c, (int, float)) or not (0.0 <= c <= 1.0):
-            fail(f"prediction row {i} confidence {c!r} not in [0,1]")
-    print("PASS: predict on 20 held-out rows -> 20 rows, predicted in label set, confidence in [0,1]")
+    bundle = os.path.join(tmp, "clf.joblib")
 
-    rb = run(["--predict", heldout_path, "--model-in", bundle, "--output", preds_path, "--backend", "openai"])
-    if rb.returncode == 0 or "backend='local'" not in rb.stderr:
-        fail(f"conflicting --backend openai not refused with the bundle's backend: {rb.returncode} {rb.stderr}")
-    rm = run(["--predict", heldout_path, "--model-in", bundle, "--output", preds_path,
-              "--embed-model", "minishlab/potion-base-32M"])
-    if rm.returncode == 0 or LOCAL_MODEL not in rm.stderr:
-        fail(f"conflicting --embed-model not refused with the bundle's model: {rm.returncode} {rm.stderr}")
-    print("PASS: bundle round-trips backend + embed_model (echoed on stderr; conflicting flags refused)")
+    if os.path.exists(RAW):
+        # Build a 1000-row stratified subset (100/class) + 20 held-out rows (2/class)
+        # from the real CFPB data.
+        by_label = defaultdict(list)
+        with open(RAW) as f:
+            for line in f:
+                if line.strip():
+                    rec = json.loads(line)
+                    by_label[rec["label"]].append(rec)
+        labels = sorted(by_label)
+        if len(labels) != 10:
+            fail(f"expected 10 CFPB classes, found {len(labels)}")
+        train_rows = [r for lb in labels for r in by_label[lb][:100]]
+        heldout_rows = [r for lb in labels for r in by_label[lb][100:102]]
+        train_path = os.path.join(tmp, "train1000.jsonl")
+        heldout_path = os.path.join(tmp, "heldout20.jsonl")
+        write_jsonl(train_path, train_rows)
+        write_jsonl(heldout_path, heldout_rows)
+
+        # 1. Train on 1000 rows, local backend: exit 0, honest holdout metrics,
+        #    accuracy >= 0.55 (benchmark ~0.70+ at this size; 0.55 = regression floor).
+        r1 = run(["--data", train_path, "--model-out", bundle])
+        if r1.returncode != 0:
+            fail(f"train run exited {r1.returncode}: {r1.stderr}")
+        m_acc = re.search(r"held-out accuracy: ([0-9.]+) \(n=(\d+)\)", r1.stdout)
+        m_f1 = re.search(r"held-out macro-F1: ([0-9.]+)", r1.stdout)
+        if not m_acc:
+            fail(f"no held-out accuracy line on stdout: {r1.stdout}")
+        if not m_f1:
+            fail(f"no held-out macro-F1 line on stdout: {r1.stdout}")
+        acc = float(m_acc.group(1))
+        if acc < 0.55:
+            fail(f"held-out accuracy {acc} below the 0.55 regression floor")
+        if "classifier: LogisticRegression" not in r1.stderr:
+            fail(f"missing one-line WHY for the LR default on stderr: {r1.stderr}")
+        if "saved ->" in r1.stdout:
+            fail("'saved ->' diagnostic went to stdout (convention: stderr)")
+        if "saved ->" not in r1.stderr:
+            fail(f"missing 'saved ->' line on stderr: {r1.stderr}")
+        print(
+            f"PASS: train on 1000 CFPB rows (local backend) exits 0; "
+            f"held-out accuracy {acc} >= 0.55 and macro-F1 {m_f1.group(1)} printed"
+        )
+
+        # 2. Determinism: identical command (same default seed) -> identical metrics.
+        r2 = run(["--data", train_path, "--model-out", os.path.join(tmp, "clf2.joblib")])
+        if r2.returncode != 0:
+            fail(f"second seeded train run exited {r2.returncode}: {r2.stderr}")
+        acc_line_1 = [l for l in r1.stdout.splitlines() if "held-out accuracy" in l]
+        acc_line_2 = [l for l in r2.stdout.splitlines() if "held-out accuracy" in l]
+        f1_line_1 = [l for l in r1.stdout.splitlines() if "macro-F1" in l]
+        f1_line_2 = [l for l in r2.stdout.splitlines() if "macro-F1" in l]
+        if acc_line_1 != acc_line_2 or f1_line_1 != f1_line_2:
+            fail(f"same seed, different metrics: {acc_line_1} vs {acc_line_2}, {f1_line_1} vs {f1_line_2}")
+        print(f"PASS: same train command twice (same seed) -> identical held-out accuracy line {acc_line_1[0]!r}")
+
+        # 3. Predict on 20 held-out rows: every row gets predicted + confidence in [0,1];
+        #    the bundle round-trips backend/embed_model (stderr echo + conflict refusals).
+        rp = run(["--predict", heldout_path, "--model-in", bundle, "--output", preds_path])
+        if rp.returncode != 0:
+            fail(f"predict run exited {rp.returncode}: {rp.stderr}")
+        if rp.stdout != "":
+            fail(f"predict mode wrote to stdout (diagnostics belong on stderr): {rp.stdout!r}")
+        if f"embedding with local:{LOCAL_MODEL}" not in rp.stderr:
+            fail(f"bundle backend/embed_model not echoed from the bundle: {rp.stderr}")
+        if "wrote 20 predictions" not in rp.stderr:
+            fail(f"missing 'wrote 20 predictions' on stderr: {rp.stderr}")
+        with open(preds_path) as f:
+            preds = [json.loads(line) for line in f if line.strip()]
+        if len(preds) != 20:
+            fail(f"expected 20 prediction rows, got {len(preds)}")
+        for i, p in enumerate(preds):
+            if p.get("predicted") not in labels:
+                fail(f"prediction row {i} has predicted={p.get('predicted')!r}, not a training label")
+            c = p.get("confidence")
+            if not isinstance(c, (int, float)) or not (0.0 <= c <= 1.0):
+                fail(f"prediction row {i} confidence {c!r} not in [0,1]")
+        print("PASS: predict on 20 held-out rows -> 20 rows, predicted in label set, confidence in [0,1]")
+
+        # The bundle round-trips backend/embed_model: conflicting predict-time flags refused.
+        rb = run(["--predict", heldout_path, "--model-in", bundle, "--output", preds_path, "--backend", "openai"])
+        if rb.returncode == 0 or "backend='local'" not in rb.stderr:
+            fail(f"conflicting --backend openai not refused with the bundle's backend: {rb.returncode} {rb.stderr}")
+        rm = run(["--predict", heldout_path, "--model-in", bundle, "--output", preds_path,
+                  "--embed-model", "minishlab/potion-base-32M"])
+        if rm.returncode == 0 or LOCAL_MODEL not in rm.stderr:
+            fail(f"conflicting --embed-model not refused with the bundle's model: {rm.returncode} {rm.stderr}")
+        print("PASS: bundle round-trips backend + embed_model (echoed on stderr; conflicting flags refused)")
+    else:
+        # The CFPB data (dogfood/level1/data/raw.jsonl) is gitignored and local-only,
+        # so a fresh clone can't run the train/determinism/predict accuracy checks.
+        # Skip them; the committed-fixture failure-path checks below still run.
+        print(f"SKIP: train / determinism / predict accuracy checks — "
+              f"{os.path.relpath(RAW, ROOT)} not present (gitignored local-only CFPB data)")
 
     # 4. Major finding: missing xgboost exits with the rerun command BEFORE any
     #    embedding pass (auto + --extra-keys resolves to xgboost).
@@ -161,8 +171,8 @@ def main():
         fail(f"xgboost rerun missing WHY line or metrics: {rxx.stderr} / {rxx.stdout}")
     print("PASS: printed rerun command works verbatim (xgboost trains, WHY + macro-F1 printed)")
 
-    # 6. --data and --predict are mutually exclusive (argparse exit 2).
-    rme = run(["--data", SMALL, "--predict", heldout_path, "--model-in", bundle, "--output", preds_path])
+    # 6. --data and --predict are mutually exclusive (argparse exit 2, before any file read).
+    rme = run(["--data", SMALL, "--predict", SMALL, "--model-in", bundle, "--output", preds_path])
     if rme.returncode != 2:
         fail(f"--data + --predict together should exit 2 (argparse), got {rme.returncode}: {rme.stderr}")
     print("PASS: --data + --predict together -> argparse error (exit 2), no silent train-only run")

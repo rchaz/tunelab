@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Evidence tests for skills/tune-decide/scripts/centroid_classify.py.
 
-Invokes the real script via `uv run` subprocess. Uses the real CFPB data at
-dogfood/level1/data/raw.jsonl (3-class subset, 20 examples/class) for the main
-check and temp files for the failure paths. First run downloads the ~125MB
-local embedding model from Hugging Face (cached afterwards).
+Invokes the real script via `uv run` subprocess. The main accuracy check uses the
+real CFPB data at dogfood/level1/data/raw.jsonl (3-class subset, 20 examples/class)
+when present; that file is gitignored and local-only, so when it is absent the
+accuracy check is skipped and the data-independent failure-path checks still run.
+First run downloads the ~125MB local embedding model from Hugging Face (cached
+afterwards).
 
 Prints one 'PASS: <check>' line per check; exits non-zero on the first failure.
 """
@@ -41,54 +43,64 @@ def write_jsonl(path, rows):
 
 def main():
     tmp = tempfile.mkdtemp(prefix="tunelab-centroid-test-")
-
-    by_label = defaultdict(list)
-    with open(RAW) as f:
-        for line in f:
-            if line.strip():
-                rec = json.loads(line)
-                if rec["label"] in CLASSES:
-                    by_label[rec["label"]].append(rec)
-
-    # 20 examples/class for centroids; 30 inputs (10/class) drawn from later
-    # rows, label stripped (kept as 'gold' to verify key pass-through).
-    examples = [r for lb in CLASSES for r in by_label[lb][:20]]
-    inputs = [
-        {"text": r["text"], "gold": r["label"]}
-        for lb in CLASSES
-        for r in by_label[lb][20:30]
-    ]
     ex_path = os.path.join(tmp, "examples.jsonl")
     in_path = os.path.join(tmp, "inputs.jsonl")
     out_path = os.path.join(tmp, "preds.jsonl")
-    write_jsonl(ex_path, examples)
-    write_jsonl(in_path, inputs)
 
-    # 1. Main check: 3 classes x 20 examples, classify 30 inputs, local backend.
-    r = run(["--examples", ex_path, "--classify", in_path, "--output", out_path])
-    if r.returncode != 0:
-        fail(f"centroid run exited {r.returncode}: {r.stderr}")
-    if r.stdout != "":
-        fail(f"centroid_classify wrote to stdout (results belong in --output): {r.stdout!r}")
-    with open(out_path) as f:
-        preds = [json.loads(line) for line in f if line.strip()]
-    if len(preds) != 30:
-        fail(f"expected 30 prediction rows, got {len(preds)}")
-    for i, p in enumerate(preds):
-        if p.get("predicted") not in CLASSES:
-            fail(f"row {i}: predicted={p.get('predicted')!r} not one of the 3 example labels")
-        c = p.get("confidence")
-        if not isinstance(c, (int, float)) or c < 0:
-            fail(f"row {i}: confidence (cosine margin) {c!r} is not >= 0")
-        if "gold" not in p:
-            fail(f"row {i}: extra input key 'gold' was not passed through")
-    print(
-        "PASS: centroid_classify (3 classes x 20 examples, 30 inputs) exits 0; "
-        "all predictions from the 3 labels; confidence = margin >= 0; extra keys preserved"
-    )
-    if "confidence margins:" not in r.stderr or "predicted distribution:" not in r.stderr:
-        fail(f"margin/distribution diagnostics missing from stderr: {r.stderr}")
-    print("PASS: margin quartiles + predicted distribution diagnostics on stderr")
+    if os.path.exists(RAW):
+        by_label = defaultdict(list)
+        with open(RAW) as f:
+            for line in f:
+                if line.strip():
+                    rec = json.loads(line)
+                    if rec["label"] in CLASSES:
+                        by_label[rec["label"]].append(rec)
+
+        # 20 examples/class for centroids; 30 inputs (10/class) drawn from later
+        # rows, label stripped (kept as 'gold' to verify key pass-through).
+        examples = [r for lb in CLASSES for r in by_label[lb][:20]]
+        inputs = [
+            {"text": r["text"], "gold": r["label"]}
+            for lb in CLASSES
+            for r in by_label[lb][20:30]
+        ]
+        write_jsonl(ex_path, examples)
+        write_jsonl(in_path, inputs)
+
+        # 1. Main check: 3 classes x 20 examples, classify 30 inputs, local backend.
+        r = run(["--examples", ex_path, "--classify", in_path, "--output", out_path])
+        if r.returncode != 0:
+            fail(f"centroid run exited {r.returncode}: {r.stderr}")
+        if r.stdout != "":
+            fail(f"centroid_classify wrote to stdout (results belong in --output): {r.stdout!r}")
+        with open(out_path) as f:
+            preds = [json.loads(line) for line in f if line.strip()]
+        if len(preds) != 30:
+            fail(f"expected 30 prediction rows, got {len(preds)}")
+        for i, p in enumerate(preds):
+            if p.get("predicted") not in CLASSES:
+                fail(f"row {i}: predicted={p.get('predicted')!r} not one of the 3 example labels")
+            c = p.get("confidence")
+            if not isinstance(c, (int, float)) or c < 0:
+                fail(f"row {i}: confidence (cosine margin) {c!r} is not >= 0")
+            if "gold" not in p:
+                fail(f"row {i}: extra input key 'gold' was not passed through")
+        print(
+            "PASS: centroid_classify (3 classes x 20 examples, 30 inputs) exits 0; "
+            "all predictions from the 3 labels; confidence = margin >= 0; extra keys preserved"
+        )
+        if "confidence margins:" not in r.stderr or "predicted distribution:" not in r.stderr:
+            fail(f"margin/distribution diagnostics missing from stderr: {r.stderr}")
+        print("PASS: margin quartiles + predicted distribution diagnostics on stderr")
+    else:
+        # The CFPB data (dogfood/level1/data/raw.jsonl) is gitignored and local-only,
+        # so a fresh clone can't run the accuracy probe. Skip it, but synthesize a tiny
+        # 3-class set so the data-independent failure-path checks below still run.
+        print(f"SKIP: main accuracy check — {os.path.relpath(RAW, ROOT)} not present "
+              "(gitignored local-only CFPB data)")
+        write_jsonl(ex_path, [{"text": f"a {lb} complaint, number {i}", "label": lb}
+                              for lb in CLASSES for i in range(20)])
+        write_jsonl(in_path, [{"text": "a complaint about a charge", "gold": CLASSES[0]}])
 
     # 2. Empty --classify file -> clean exit, no model2vec traceback.
     empty = os.path.join(tmp, "empty.jsonl")

@@ -84,12 +84,10 @@ Each skill bundles small, runnable Python scripts (run with [uv](https://docs.as
 
 Worked, end-to-end examples — each one is a real run with real numbers:
 
-1. **[Hybrid cascade](recipes/01-hybrid-cascade.md)** — the flagship. A 3-tier system (tiny classifier → small fine-tuned model → frontier model) that beats every single model alone, at a fraction of the cost.
+1. **[Hybrid cascade](recipes/01-hybrid-cascade.md)** — the flagship. A 3-tier system (tiny classifier → small fine-tuned model → frontier model) that beats every single model alone at a fraction of the cost — then a self-improving loop that keeps it sharp as usage accumulates.
 2. **[LLM auto-router](recipes/02-llm-auto-router.md)** — send each request to the cheapest model that can handle it, cutting the bill ~26%.
 3. **[Tool-result distiller](recipes/03-tool-result-distiller.md)** — shrink bulky tool output before it re-enters an agent's context (and an honest story about why this one *didn't* ship).
-4. **[Finance filings analyst](recipes/04-finance-cpt-analyst.md)** — teach a model the language of SEC filings with continued pretraining.
-5. **[Self-improving system](recipes/05-self-improving-system.md)** — wire it all into a loop that keeps getting better from feedback.
-6. **[Cheap ticket triage](recipes/06-cheap-ticket-triage.md)** — replace a frontier ticket classifier with a free local one, and the honest data/eval traps along the way (leakage faking 100%, a fine-tune that lost at scale, an eval grading its own homework).
+4. **[Cheap ticket triage](recipes/04-cheap-ticket-triage.md)** — replace a frontier ticket classifier with a free local one, and the honest data/eval traps along the way (leakage faking 100%, a fine-tune that lost at scale, an eval grading its own homework).
 
 ## Does it actually work?
 
