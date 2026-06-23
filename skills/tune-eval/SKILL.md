@@ -170,7 +170,7 @@ mlx_lm.lora --model mlx-community/Qwen3-0.6B-Base-4bit --data data/ --test --tes
 | Meets the pre-registered bar | **Ship** — with confidence routing and a drift plan (below). |
 | Misses by a little; errors concentrated in 1–2 classes | **More data for those classes** (teacher-label fresh examples; session-native is fine), retrain. Cheapest fix. |
 | Tuned ≈ base | **Training didn't take.** Check `--mask-prompt`, chat-template mismatch, LR too low, dataset too small — debug in tune-train before buying more data. |
-| Tuned ≪ teacher across the board | **Escalate the level**: bigger base model, or back to tune-decide to reconsider the rung. |
+| Tuned ≪ teacher across the board | **Escalate the level**: bigger base model, or back to tune-decide to reconsider the level. |
 
 **Routing threshold guidance.** Low-confidence inputs go to the frontier model; the hybrid beats either alone, and routed cases are the next training set. Confidence source: a Level-1 classifier gives calibrated probabilities directly (`train_classifier`'s logistic-regression default exists for this); an SLM gives the label-token logprob margin, or put a Level-1 router in front. Pick the threshold on **validation** predictions, never test: sweep it, take the lowest value where the kept slice clears the bar, and report coverage-at-threshold ("we keep 87% of traffic locally at ≥0.8 confidence; the kept slice scores 96%").
 

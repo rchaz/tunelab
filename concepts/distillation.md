@@ -26,7 +26,7 @@ frontier model, and why every shipped distillation gets **confidence
 routing**: inputs the student is unsure about go to the teacher, and those
 routed cases become the next round of training data.
 
-## The rungs of distillation in tunelab
+## The levels of distillation in tunelab
 
 - **Level 1** is distillation in its cheapest form: the teacher's logged
   *labels* train a classifier on embeddings. No language model is trained.

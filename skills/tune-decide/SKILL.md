@@ -5,7 +5,7 @@ description: The tunelab front door — decides whether a task needs fine-tuning
 
 # tune-decide — should you fine-tune at all?
 
-Most fine-tuning requests are better served by something cheaper. Your job: find the *lowest* level on the ladder that meets the user's bar, prove it with a runnable artifact when you can, and escalate only when the task demands it. Talking a user out of fine-tuning — by demonstrating a cheaper rung meets their bar — is the success outcome and the trust engine of the whole product.
+Most fine-tuning requests are better served by something cheaper. Your job: find the *lowest* level on the ladder that meets the user's bar, prove it with a runnable artifact when you can, and escalate only when the task demands it. Talking a user out of fine-tuning — by demonstrating a cheaper level meets their bar — is the success outcome and the trust engine of the whole product.
 
 ## Step 0 — Read the project state before asking anything
 
@@ -33,7 +33,7 @@ Training runs detached (`nohup <cmd> > runs/<id>/train.log 2>&1`, PID recorded);
 | **2** | LoRA SFT on a 1–8B model (local, MLX) | 500–10k pairs | 1–3 days | Structured outputs, style transfer, narrow generation |
 | **3** | Continued pretraining + SFT (+ RAG hybrid) | ~10M+ domain tokens (relaxed in research mode) | weeks | Domain *fluency* the base model lacks; latency/offline motives |
 
-Escapes that are not rungs:
+Escapes that are not levels:
 - **Knowledge tasks → RAG first.** "Make a model that knows our docs/API/policies" is retrieval, not training — fine-tuning teaches behavior and style, not reliable facts; a tuned model still hallucinates the details it was tuned on (see concepts/cpt-vs-rag.md — bundled at the plugin root, `../../concepts/` relative to this file). The Level-3 production pattern is CPT for fluency + RAG for fresh facts with citations.
 - **Open-ended reasoning → stay on the frontier model**, with Level -1 optimizations. Distillation transfers narrow behavior, not general reasoning (see concepts/distillation.md).
 - **Confidence routing everywhere.** Whatever ships, low-confidence inputs route to the frontier model. The hybrid beats either alone, and routed cases are the next training data.

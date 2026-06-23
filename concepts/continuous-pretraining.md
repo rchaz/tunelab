@@ -54,7 +54,7 @@ domain tokens you don't have, and it slots into tunelab's synthetic-data path.
 
 ## tunelab's stance
 
-CPT is the highest-effort, lowest-frequency rung — gated hard (stable
+CPT is the highest-effort, lowest-frequency level — gated hard (stable
 knowledge, real corpus volume, a latency/offline motive) and sequenced last.
 But when it applies, treating it as a *system* (refresh → incremental CPT →
 restore → gate) rather than a heroic one-time run is what makes it maintainable.
