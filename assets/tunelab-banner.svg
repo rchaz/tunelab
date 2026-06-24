@@ -1,0 +1,147 @@
+<svg width="1600" height="640" viewBox="0 0 1600 640" xmlns="http://www.w3.org/2000/svg" font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a1020"/>
+      <stop offset="1" stop-color="#10182e"/>
+    </linearGradient>
+    <linearGradient id="cyanFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0e2a33"/>
+      <stop offset="1" stop-color="#0b2029"/>
+    </linearGradient>
+    <linearGradient id="amberFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#33260c"/>
+      <stop offset="1" stop-color="#291e09"/>
+    </linearGradient>
+    <linearGradient id="violetFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#241a3d"/>
+      <stop offset="1" stop-color="#1c1430"/>
+    </linearGradient>
+    <marker id="arrCyan" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#22d3ee"/>
+    </marker>
+    <marker id="arrAmber" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrViolet" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#a78bfa"/>
+    </marker>
+    <marker id="arrMute" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#64748b"/>
+    </marker>
+    <marker id="arrGreen" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="640" rx="22" fill="url(#bg)"/>
+  <rect x="2" y="2" width="1596" height="636" rx="21" fill="none" stroke="#1f2c47" stroke-width="2"/>
+
+  <!-- Title -->
+  <text x="70" y="86" font-size="44" font-weight="bold" fill="#eaf1ff" letter-spacing="0.5">Tunelab</text>
+  <circle cx="298" cy="80" r="7" fill="#22d3ee"/>
+  <text x="72" y="116" font-size="20" font-weight="bold" fill="#dbe7ff">Move repetitive LLM calls onto small local models — fast, low-latency, cost-efficient.</text>
+  <text x="72" y="142" font-size="14" fill="#8aa0bf" font-family="DejaVu Sans Mono, monospace">tool-calling · classification · extraction — fine-tuned on your own logs</text>
+
+  <!-- step legend top-right -->
+  <text x="1530" y="64" text-anchor="end" font-size="13" fill="#7e8ba6" font-family="DejaVu Sans Mono, monospace">cheapest model first — escalate only the hard cases</text>
+  <text x="1530" y="86" text-anchor="end" font-size="13" fill="#7e8ba6" font-family="DejaVu Sans Mono, monospace">labels from your logs · or distilled bigger model · verified before you ship</text>
+
+  <!-- YOUR MACHINE container -->
+  <rect x="56" y="168" width="1012" height="328" rx="18" fill="#0c1426" stroke="#1c4a55" stroke-width="2" stroke-dasharray="8 6"/>
+  <circle cx="86" cy="196" r="6" fill="#34d399"/>
+  <text x="102" y="201" font-size="15" font-weight="bold" fill="#7fe7d2" font-family="DejaVu Sans Mono, monospace" letter-spacing="0.5">START WITH YOUR MACHINE — Apple Silicon · offline · $0</text>
+
+  <!-- incoming requests -->
+  <g font-family="DejaVu Sans Mono, monospace">
+    <rect x="92" y="300" width="74" height="14" rx="3" fill="#1d2b45"/>
+    <rect x="92" y="320" width="74" height="14" rx="3" fill="#22304c"/>
+    <rect x="92" y="340" width="74" height="14" rx="3" fill="#1d2b45"/>
+    <rect x="92" y="360" width="74" height="14" rx="3" fill="#22304c"/>
+  </g>
+  <text x="129" y="296" text-anchor="middle" font-size="13" fill="#9fb0cc">incoming</text>
+  <text x="129" y="392" text-anchor="middle" font-size="13" fill="#9fb0cc">requests</text>
+
+  <!-- Tier A: free classifier -->
+  <rect x="206" y="278" width="196" height="118" rx="14" fill="url(#cyanFill)" stroke="#22d3ee" stroke-width="2"/>
+  <text x="304" y="308" text-anchor="middle" font-size="13" fill="#22d3ee" font-family="DejaVu Sans Mono, monospace">LEVEL 0 / 1</text>
+  <text x="304" y="334" text-anchor="middle" font-size="18" font-weight="bold" fill="#d7f7ff">Free classifier</text>
+  <text x="304" y="358" text-anchor="middle" font-size="13" fill="#9fd9e6">embeddings · on-device</text>
+  <text x="304" y="378" text-anchor="middle" font-size="13" fill="#9fd9e6">seconds · $0</text>
+
+  <!-- Tier B: LoRA fine-tune -->
+  <rect x="500" y="278" width="196" height="118" rx="14" fill="url(#amberFill)" stroke="#f59e0b" stroke-width="2"/>
+  <text x="598" y="308" text-anchor="middle" font-size="13" fill="#f59e0b" font-family="DejaVu Sans Mono, monospace">LEVEL 2</text>
+  <text x="598" y="334" text-anchor="middle" font-size="18" font-weight="bold" fill="#ffe6bf">LoRA fine-tune</text>
+  <text x="598" y="358" text-anchor="middle" font-size="13" fill="#f0cf9a">teach your task</text>
+  <text x="598" y="378" text-anchor="middle" font-size="13" fill="#f0cf9a">mins–hours on a Mac</text>
+
+  <!-- shrinking-model (distillation) glyph between B and frontier, near top -->
+  <g>
+    <circle cx="812" cy="232" r="20" fill="none" stroke="#a78bfa" stroke-width="2" opacity="0.85"/>
+    <circle cx="848" cy="236" r="13" fill="none" stroke="#c4b5fd" stroke-width="2" opacity="0.9"/>
+    <circle cx="876" cy="240" r="7" fill="#a78bfa" opacity="0.9"/>
+    <text x="812" y="280" text-anchor="middle" font-size="12" fill="#bda9f0" font-family="DejaVu Sans Mono, monospace">distill ↓ compress</text>
+  </g>
+
+  <!-- Frontier (outside the machine) -->
+  <rect x="1160" y="278" width="220" height="118" rx="14" fill="url(#violetFill)" stroke="#a78bfa" stroke-width="2"/>
+  <!-- cloud glyph -->
+  <g fill="#a78bfa" opacity="0.95">
+    <circle cx="1240" cy="262" r="11"/>
+    <circle cx="1258" cy="256" r="14"/>
+    <circle cx="1278" cy="262" r="11"/>
+    <rect x="1240" y="258" width="38" height="12" rx="6"/>
+  </g>
+  <text x="1270" y="312" text-anchor="middle" font-size="13" fill="#a78bfa" font-family="DejaVu Sans Mono, monospace">LEVEL 3</text>
+  <text x="1270" y="338" text-anchor="middle" font-size="18" font-weight="bold" fill="#e7ddff">Frontier model</text>
+  <text x="1270" y="362" text-anchor="middle" font-size="13" fill="#cdbff2">API · highest cost</text>
+  <text x="1270" y="382" text-anchor="middle" font-size="13" fill="#cdbff2">only the hardest 12%</text>
+
+  <!-- horizontal cascade flow -->
+  <line x1="170" y1="337" x2="200" y2="337" stroke="#64748b" stroke-width="2.5" marker-end="url(#arrMute)"/>
+  <line x1="404" y1="337" x2="494" y2="337" stroke="#22d3ee" stroke-width="2.5" marker-end="url(#arrAmber)"/>
+  <text x="449" y="328" text-anchor="middle" font-size="12" fill="#8aa0bf" font-family="DejaVu Sans Mono, monospace">harder →</text>
+  <line x1="698" y1="337" x2="1154" y2="337" stroke="#f59e0b" stroke-width="2.5" marker-end="url(#arrViolet)"/>
+  <text x="930" y="328" text-anchor="middle" font-size="12" fill="#8aa0bf" font-family="DejaVu Sans Mono, monospace">escalate hardest cases →</text>
+
+  <!-- downward "resolved" arrows + percentages -->
+  <line x1="304" y1="398" x2="304" y2="452" stroke="#34d399" stroke-width="2.5" marker-end="url(#arrGreen)"/>
+  <line x1="598" y1="398" x2="598" y2="452" stroke="#34d399" stroke-width="2.5" marker-end="url(#arrGreen)"/>
+  <rect x="246" y="456" width="116" height="26" rx="13" fill="#0e2a1f" stroke="#34d399" stroke-width="1.5"/>
+  <text x="304" y="474" text-anchor="middle" font-size="13" fill="#7ff0c8" font-family="DejaVu Sans Mono, monospace">70% · $0</text>
+  <rect x="540" y="456" width="116" height="26" rx="13" fill="#0e2a1f" stroke="#34d399" stroke-width="1.5"/>
+  <text x="598" y="474" text-anchor="middle" font-size="13" fill="#7ff0c8" font-family="DejaVu Sans Mono, monospace">18% · $0</text>
+  <rect x="1212" y="410" width="116" height="26" rx="13" fill="#241a3d" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="1270" y="428" text-anchor="middle" font-size="13" fill="#cdbff2" font-family="DejaVu Sans Mono, monospace">12% · $$</text>
+
+  <!-- distillation arc: teacher -> student -->
+  <path d="M1230 250 C 980 156, 820 156, 640 268" fill="none" stroke="#a78bfa" stroke-width="2.2" stroke-dasharray="7 6" marker-end="url(#arrViolet)" opacity="0.9"/>
+  <!-- data cylinder: your logs become free labels -->
+  <g>
+    <path d="M733 132 v22 a14 5 0 0 0 28 0 v-22" fill="#0c2a30" stroke="#34d399" stroke-width="1.5"/>
+    <ellipse cx="747" cy="132" rx="14" ry="5" fill="#10343c" stroke="#34d399" stroke-width="1.5"/>
+    <ellipse cx="747" cy="143" rx="14" ry="5" fill="none" stroke="#34d399" stroke-width="1" opacity="0.55"/>
+  </g>
+  <text x="985" y="138" text-anchor="middle" font-size="13" fill="#bda9f0" font-family="DejaVu Sans Mono, monospace">your logs → free labels · or distill a bigger model</text>
+  <text x="985" y="158" text-anchor="middle" font-size="13" fill="#bda9f0" font-family="DejaVu Sans Mono, monospace">→ fine-tune the local student (MLX / LoRA)</text>
+
+  <!-- bottom summary stat pills -->
+  <g font-family="DejaVu Sans Mono, monospace">
+    <rect x="70" y="540" width="330" height="60" rx="12" fill="#0e1f1a" stroke="#34d399" stroke-width="1.5"/>
+    <text x="235" y="568" text-anchor="middle" font-size="25" font-weight="bold" fill="#7ff0c8">88.5% &gt; 81.8%</text>
+    <text x="235" y="589" text-anchor="middle" font-size="13" fill="#8fb8aa">free classifier beats Opus 4.8</text>
+
+    <rect x="430" y="540" width="300" height="60" rx="12" fill="#101a2e" stroke="#60a5fa" stroke-width="1.5"/>
+    <text x="580" y="568" text-anchor="middle" font-size="26" font-weight="bold" fill="#bcd6ff">94%</text>
+    <text x="580" y="589" text-anchor="middle" font-size="13" fill="#9fb0cc">3-tier cascade accuracy</text>
+
+    <rect x="760" y="540" width="300" height="60" rx="12" fill="#1c1430" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="910" y="568" text-anchor="middle" font-size="26" font-weight="bold" fill="#e7ddff">8× lower cost</text>
+    <text x="910" y="589" text-anchor="middle" font-size="13" fill="#c3b6e8">than frontier-only</text>
+  </g>
+
+  <!-- caption right -->
+  <text x="1530" y="556" text-anchor="end" font-size="15" font-weight="bold" fill="#9fb0cc" font-family="DejaVu Sans Mono, monospace">your local AI scientist</text>
+  <text x="1530" y="580" text-anchor="end" font-size="13" fill="#8aa0bf" font-family="DejaVu Sans Mono, monospace">verified on held-out data before you ship</text>
+  <text x="1530" y="604" text-anchor="end" font-size="13" fill="#56657f" font-family="DejaVu Sans Mono, monospace">decide → data → train → eval → loop</text>
+</svg>

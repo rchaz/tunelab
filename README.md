@@ -1,6 +1,12 @@
-# tunelab
+<p align="center">
+  <img src="assets/tunelab-banner.png" alt="tunelab — move repetitive LLM calls (tool calling, classification, extraction) onto small local models you fine-tune on your own data with MLX/LoRA, verified on held-out data before you ship" width="100%">
+</p>
 
-Replace expensive API calls with cheap local models — classifiers, fine-tunes, cascades — and prove they work on your data before you ship them.
+# Tunelab
+
+tunelab moves repetitive LLM calls — tool calling, classification, extraction — onto small local models. It preps and labels training data from your logs (or distills it from a bigger model), fine-tunes locally with MLX/LoRA, and verifies the small model beats the API on held-out data before you ship.
+
+Measured on Banking77: a free local classifier scores **88.5%** vs Claude Opus 4.8's **81.8%**; a 3-tier cascade reaches **94%** at **8× lower cost** than frontier-only.
 
 ```
 You: We classify support tickets with Claude Opus 4.8. It costs $40/day. Can we do this cheaper?
@@ -73,7 +79,7 @@ These are the same Level -1 … 3 the skills refer to throughout. The best syste
 | Skill | What it does |
 |---|---|
 | **tune-decide** | Interviews you, runs experiments on your data, recommends the cheapest approach that clears your bar |
-| **tune-data** | Turns logs/CSV/JSONL into clean training data; generates labels via teacher model if needed |
+| **tune-data** | Turns logs/CSV/JSONL into clean training data; generates labels via a teacher model (distillation) if needed |
 | **tune-train** | LoRA / QLoRA / full fine-tune / continued pretraining, locally on Apple Silicon via [MLX](https://github.com/ml-explore/mlx-lm) |
 | **tune-eval** | Accuracy on held-out data, LLM-as-judge, cascade composition — bar set before scores are seen |
 | **tune-loop** | Champion/challenger: promotes a new model only when it beats the incumbent by a pre-registered margin |
@@ -111,7 +117,7 @@ Full run logs including failures: [`dogfood/`](dogfood/)
 
 ## Concepts
 
-Short explainers in [`concepts/`](concepts/): [cascades](concepts/why-cascades-work.md), [ML vs LLM vs SLM](concepts/ml-vs-llm-vs-slm.md), [LoRA vs QLoRA](concepts/lora-vs-qlora.md), [fine-tuning vs RAG](concepts/cpt-vs-rag.md), [overfitting](concepts/epochs-and-overfitting.md), and more.
+Short explainers in [`concepts/`](concepts/): [distillation](concepts/distillation.md), [cascades](concepts/why-cascades-work.md), [ML vs LLM vs SLM](concepts/ml-vs-llm-vs-slm.md), [LoRA vs QLoRA](concepts/lora-vs-qlora.md), [fine-tuning vs RAG](concepts/cpt-vs-rag.md), [overfitting](concepts/epochs-and-overfitting.md), and more.
 
 ---
 
